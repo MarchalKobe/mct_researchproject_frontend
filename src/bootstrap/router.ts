@@ -20,6 +20,14 @@ const routes: RouteRecordRaw[] = [
             teacher: false,
         },
     },
+    {
+        path: '/confirm',
+        component: () => import('../screens/Confirm.vue'),
+        meta: {
+            loggedIn: false,
+            teacher: false,
+        },
+    },
 ];
 
 const router: Router = createRouter({
@@ -47,6 +55,8 @@ router.beforeEach(async (to: RouteLocationNormalized, _: RouteLocationNormalized
     // } else {
     //     next();
     // };
+
+    next();
 });
 
 export default router;

@@ -1,7 +1,7 @@
 <script setup lang="ts">
-
+    import './styles/screen.scss';
 </script>
 
 <template>
-    <p>Hello World</p>
+    <RouterView></RouterView>
 </template>

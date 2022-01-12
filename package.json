@@ -1,5 +1,5 @@
 {
-  "name": "mct_researchproject",
+  "name": "mct_researchproject_frontend",
   "version": "0.0.0",
   "scripts": {
     "dev": "vite --host",

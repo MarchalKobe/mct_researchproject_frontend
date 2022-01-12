@@ -1,0 +1,35 @@
+.c-input {
+    position: relative;
+
+    &__container {
+        display: block;
+        width: 100%;
+        text-align: left;
+    }
+    
+    &__label {
+        display: block;
+        font-size: 0.75rem;
+        margin-bottom: 0.25rem;
+    }
+
+    &__symbol {
+        width: 1.25rem;
+        position: absolute;
+        left: 0.5rem;
+        top: 0.5rem;
+        stroke: var(--global-x-light);
+    }
+
+    &__field {
+        all: unset;
+        color: var(--global-xx-light);
+        background: #2C2D30;
+        border: 1px solid #5B5E63;
+        border-radius: 0.25rem;
+        padding: 0.5rem;
+        padding-left: 2rem;
+        cursor: text;
+        width: calc(100% - calc(2.5rem + 2px));
+    }
+}

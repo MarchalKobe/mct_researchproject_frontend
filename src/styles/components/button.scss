@@ -1,0 +1,13 @@
+.c-button__large {
+    all: unset;
+    color: var(--global-xx-light);
+    background: var(--global-alpha);
+    border-radius: 0.5rem;
+    padding: 0.75rem 0;
+    width: 100%;
+    cursor: pointer;
+
+    &:hover {
+        opacity: 0.9;
+    }
+}

@@ -12,13 +12,20 @@
 // elements
 @import "./elements/root.scss";
 @import "./elements/page.scss";
-// @import "./elements/container.scss";
+@import "./elements/container.scss";
+
 
 // objects
 
 
 // components
-
+@import "./components/button.scss";
+@import "./components/input.scss";
+@import "./components/link.scss";
+@import "./components/switch.scss";
 
 
 // utilities
+@import "./utilities/margin.scss";
+@import "./utilities/color.scss";
+@import "./utilities/flex.scss";

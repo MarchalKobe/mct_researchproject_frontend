@@ -3,7 +3,5 @@
 </script>
 
 <template>
-    <RouterLink to="/login">Login</RouterLink>
-    <RouterLink to="/register">Register</RouterLink>
     <RouterView></RouterView>
 </template>

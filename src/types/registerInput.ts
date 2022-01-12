@@ -3,5 +3,6 @@ export default interface RegisterInput {
     lastName: string;
     email: string;
     password: string;
+    confirm?: string;
     type: number;
 };

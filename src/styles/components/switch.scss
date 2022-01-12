@@ -1,0 +1,21 @@
+.c-switch {
+    border: 1px solid var(--global-x-light);
+    border-radius: 0.25rem;
+    padding: 0.25rem;
+    display: inline-block;
+
+    &__element {
+        all: unset;
+        border-radius: 0.25rem;
+        padding: 0.25rem;
+        cursor: pointer;
+        
+        &-selected {
+            background: var(--global-light);
+        }
+
+        &:hover {
+            opacity: 0.8;
+        }
+    }
+}

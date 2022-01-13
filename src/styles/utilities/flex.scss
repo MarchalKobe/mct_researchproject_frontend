@@ -1,3 +1,31 @@
 .u-flex {
     display: flex;
 }
+
+.u-align-center {
+    align-items: center;
+}
+
+// .u-align-start {
+//     align-items: flex-start;
+// }
+
+// .u-justify-center {
+//     justify-content: center;
+// }
+
+// .u-justify-end {
+//     justify-content: flex-end;
+// }
+
+// .u-justify-space-between {
+//     justify-content: space-between;
+// }
+
+.u-direction-column {
+    flex-direction: column;
+}
+
+// .u-wrap {
+//     flex-wrap: wrap;
+// }

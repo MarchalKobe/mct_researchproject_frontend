@@ -45,6 +45,14 @@ const routes: RouteRecordRaw[] = [
         },
     },
     {
+        path: '/profile',
+        component: () => import('../screens/Profile.vue'),
+        meta: {
+            loggedIn: true,
+            teacher: false,
+        },
+    },
+    {
         path: '/classes',
         component: () => import('../screens/Classes.vue'),
         meta: {
@@ -67,10 +75,12 @@ router.beforeEach(async (to: RouteLocationNormalized, _: RouteLocationNormalized
             if(to.meta.teacher) {
                 if(user.type !== 1) {
                     next('/login');
+                    return;
                 };
             };
         } else {
             next('/login');
+            return;
         };
     };
 

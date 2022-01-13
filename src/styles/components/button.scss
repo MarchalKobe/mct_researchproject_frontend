@@ -1,13 +1,50 @@
-.c-button__large {
-    all: unset;
-    color: var(--global-xx-light);
-    background: var(--global-alpha);
-    border-radius: 0.5rem;
-    padding: 0.75rem 0;
-    width: 100%;
-    cursor: pointer;
+.c-button {
+    &__soft {
+        all: unset;
+        cursor: pointer;
 
-    &:hover {
-        opacity: 0.9;
+        &:hover {
+            opacity: 0.9;
+        }
+    }
+
+    &__large {
+        all: unset;
+        color: var(--global-xx-light);
+        background: var(--global-alpha);
+        border-radius: 0.5rem;
+        padding: 0.75rem 0;
+        width: 100%;
+        cursor: pointer;
+    
+        &:hover {
+            opacity: 0.9;
+        }
+    }
+
+    &__icon {
+        all: unset;
+        stroke: var(--global-x-light);
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0.4rem;
+        cursor: pointer;
+
+        &-selected {
+            stroke: var(--global-xx-light);
+            background: var(--global-x-dark);
+        }
+
+        &-alpha {
+            stroke: var(--global-xx-light);
+            background: var(--global-alpha);
+        }
+
+        &:hover {
+            opacity: 0.9;
+        }
     }
 }

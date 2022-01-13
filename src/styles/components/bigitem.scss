@@ -1,0 +1,47 @@
+.c-bigitem {
+    position: relative;
+    border: 1px solid var(--global-x-light);
+    background: var(--global-dark);
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 14rem;
+    width: 12rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+
+    &__container {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        justify-items: center;
+        gap: 2rem;
+    }
+
+    &__button {
+        position: absolute;
+        top: -1rem;
+        right: -1rem;
+    }
+
+    &__symbol {
+        stroke: var(--global-x-light);
+        margin-bottom: 2rem;
+    }
+
+    &__name {
+        color: var(--global-x-light);
+        font-size: 1.25rem;
+        font-weight: 400;
+        margin: 0;
+    }
+
+    &-add {
+        border: 1px dashed var(--global-x-light);
+        background: none;
+    }
+
+    &:hover {
+        opacity: 0.8;
+    }
+}

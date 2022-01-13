@@ -28,33 +28,43 @@ const routes: RouteRecordRaw[] = [
             teacher: false,
         },
     },
+    {
+        path: '/forgotpassword',
+        component: () => import('../screens/ForgotPassword.vue'),
+        meta: {
+            loggedIn: false,
+            teacher: false,
+        },
+    },
+    {
+        path: '/classes',
+        component: () => import('../screens/Classes.vue'),
+        meta: {
+            loggedIn: true,
+            teacher: false,
+        },
+    },
 ];
 
-const router: Router = createRouter({
+export const router: Router = createRouter({
     history: createWebHistory(),
     routes,
 });
 
 router.beforeEach(async (to: RouteLocationNormalized, _: RouteLocationNormalized, next: NavigationGuardNext) => {
-    // if(to.meta.loggedIn) {
-    //     const user: UserState = computed(() => store.getters[GetterTypes.GET_USER_INFORMATION]()).value;
+    if(to.meta.loggedIn) {
+        const user: UserState = computed(() => store.getters[GetterTypes.GET_USER_INFORMATION]()).value;
 
-    //     if(user.loggedIn) {
-    //         if(to.meta.teacher) {
-    //             if(user.type === 1) {
-    //                 next();
-    //             } else {
-    //                 next('/login');
-    //             };
-    //         } else {
-    //             next();
-    //         };
-    //     } else {
-    //         next('/login');
-    //     };
-    // } else {
-    //     next();
-    // };
+        if(user.loggedIn) {
+            if(to.meta.teacher) {
+                if(user.type !== 1) {
+                    next('/login');
+                };
+            };
+        } else {
+            next('/login');
+        };
+    };
 
     next();
 });

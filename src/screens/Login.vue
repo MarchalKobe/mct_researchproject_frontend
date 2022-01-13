@@ -2,6 +2,10 @@
     import { reactive } from 'vue';
     import LoginInput from '../types/loginInput';
     import { useNetwork } from '../utils/networkComposable';
+    import { getAuth, signInWithCustomToken, Auth, UserCredential } from 'firebase/auth';
+    import router from '../bootstrap/router';
+
+    const auth: Auth = getAuth();
 
     const { login } = useNetwork();
 
@@ -14,6 +18,20 @@
         console.log(loginData);
         const response = await login(loginData);
         console.log({ response });
+
+        if(response.data.login) {
+            console.log(response.data.login.token);
+            
+
+            signInWithCustomToken(auth, response.data.login.token).then((_: UserCredential) => {
+                router.push('/classes');
+            }).catch((error: any) => {
+                console.error(error);
+            });
+        } else {
+            // TODO: Email or password is wrong
+            console.log('Email or password is wrong');
+        };
     };
 </script>
 

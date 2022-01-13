@@ -1,5 +1,6 @@
 <script setup lang="ts">
     import { ref } from 'vue';
+    import router from '../bootstrap/router';
     import { useNetwork } from '../utils/networkComposable';
 
     const { confirm } = useNetwork();
@@ -10,6 +11,10 @@
         if(token.value) {
             const response = await confirm(token.value);
             console.log({ response });
+
+            // TODO: Check response
+            window.alert('Account has been confirmed');
+            router.push('/login');
         };
     };
 </script>

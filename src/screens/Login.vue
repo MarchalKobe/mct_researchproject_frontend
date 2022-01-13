@@ -22,15 +22,14 @@
         if(response.data.login) {
             console.log(response.data.login.token);
             
-
             signInWithCustomToken(auth, response.data.login.token).then((_: UserCredential) => {
                 router.push('/classes');
             }).catch((error: any) => {
                 console.error(error);
             });
         } else {
-            // TODO: Email or password is wrong
-            console.log('Email or password is wrong');
+            // TODO: Error: email or password is wrong
+            window.alert('Email or password is wrong');
         };
     };
 </script>

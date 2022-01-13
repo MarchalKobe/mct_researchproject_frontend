@@ -1,5 +1,7 @@
+import ForgotPasswordInput from "../types/forgotPasswordInput";
 import LoginInput from "../types/loginInput";
 import RegisterInput from "../types/registerInput";
+import RestorePasswordInput from "../types/restorePasswordInput";
 
 const handleData = async (path: string, token: string | null = null, method: string = 'GET', body: any = null) => {
     const t0 = performance.now();
@@ -77,9 +79,38 @@ export const useNetwork = () => {
         },
     });
 
+    const forgotPassword = (body: ForgotPasswordInput) => handleData('graphql', null, 'POST', {
+        query: /* GraphQL */ `
+            mutation ForgotPassword($data: ForgotPasswordInput!) {
+                forgotPassword(data: $data)
+            }
+        `,
+        variables: {
+            data: {
+                email: body.email,
+            },
+        },
+    });
+
+    const restorePassword = (token: string, body: RestorePasswordInput) => handleData('graphql', null, 'POST', {
+        query: /* GraphQL */ `
+            mutation RestorePassword($data: RestorePasswordInput!, $token: String!) {
+                restorePassword(data: $data, token: $token)
+            }
+        `,
+        variables: {
+            data: {
+                password: body.password,
+            },
+            token: token,
+        },
+    });
+
     return {
         register,
         login,
         confirm,
+        forgotPassword,
+        restorePassword,
     };
 };

@@ -18,6 +18,9 @@
         console.log(registerData);
         const response = await register(registerData);
         console.log({ response });
+
+        // TODO: Check response
+        window.alert(`An email has been send to ${registerData.email} with your confirmation link.`);
     };
 </script>
 

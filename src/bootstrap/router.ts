@@ -37,6 +37,14 @@ const routes: RouteRecordRaw[] = [
         },
     },
     {
+        path: '/restorepassword',
+        component: () => import('../screens/RestorePassword.vue'),
+        meta: {
+            loggedIn: false,
+            teacher: false,
+        },
+    },
+    {
         path: '/classes',
         component: () => import('../screens/Classes.vue'),
         meta: {

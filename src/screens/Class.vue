@@ -1,16 +1,45 @@
 <script setup lang="ts">
     import Navbar from '../components/Navbar.vue';
     import Header from '../components/Header.vue';
+    import { computed, reactive, ref } from 'vue';
+    import Classroom from '../types/Classroom';
+    import { getIdToken, User } from 'firebase/auth';
+    import { GetterTypes, UserState } from '../store/modules/user';
+    import store from '../store';
+    import { useNetwork } from '../utils/networkComposable';
+    import router from '../bootstrap/router';
+
+    const { getClassroom } = useNetwork();
+
+    const user = reactive<{ information: UserState }>({
+        information: computed(() => store.getters[GetterTypes.GET_USER_INFORMATION]()).value,
+    });
 
     const path = new URL(location.href).pathname;
     const pathNew = path.split('/');
-    const classname = pathNew[pathNew.length - 1];
+    const classroomId = pathNew[pathNew.length - 1];
+
+    const classroom = ref<Classroom | null>(null);
+
+    const getThisClassroom = async () => {
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            const response = await getClassroom(token, classroomId);
+            console.log({ response });
+            classroom.value = response.data.getClassroom;
+        }).catch((error: string) => {
+            console.error(error);
+        });
+    };
+
+    const goBack = () => router.push('/classes');
+
+    getThisClassroom();
 </script>
 
 <template>
     <Navbar />
 
-    <div class="e-container">
-        <Header :title="`${classname} - Assignments`" />
+    <div v-if="classroom" class="e-container">
+        <Header :title="`${classroom.name} - Assignments`" :backAction="goBack" />
     </div>
 </template>

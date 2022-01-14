@@ -1,5 +1,11 @@
-.c-bigitem {
-    position: relative;
+.c-classelements {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    justify-items: center;
+    gap: 2rem;
+}
+
+.c-classelement {
     border: 1px solid var(--global-x-light);
     background: var(--global-dark);
     display: inline-flex;
@@ -12,10 +18,7 @@
     cursor: pointer;
 
     &__container {
-        display: grid;
-        grid-template-columns: 1fr 1fr 1fr;
-        justify-items: center;
-        gap: 2rem;
+        position: relative;
     }
 
     &__button {

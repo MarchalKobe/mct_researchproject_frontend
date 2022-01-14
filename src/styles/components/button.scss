@@ -55,6 +55,11 @@
             stroke: var(--global-xx-light);
             background: var(--global-alpha);
         }
+        
+        &-empty {
+            stroke: var(--global-xx-light);
+            border: 2px solid var(--global-light);
+        }
 
         &:hover {
             opacity: 0.9;

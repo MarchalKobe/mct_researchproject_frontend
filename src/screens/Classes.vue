@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import Navbar from '../components/Navbar.vue';
     import Header from '../components/Header.vue';
-    import BigItem from '../components/BigItem.vue';
+    import ClassElement from '../components/ClassElement.vue';
     import { computed, reactive, ref } from 'vue';
     import { GetterTypes, UserState } from '../store/modules/user';
     import store from '../store';
@@ -71,6 +71,18 @@
         });
     };
 
+    const deleteThisClassroom = async (classroomId: string) => {
+        console.log({classroomId});
+        
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            // const response = await leaveClassroom(token, classroomId);
+            // console.log({ response });
+            getThisMyJoinedClassrooms();
+        }).catch((error: string) => {
+            console.error(error);
+        });
+    };
+
     const goToClass = (classroomId: string) => {
         router.push(`/classes/${classroomId}`);
     };
@@ -85,14 +97,14 @@
         <Header title="Classes" />
 
         <section>
-            <div v-if="user.information.type !== 1" class="u-flex u-align-center u-justify-end u-margin-bottom-lg">
+            <div class="u-flex u-align-center u-justify-end u-margin-bottom-lg">
                 <button class="c-button__soft u-color-x-light" @click="toggleEdit">{{ edit ? 'Done' : 'Edit' }}</button>
             </div>
             
-            <div class="c-bigitem__container">
-                <BigItem v-if="user.information.type === 1" :add="true" name="Create class" @click="toggleAddClassPopup" />
-                <BigItem :add="true" name="Join class" @click="toggleJoinClassPopup" />
-                <BigItem v-for="(classroom, index) in classrooms" :key="index" :edit="edit" :id="classroom.classroomId" :name="classroom.name" :action="leaveThisClassroom" @click="goToClass(classroom.name)" />
+            <div v-if="user.information.user" class="c-classelements">
+                <ClassElement v-if="user.information.type === 1" :add="true" name="Create class" @click="toggleAddClassPopup" />
+                <ClassElement :add="true" name="Join class" @click="toggleJoinClassPopup" />
+                <ClassElement v-for="(classroom, index) in classrooms" :key="index" :classroom="classroom" :edit="edit" :userId="user.information.user.uid" :leaveAction="leaveThisClassroom" :deleteAction="deleteThisClassroom" :clickAction="goToClass" />
             </div>
         </section>
     </div>

@@ -1,9 +1,11 @@
 import AddClassroomInput from "../types/AddClassroomInput";
 import ForgotPasswordInput from "../types/forgotPasswordInput";
 import JoinClassroomInput from "../types/JoinClassroomInput";
-import LoginInput from "../types/loginInput";
-import RegisterInput from "../types/registerInput";
-import RestorePasswordInput from "../types/restorePasswordInput";
+import LoginInput from "../types/LoginInput";
+import RegisterInput from "../types/RegisterInput";
+import RestorePasswordInput from "../types/RestorePasswordInput";
+import UpdateEmailInput from "../types/UpdateEmailInput";
+import UpdateGeneralInput from "../types/UpdateGeneralInput";
 
 const handleData = async (path: string, token: string | null = null, method: string = 'GET', body: any = null) => {
     const t0 = performance.now();
@@ -108,6 +110,33 @@ export const useNetwork = () => {
         },
     });
 
+    const updateAccountGeneral = (token: string, body: UpdateGeneralInput) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            mutation UpdateAccountGeneral($data: UpdateGeneralInput!) {
+                updateAccountGeneral(data: $data)
+            }
+        `,
+        variables: {
+            data: {
+                firstName: body.firstName,
+                lastName: body.lastName,
+            },
+        },
+    });
+
+    const updateAccountEmail = (token: string, body: UpdateEmailInput) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            mutation UpdateAccountEmail($data: UpdateEmailInput!) {
+                updateAccountEmail(data: $data)
+            }
+        `,
+        variables: {
+            data: {
+                email: body.email,
+            },
+        },
+    });
+
     const getClassroom = (token: string, classroomId: string) => handleData('graphql', token, 'POST', {
         query: /* GraphQL */ `
             query GetClassroom($classroomId: String!) {
@@ -181,6 +210,8 @@ export const useNetwork = () => {
         confirm,
         forgotPassword,
         restorePassword,
+        updateAccountGeneral,
+        updateAccountEmail,
         getClassroom,
         getMyJoinedClassrooms,
         addClassroom,

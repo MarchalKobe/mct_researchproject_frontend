@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { reactive } from 'vue';
-    import RegisterInput from '../types/registerInput';
+    import RegisterInput from '../types/RegisterInput';
     import { useNetwork } from '../utils/networkComposable';
     import Input from '../components/Input.vue';
 

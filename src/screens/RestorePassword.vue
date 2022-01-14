@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { reactive, ref } from 'vue';
     import router from '../bootstrap/router';
-    import RestorePasswordInput from '../types/restorePasswordInput';
+    import RestorePasswordInput from '../types/RestorePasswordInput';
     import { useNetwork } from '../utils/networkComposable';
 
     const { restorePassword } = useNetwork();

@@ -31,4 +31,20 @@
             height: 100%;
         }
     }
+
+    &__element {
+        position: relative;
+
+        &:hover::after {
+            content: attr(data-information);
+            position: absolute;
+            left: 3rem;
+            top: 0;
+            white-space: nowrap;
+            background: var(--global-xx-dark);
+            padding: 0.25rem 1rem;
+            border-radius: 0.4rem;
+            border: 2px solid var(--global-light);
+        }
+    }
 }

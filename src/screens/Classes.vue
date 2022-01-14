@@ -7,8 +7,10 @@
     import store from '../store';
     import { useNetwork } from '../utils/networkComposable';
     import { getIdToken, User } from 'firebase/auth';
+    import Classroom from '../types/Classroom';
+    import router from '../bootstrap/router';
 
-    const { addClassroom, joinClassroom } = useNetwork();
+    const { getMyJoinedClassrooms, addClassroom, joinClassroom, leaveClassroom } = useNetwork();
 
     const user = reactive<{ information: UserState }>({
         information: computed(() => store.getters[GetterTypes.GET_USER_INFORMATION]()).value,
@@ -16,6 +18,8 @@
 
     const edit = ref<boolean>(false);
     const toggleEdit = () => edit.value = !edit.value;
+
+    const classrooms = ref<Classroom[]>([]);
 
     const addClassPopup = ref<boolean>(false);
     const classname = ref<string>('');
@@ -25,10 +29,22 @@
     const classcode = ref<string>('');
     const toggleJoinClassPopup = () => joinClassPopup.value = !joinClassPopup.value;
 
+    const getThisMyJoinedClassrooms = async () => {
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            const response = await getMyJoinedClassrooms(token);
+            console.log({ response });
+            classrooms.value = response.data.getMyJoinedClassrooms;
+        }).catch((error: string) => {
+            console.error(error);
+        });
+    };
+
     const addClassroomSubmit = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await addClassroom(token, { name: classname.value });
             console.log({ response });
+            getThisMyJoinedClassrooms();
+            toggleAddClassPopup();
         }).catch((error: string) => {
             console.error(error);
         });
@@ -38,10 +54,28 @@
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await joinClassroom(token, { classcode: classcode.value });
             console.log({ response });
+            getThisMyJoinedClassrooms();
+            toggleJoinClassPopup();
         }).catch((error: string) => {
             console.error(error);
         });
     };
+
+    const leaveThisClassroom = async (classroomId: string) => {
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            const response = await leaveClassroom(token, classroomId);
+            console.log({ response });
+            getThisMyJoinedClassrooms();
+        }).catch((error: string) => {
+            console.error(error);
+        });
+    };
+
+    const goToClass = (classroomId: string) => {
+        router.push(`/classes/${classroomId}`);
+    };
+
+    getThisMyJoinedClassrooms();
 </script>
 
 <template>
@@ -51,14 +85,14 @@
         <Header title="Classes" />
 
         <section>
-            <div class="u-flex u-align-center u-justify-end u-margin-bottom-lg">
+            <div v-if="user.information.type !== 1" class="u-flex u-align-center u-justify-end u-margin-bottom-lg">
                 <button class="c-button__soft u-color-x-light" @click="toggleEdit">{{ edit ? 'Done' : 'Edit' }}</button>
             </div>
             
             <div class="c-bigitem__container">
                 <BigItem v-if="user.information.type === 1" :add="true" name="Create class" @click="toggleAddClassPopup" />
                 <BigItem :add="true" name="Join class" @click="toggleJoinClassPopup" />
-                <BigItem :edit="edit" name="4BOIN" />
+                <BigItem v-for="(classroom, index) in classrooms" :key="index" :edit="edit" :id="classroom.classroomId" :name="classroom.name" :action="leaveThisClassroom" @click="goToClass(classroom.name)" />
             </div>
         </section>
     </div>

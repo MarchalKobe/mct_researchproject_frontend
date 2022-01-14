@@ -108,6 +108,18 @@ export const useNetwork = () => {
         },
     });
 
+    const getMyJoinedClassrooms = (token: string) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            query GetMyJoinedClassrooms {
+                getMyJoinedClassrooms {
+                    classroomId
+                    name
+                }
+            }
+        `,
+        variables: {},
+    });
+
     const addClassroom = (token: string, body: AddClassroomInput) => handleData('graphql', token, 'POST', {
         query: /* GraphQL */ `
             mutation AddClassroom($data: AddClassroomInput!) {
@@ -134,13 +146,26 @@ export const useNetwork = () => {
         },
     });
 
+    const leaveClassroom = (token: string, classroomId: string) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            mutation LeaveClassroom($classroomId: String!) {
+                leaveClassroom(classroomId: $classroomId)
+            }
+        `,
+        variables: {
+            classroomId: classroomId,
+        },
+    });
+
     return {
         register,
         login,
         confirm,
         forgotPassword,
         restorePassword,
+        getMyJoinedClassrooms,
         addClassroom,
         joinClassroom,
+        leaveClassroom,
     };
 };

@@ -60,6 +60,14 @@ const routes: RouteRecordRaw[] = [
             teacher: false,
         },
     },
+    {
+        path: '/classes/:classroomId',
+        component: () => import('../screens/Class.vue'),
+        meta: {
+            loggedIn: true,
+            teacher: false,
+        },
+    },
 ];
 
 export const router: Router = createRouter({

@@ -9,6 +9,7 @@ export type UserState = {
     loggedIn: boolean,
     preferredTheme: string,
     type: number,
+    avatar: string,
 };
 
 export enum GetterTypes {
@@ -33,6 +34,7 @@ const state: UserState = {
     loggedIn: false,
     preferredTheme: '',
     type: -1,
+    avatar: '',
 };
 
 export default {
@@ -54,6 +56,7 @@ export default {
             state.loggedIn = !information.loggedIn;
             state.preferredTheme = information.preferredTheme;
             state.type = information.type;
+            state.avatar = information.avatar;
         },
         
         [MutationTypes.LOGOUT_USER](state: UserState) {
@@ -64,6 +67,7 @@ export default {
             state.loggedIn = false;
             state.preferredTheme = '';
             state.type = -1;
+            state.avatar = '';
         },
     },
     
@@ -91,7 +95,7 @@ export default {
                     auth.onAuthStateChanged(async (user: User | null) => {
                         if(user) {
                             getIdTokenResult(user).then((idTokenResult) => {
-                                commit(MutationTypes.LOGIN_USER, { user: user, firstName: idTokenResult.claims.firstName, lastName: idTokenResult.claims.lastName, email: idTokenResult.claims.email, type: idTokenResult.claims.type });
+                                commit(MutationTypes.LOGIN_USER, { user: user, firstName: idTokenResult.claims.firstName, lastName: idTokenResult.claims.lastName, email: idTokenResult.claims.email, type: idTokenResult.claims.type, avatar: idTokenResult.claims.avatar });
                                 resolve();
                             }).catch((error) => {
                                 console.error(error);

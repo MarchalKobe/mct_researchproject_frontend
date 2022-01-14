@@ -1,7 +1,12 @@
 <script setup lang="ts">
+    import { computed, reactive, ref } from 'vue';
     import router from '../bootstrap/router';
     import store from '../store';
-    import { ActionTypes } from '../store/modules/user';
+    import { ActionTypes, GetterTypes, UserState } from '../store/modules/user';
+
+    const user = reactive<{ information: UserState }>({
+        information: computed(() => store.getters[GetterTypes.GET_USER_INFORMATION]()).value,
+    });
 
     const path = new URL(location.href).pathname;
 
@@ -32,9 +37,7 @@
 
             <div class="c-navbar__profile">
                 <RouterLink class="c-button__soft" to="/profile">
-                    <div class="c-navbar__avatar">
-                        <img src="https://via.placeholder.com/150" alt="avatar">
-                    </div>
+                    <div class="c-navbar__avatar" v-html="user.information.avatar"></div>
                 </RouterLink>
             </div>
         </div>

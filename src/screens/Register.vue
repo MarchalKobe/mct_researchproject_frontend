@@ -3,6 +3,8 @@
     import RegisterInput from '../types/RegisterInput';
     import { useNetwork } from '../utils/networkComposable';
     import Input from '../components/Input.vue';
+    import RegisterError from '../types/RegisterError';
+    import { validateEmail } from '../helpers/ValidateEmail';
 
     const { register } = useNetwork();
 
@@ -15,8 +17,32 @@
         type: 0,
     });
 
+    const registerError = reactive<RegisterError>({
+        firstName: null,
+        lastName: null,
+        email: null,
+        password: null,
+        confirm: null,
+    });
+
     const registerSubmit = async () => {
-        console.log(registerData);
+        registerError.firstName = registerData.firstName.length ? null : 'Field required';
+
+        registerError.lastName = registerData.lastName.length ? null : 'Field required';
+
+        registerError.email = validateEmail(registerData.email) ? null : 'Not a valid email address';
+        if(!registerError.email) registerError.email = registerData.email.length ? null : 'Field required';
+        
+        registerError.password = registerData.password.length ? null : 'Field required';
+        if(!registerError.password) registerError.password = registerData.password.length >= 5 ? null : 'At least 5 characters';
+
+        registerError.confirm = registerData.confirm!.length ? null : 'Field required';
+        if(!registerError.confirm) registerError.confirm = registerData.confirm!.length >= 5 ? null : 'At least 5 characters';
+
+        if(!registerError.password || !registerError.confirm) registerError.confirm = registerData.password === registerData.confirm ? null : 'Passwords don\'t match';
+
+        if(!Object.values(registerError).every(error => error === null)) return;
+
         const response = await register(registerData);
         console.log({ response });
 
@@ -41,13 +67,13 @@
 
         <form @submit.prevent>
             <div class="u-flex">
-                <Input class="u-margin-right-md" label="First name" symbol="user" type="text" placeholder="John" :model="registerData" modelName="firstName" :required="true" />
-                <Input label="Last name" symbol="user" type="text" placeholder="Doe" :model="registerData" modelName="lastName" :required="true" />
+                <Input class="u-margin-right-md" label="First name" symbol="user" type="text" placeholder="John" :model="registerData" modelName="firstName" :required="true" :error="registerError.firstName" />
+                <Input label="Last name" symbol="user" type="text" placeholder="Doe" :model="registerData" modelName="lastName" :required="true" :error="registerError.lastName" />
             </div>
 
-            <Input label="Email" symbol="email" type="email" placeholder="john.doe@example.com" :model="registerData" modelName="email" :required="true" />
-            <Input label="Password" symbol="password" type="password" placeholder="●●●●●●●●●●●●" :model="registerData" modelName="password" :required="true" />
-            <Input label="Confirm password" symbol="password" type="password" placeholder="●●●●●●●●●●●●" :model="registerData" modelName="confirm" :required="true" />
+            <Input label="Email" symbol="email" type="email" placeholder="john.doe@example.com" :model="registerData" modelName="email" :required="true" :error="registerError.email" />
+            <Input label="Password" symbol="password" type="password" placeholder="●●●●●●●●●●●●" :model="registerData" modelName="password" :required="true" :error="registerError.password" />
+            <Input label="Confirm password" symbol="password" type="password" placeholder="●●●●●●●●●●●●" :model="registerData" modelName="confirm" :required="true" :error="registerError.confirm" />
     
             <button class="c-button__large u-margin-bottom-md" @click="registerSubmit">Create account</button>
         </form>

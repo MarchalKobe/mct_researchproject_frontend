@@ -9,5 +9,10 @@
     --global-xx-dark: #17181A;
     --global-xxx-dark: #151617;
 
+    --global-red: #FF2D26;
+    --global-opacity-red: rgba(255, 45, 38, 0.1);
+
     --global-opacity-popup: rgba(23, 24, 26, 0.9);
+
+    --global-focus-border: 2px solid var(--global-alpha);
 }

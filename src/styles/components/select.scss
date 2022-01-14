@@ -34,5 +34,9 @@
         &[data-selected=""] {
             color: var(--global-light);
         }
+
+        &:focus {
+            border: var(--global-focus-border);
+        }
     }
 }

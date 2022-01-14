@@ -5,6 +5,8 @@
     import { getAuth, signInWithCustomToken, Auth, UserCredential } from 'firebase/auth';
     import router from '../bootstrap/router';
     import Input from '../components/Input.vue';
+    import LoginError from '../types/LoginError';
+    import { validateEmail } from '../helpers/ValidateEmail';
 
     const auth: Auth = getAuth();
 
@@ -15,8 +17,20 @@
         password: '',
     });
 
+    const loginError = reactive<LoginError>({
+        email: null,
+        password: null,
+    });
+
     const loginSubmit = async () => {
-        console.log(loginData);
+        loginError.email = loginData.email.length ? null : 'Field required';
+        if(!loginError.email) loginError.email = validateEmail(loginData.email) ? null : 'Not a valid email address';
+        
+        loginError.password = loginData.password.length ? null : 'Field required';
+        if(!loginError.password) loginError.password = loginData.password.length >= 5 ? null : 'At least 5 characters';
+
+        if(!Object.values(loginError).every(error => error === null)) return;
+
         const response = await login(loginData);
         console.log({ response });
 
@@ -43,9 +57,9 @@
         <h1 class="u-margin-0 u-margin-bottom-x-lg">Log in.</h1>
 
         <form @submit.prevent>
-            <Input label="Email" symbol="email" type="email" placeholder="john.doe@example.com" :model="loginData" modelName="email" />
-            <Input label="Password" symbol="password" type="password" placeholder="●●●●●●●●●●●●" :model="loginData" modelName="password" />
-            
+            <Input label="Email" symbol="email" type="email" placeholder="john.doe@example.com" :model="loginData" modelName="email" :error="loginError.email" />
+            <Input label="Password" symbol="password" type="password" placeholder="●●●●●●●●●●●●" :model="loginData" modelName="password" :error="loginError.password" />
+
             <button class="c-button__large u-margin-bottom-md" @click="loginSubmit">Log in</button>
         </form>
 

@@ -9,6 +9,7 @@
     import { getIdToken, User } from 'firebase/auth';
     import Classroom from '../types/Classroom';
     import router from '../bootstrap/router';
+    import Input from '../components/Input.vue';
 
     const { getMyJoinedClassrooms, addClassroom, joinClassroom, leaveClassroom } = useNetwork();
 
@@ -21,12 +22,17 @@
 
     const classrooms = ref<Classroom[]>([]);
 
+    const classroom = reactive<Classroom>({
+        name: '',
+        classcode: '',
+    });
+
     const addClassPopup = ref<boolean>(false);
-    const classname = ref<string>('');
+    // const classname = ref<string>('');
     const toggleAddClassPopup = () => addClassPopup.value = !addClassPopup.value;
 
     const joinClassPopup = ref<boolean>(false);
-    const classcode = ref<string>('');
+    // const classcode = ref<string>('');
     const toggleJoinClassPopup = () => joinClassPopup.value = !joinClassPopup.value;
 
     const getThisMyJoinedClassrooms = async () => {
@@ -41,7 +47,7 @@
 
     const addClassroomSubmit = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
-            const response = await addClassroom(token, { name: classname.value });
+            const response = await addClassroom(token, { name: classroom.name! });
             console.log({ response });
             getThisMyJoinedClassrooms();
             toggleAddClassPopup();
@@ -52,7 +58,7 @@
 
     const joinClassroomSubmit = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
-            const response = await joinClassroom(token, { classcode: classcode.value });
+            const response = await joinClassroom(token, { classcode: classroom.classcode! });
             console.log({ response });
             getThisMyJoinedClassrooms();
             toggleJoinClassPopup();
@@ -75,8 +81,7 @@
         console.log({classroomId});
         
         getIdToken(user.information.user as User).then(async (token: string) => {
-            // const response = await leaveClassroom(token, classroomId);
-            // console.log({ response });
+            // TODO: delete classroom
             getThisMyJoinedClassrooms();
         }).catch((error: string) => {
             console.error(error);
@@ -118,15 +123,7 @@
             <h1 class="c-popup__title">Create class</h1>
 
             <form @submit.prevent>
-                <label class="c-input__container u-margin-bottom-md" for="classname">
-                    <span class="c-input__label">Name</span>
-                    <div class="c-input">
-                        <svg class="c-input__symbol" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 50 37">
-                            <path id="icons8-class" d="M2.813,8A1,1,0,0,0,2,9V38H.906A1,1,0,0,0,0,39v5a1,1,0,0,0,1,1H49a1,1,0,0,0,1-1V39a1,1,0,0,0-1-1H48V9a1,1,0,0,0-1-1H2.813ZM4,10H46V38H21.906L23,36l-1.094-2H11v4H4Zm35,4.969a1.536,1.536,0,0,0-.594.219L25.031,24.719l-5.406-4.5a1,1,0,0,0-1.219-.031l-8,6a1.006,1.006,0,0,0,1.188,1.625l7.375-5.531,5.406,4.5a1,1,0,0,0,1.219.031l14-10A1,1,0,0,0,39,14.969ZM2,40H48v3H2Z" fill="#A2A8B0"/>
-                        </svg>
-                        <input class="c-input__field" type="text" name="classname" id="classname" placeholder="4BOIN" v-model="classname">
-                    </div>
-                </label>
+                <Input label="Name" symbol="classroom" type="text" placeholder="4BOIN" :model="classroom" modelName="name" />
     
                 <div class="u-flex u-align-center u-justify-end">
                     <button class="c-button__normal c-button__normal-alpha" @click="addClassroomSubmit">Create class</button>
@@ -144,15 +141,7 @@
             <h1 class="c-popup__title">Join class</h1>
 
             <form @submit.prevent>
-                <label class="c-input__container u-margin-bottom-md" for="classcode">
-                    <span class="c-input__label">Class code</span>
-                    <div class="c-input">
-                        <svg class="c-input__symbol" xmlns="http://www.w3.org/2000/svg" width="24" height="18" viewBox="0 0 50 37">
-                            <path id="icons8-class" d="M2.813,8A1,1,0,0,0,2,9V38H.906A1,1,0,0,0,0,39v5a1,1,0,0,0,1,1H49a1,1,0,0,0,1-1V39a1,1,0,0,0-1-1H48V9a1,1,0,0,0-1-1H2.813ZM4,10H46V38H21.906L23,36l-1.094-2H11v4H4Zm35,4.969a1.536,1.536,0,0,0-.594.219L25.031,24.719l-5.406-4.5a1,1,0,0,0-1.219-.031l-8,6a1.006,1.006,0,0,0,1.188,1.625l7.375-5.531,5.406,4.5a1,1,0,0,0,1.219.031l14-10A1,1,0,0,0,39,14.969ZM2,40H48v3H2Z" fill="#A2A8B0"/>
-                        </svg>
-                        <input class="c-input__field" type="text" name="classcode" id="classcode" placeholder="1234" v-model="classcode">
-                    </div>
-                </label>
+                <Input label="Class code" symbol="classroom" type="text" placeholder="1234" :model="classroom" modelName="classcode" />
     
                 <div class="u-flex u-align-center u-justify-end">
                     <button class="c-button__normal c-button__normal-alpha" @click="joinClassroomSubmit">Join class</button>

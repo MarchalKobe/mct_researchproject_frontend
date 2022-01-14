@@ -4,6 +4,7 @@
     import { useNetwork } from '../utils/networkComposable';
     import { getAuth, signInWithCustomToken, Auth, UserCredential } from 'firebase/auth';
     import router from '../bootstrap/router';
+    import Input from '../components/Input.vue';
 
     const auth: Auth = getAuth();
 
@@ -44,22 +45,8 @@
         <h1 class="u-margin-0 u-margin-bottom-x-lg">Log in.</h1>
 
         <form @submit.prevent>
-            <label class="c-input__container u-margin-bottom-md" for="email">
-                <span class="c-input__label">Email</span>
-                <div class="c-input">
-                    <svg class="c-input__symbol" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                    <input class="c-input__field" type="text" name="email" id="email" placeholder="john.doe@example.com" v-model="loginData.email">
-                </div>
-            </label>
-    
-            <label class="c-input__container u-margin-bottom-md" for="password">
-                <span class="c-input__label">Password</span>
-                <div class="c-input">
-                    <svg class="c-input__symbol" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                    <input class="c-input__field" type="password" name="password" id="password" placeholder="●●●●●●●●●●●●" v-model="loginData.password">
-                </div>
-            </label>
-    
+            <Input label="Email" symbol="email" type="email" placeholder="john.doe@example.com" :model="loginData" modelName="email" />
+            <Input label="Password" symbol="password" type="password" placeholder="●●●●●●●●●●●●" :model="loginData" modelName="password" />
             <button class="c-button__large u-margin-bottom-md" @click="loginSubmit">Log in</button>
         </form>
 

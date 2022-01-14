@@ -2,6 +2,7 @@
     import { reactive } from 'vue';
     import ForgotPasswordInput from '../types/forgotPasswordInput';
     import { useNetwork } from '../utils/networkComposable';
+    import Input from '../components/Input.vue';
 
     const { forgotPassword } = useNetwork();
 
@@ -29,13 +30,7 @@
         <h1 class="u-margin-0 u-margin-bottom-x-lg">Forgot password.</h1>
 
         <form @submit.prevent>
-            <label class="c-input__container u-margin-bottom-md" for="email">
-                <span class="c-input__label">Email</span>
-                <div class="c-input">
-                    <svg class="c-input__symbol" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                    <input class="c-input__field" type="text" name="email" id="email" placeholder="john.doe@example.com" v-model="forgotPasswordData.email">
-                </div>
-            </label>
+            <Input label="Email" symbol="email" type="email" placeholder="john.doe@example.com" :model="forgotPasswordData" modelName="email" />
 
             <button class="c-button__large u-margin-bottom-md" @click="forgotPasswordSubmit">Forgot password</button>
         </form>

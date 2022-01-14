@@ -2,6 +2,7 @@
     import { reactive } from 'vue';
     import RegisterInput from '../types/registerInput';
     import { useNetwork } from '../utils/networkComposable';
+    import Input from '../components/Input.vue';
 
     const { register } = useNetwork();
 
@@ -40,46 +41,13 @@
 
         <form @submit.prevent>
             <div class="u-flex">
-                <label class="c-input__container u-margin-bottom-md u-margin-right-md" for="firstname">
-                    <span class="c-input__label">First name<span class="u-color-alpha">*</span></span>
-                    <div class="c-input">
-                        <svg class="c-input__symbol" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                        <input class="c-input__field" type="text" name="firstname" id="firstname" placeholder="John" v-model="registerData.firstName">
-                    </div>
-                </label>
-        
-                <label class="c-input__container u-margin-bottom-md" for="lastName">
-                    <span class="c-input__label">Last name<span class="u-color-alpha">*</span></span>
-                    <div class="c-input">
-                        <svg class="c-input__symbol" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                        <input class="c-input__field" type="text" name="lastname" id="lastname" placeholder="Doe" v-model="registerData.lastName">
-                    </div>
-                </label>
+                <Input class="u-margin-right-md" label="First name" symbol="user" type="text" placeholder="John" :model="registerData" modelName="firstName" :required="true" />
+                <Input label="Last name" symbol="user" type="text" placeholder="Doe" :model="registerData" modelName="lastName" :required="true" />
             </div>
-    
-            <label class="c-input__container u-margin-bottom-md" for="email">
-                <span class="c-input__label">Email<span class="u-color-alpha">*</span></span>
-                <div class="c-input">
-                    <svg class="c-input__symbol" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
-                    <input class="c-input__field" type="text" name="email" id="email" placeholder="john.doe@example.com" v-model="registerData.email">
-                </div>
-            </label>
-    
-            <label class="c-input__container u-margin-bottom-md" for="password">
-                <span class="c-input__label">Password<span class="u-color-alpha">*</span></span>
-                <div class="c-input">
-                    <svg class="c-input__symbol" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                    <input class="c-input__field" type="password" name="password" id="password" placeholder="●●●●●●●●●●●●" v-model="registerData.password">
-                </div>
-            </label>
-    
-            <label class="c-input__container u-margin-bottom-md" for="confirm">
-                <span class="c-input__label">Confirm password<span class="u-color-alpha">*</span></span>
-                <div class="c-input">
-                    <svg class="c-input__symbol" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                    <input class="c-input__field" type="password" name="confirm" id="confirm" placeholder="●●●●●●●●●●●●" v-model="registerData.confirm">
-                </div>
-            </label>
+
+            <Input label="Email" symbol="email" type="email" placeholder="john.doe@example.com" :model="registerData" modelName="email" :required="true" />
+            <Input label="Password" symbol="password" type="password" placeholder="●●●●●●●●●●●●" :model="registerData" modelName="password" :required="true" />
+            <Input label="Confirm password" symbol="password" type="password" placeholder="●●●●●●●●●●●●" :model="registerData" modelName="confirm" :required="true" />
     
             <button class="c-button__large u-margin-bottom-md" @click="registerSubmit">Create account</button>
         </form>

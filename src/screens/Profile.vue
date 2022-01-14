@@ -12,7 +12,7 @@
     import UpdateEmailInput from '../types/UpdateEmailInput';
     import router from '../bootstrap/router';
 
-    const { updateAccountGeneral, updateAccountEmail } = useNetwork();
+    const { updateAccountGeneral, updateAccountEmail, updateAccountPassword } = useNetwork();
 
     const user = reactive<{ information: UserState }>({
         information: computed(() => store.getters[GetterTypes.GET_USER_INFORMATION]()).value,
@@ -37,7 +37,7 @@
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await updateAccountGeneral(token, general);
             console.log({ response });
-            window.alert('Account general successfully changed. Log back in to see the changes');
+            window.alert('Account general successfully changed. Log back in to see the changes.');
             
             store.dispatch(ActionTypes.LOGOUT_USER).then(() => {
                 router.push('/login');
@@ -45,8 +45,6 @@
         }).catch((error: string) => {
             console.error(error);
         });
-        
-        console.log(general);
     };
 
     const updateThisAccountEmail = () => {
@@ -61,12 +59,20 @@
         }).catch((error: string) => {
             console.error(error);
         });
-        
-        console.log(general);
     };
 
     const updateThisPassword = () => {
-        console.log(password);
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            const response = await updateAccountPassword(token, password);
+            console.log({ response });
+            window.alert('Account password successfully changed. Log back in to see the changes.');
+
+            store.dispatch(ActionTypes.LOGOUT_USER).then(() => {
+                router.push('/login');
+            });
+        }).catch((error: string) => {
+            console.error(error);
+        });
     };
 </script>
 

@@ -6,6 +6,7 @@ import RegisterInput from "../types/RegisterInput";
 import RestorePasswordInput from "../types/RestorePasswordInput";
 import UpdateEmailInput from "../types/UpdateEmailInput";
 import UpdateGeneralInput from "../types/UpdateGeneralInput";
+import UpdatePasswordInput from "../types/UpdatePasswordInput";
 
 const handleData = async (path: string, token: string | null = null, method: string = 'GET', body: any = null) => {
     const t0 = performance.now();
@@ -137,6 +138,20 @@ export const useNetwork = () => {
         },
     });
 
+    const updateAccountPassword = (token: string, body: UpdatePasswordInput) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            mutation UpdateAccountPassword($data: UpdatePasswordInput!) {
+                updateAccountPassword(data: $data)
+            }
+        `,
+        variables: {
+            data: {
+                current: body.current,
+                password: body.password,
+            },
+        },
+    });
+
     const getClassroom = (token: string, classroomId: string) => handleData('graphql', token, 'POST', {
         query: /* GraphQL */ `
             query GetClassroom($classroomId: String!) {
@@ -212,6 +227,7 @@ export const useNetwork = () => {
         restorePassword,
         updateAccountGeneral,
         updateAccountEmail,
+        updateAccountPassword,
         getClassroom,
         getMyJoinedClassrooms,
         addClassroom,

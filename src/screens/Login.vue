@@ -47,6 +47,7 @@
         <form @submit.prevent>
             <Input label="Email" symbol="email" type="email" placeholder="john.doe@example.com" :model="loginData" modelName="email" />
             <Input label="Password" symbol="password" type="password" placeholder="●●●●●●●●●●●●" :model="loginData" modelName="password" />
+            
             <button class="c-button__large u-margin-bottom-md" @click="loginSubmit">Log in</button>
         </form>
 

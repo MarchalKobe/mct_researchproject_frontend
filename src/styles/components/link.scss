@@ -1,8 +1,15 @@
 .c-link {
+    all: unset;
     color: var(--global-xx-light);
     text-decoration: none;
+    border: 2px solid transparent;
+    cursor: pointer;
 
     &:hover {
         text-decoration: underline;
+    }
+
+    &:focus {
+        border: var(--global-focus-border);
     }
 }

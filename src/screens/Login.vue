@@ -1,11 +1,10 @@
 <script setup lang="ts">
     import { reactive } from 'vue';
-    import LoginInput from '../types/LoginInput';
     import { useNetwork } from '../utils/networkComposable';
     import { getAuth, signInWithCustomToken, Auth, UserCredential } from 'firebase/auth';
     import router from '../bootstrap/router';
     import Input from '../components/Input.vue';
-    import LoginError from '../types/LoginError';
+    import LoginInput, { LoginError } from '../types/LoginInput';
     import { validateEmail } from '../helpers/ValidateEmail';
 
     const auth: Auth = getAuth();
@@ -63,7 +62,7 @@
             <button class="c-button__large u-margin-bottom-md" @click="loginSubmit">Log in</button>
         </form>
 
-        <p class="u-margin-0 u-color-x-light">Don't have an account? <RouterLink class="u-color-xx-light c-link" to="/register">Create account</RouterLink></p>
+        <p class="u-margin-0 u-color-x-light">Don't have an account? <RouterLink class="u-color-xx-light c-link" to="/register">Create one</RouterLink></p>
         <RouterLink class="u-margin-0 c-link" to="/forgotpassword">Forgot password?</RouterLink>
     </div>
 </template>

@@ -1,9 +1,8 @@
 <script setup lang="ts">
     import { reactive } from 'vue';
-    import RegisterInput from '../types/RegisterInput';
     import { useNetwork } from '../utils/networkComposable';
+    import RegisterInput, { RegisterError } from '../types/RegisterInput';
     import Input from '../components/Input.vue';
-    import RegisterError from '../types/RegisterError';
     import { validateEmail } from '../helpers/ValidateEmail';
 
     const { register } = useNetwork();

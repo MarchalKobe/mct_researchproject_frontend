@@ -3,3 +3,9 @@ export default interface UpdatePasswordInput {
     password: string;
     confirm: string;
 };
+
+export interface UpdatePasswordError {
+    current: string | null;
+    password: string | null;
+    confirm: string | null;
+};

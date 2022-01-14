@@ -1,0 +1,32 @@
+.c-popup {
+    position: relative;
+    background: var(--global-dark);
+    border: 1px solid var(--global-x-light);
+    padding: 1.5rem;
+    width: 20rem;
+    border-radius: 0.5rem;
+
+    &__container {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: var(--global-opacity-popup);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    &__button {
+        position: absolute;
+        top: -1rem;
+        right: -1rem;
+    }
+
+    &__title {
+        font-size: 1.5rem;
+        margin: 0;
+        margin-bottom: 1rem;
+    }
+}

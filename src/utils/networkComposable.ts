@@ -1,4 +1,6 @@
+import AddClassroomInput from "../types/AddClassroomInput";
 import ForgotPasswordInput from "../types/forgotPasswordInput";
+import JoinClassroomInput from "../types/JoinClassroomInput";
 import LoginInput from "../types/loginInput";
 import RegisterInput from "../types/registerInput";
 import RestorePasswordInput from "../types/restorePasswordInput";
@@ -106,11 +108,39 @@ export const useNetwork = () => {
         },
     });
 
+    const addClassroom = (token: string, body: AddClassroomInput) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            mutation AddClassroom($data: AddClassroomInput!) {
+                addClassroom(data: $data)
+            }
+        `,
+        variables: {
+            data: {
+                name: body.name,
+            },
+        },
+    });
+
+    const joinClassroom = (token: string, body: JoinClassroomInput) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            mutation JoinClassroom($data: JoinClassroomInput!) {
+                joinClassroom(data: $data)
+            }
+        `,
+        variables: {
+            data: {
+                classcode: body.classcode,
+            },
+        },
+    });
+
     return {
         register,
         login,
         confirm,
         forgotPassword,
         restorePassword,
+        addClassroom,
+        joinClassroom,
     };
 };

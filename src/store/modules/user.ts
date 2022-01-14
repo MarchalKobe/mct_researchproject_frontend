@@ -95,7 +95,7 @@ export default {
                     auth.onAuthStateChanged(async (user: User | null) => {
                         if(user) {
                             getIdTokenResult(user).then((idTokenResult) => {
-                                commit(MutationTypes.LOGIN_USER, { user: user, firstName: idTokenResult.claims.firstName, lastName: idTokenResult.claims.lastName, email: idTokenResult.claims.email, type: idTokenResult.claims.type, avatar: idTokenResult.claims.avatar });
+                                commit(MutationTypes.LOGIN_USER, { user: user, firstName: idTokenResult.claims.firstName, lastName: idTokenResult.claims.lastName, email: idTokenResult.claims.email, type: idTokenResult.claims.type, avatar: idTokenResult.claims.avatar, preferredTheme: idTokenResult.claims.preferredTheme });
                                 resolve();
                             }).catch((error) => {
                                 console.error(error);

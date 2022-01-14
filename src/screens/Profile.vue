@@ -11,8 +11,11 @@
     import { useNetwork } from '../utils/networkComposable';
     import UpdateEmailInput from '../types/UpdateEmailInput';
     import router from '../bootstrap/router';
+    import Select from '../components/Select.vue';
+    import UpdateEditorInput from '../types/UpdateEditorInput';
+    import SelectOption from '../types/SelectOption';
 
-    const { updateAccountGeneral, updateAccountEmail, updateAccountPassword } = useNetwork();
+    const { updateAccountGeneral, updateAccountEmail, updateAccountPassword, updateAccountEditor } = useNetwork();
 
     const user = reactive<{ information: UserState }>({
         information: computed(() => store.getters[GetterTypes.GET_USER_INFORMATION]()).value,
@@ -32,6 +35,21 @@
         password: '',
         confirm: '',
     });
+
+    const editor = reactive<UpdateEditorInput>({
+        preferredTheme: user.information.preferredTheme,
+    });
+
+    const editorSelectOptions = reactive<SelectOption[]>([
+        {
+            id: 'dark',
+            value: 'Dark',
+        },
+        {
+            id: 'light',
+            value: 'Light',
+        },
+    ]);
 
     const updateThisAccountGeneral = () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
@@ -66,6 +84,20 @@
             const response = await updateAccountPassword(token, password);
             console.log({ response });
             window.alert('Account password successfully changed. Log back in to see the changes.');
+
+            store.dispatch(ActionTypes.LOGOUT_USER).then(() => {
+                router.push('/login');
+            });
+        }).catch((error: string) => {
+            console.error(error);
+        });
+    };
+
+    const updateThisEditor = () => {
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            const response = await updateAccountEditor(token, editor);
+            console.log({ response });
+            window.alert('Account editor successfully changed. Log back in to see the changes.');
 
             store.dispatch(ActionTypes.LOGOUT_USER).then(() => {
                 router.push('/login');
@@ -117,11 +149,13 @@
             </form>
         </section>
 
-        <section class="u-width-24">
+        <section class="u-width-24 u-margin-bottom-lg">
             <h2 class="u-margin-0 u-margin-bottom-md u-weight-400">Settings</h2>
     
             <form @submit.prevent>
+                <Select label="Editor theme" description="Select editor theme" :model="editor" modelName="preferredTheme" :options="editorSelectOptions" :required="true" />
 
+                <button class="c-button__large u-margin-bottom-md" @click="updateThisEditor">Update editor theme</button>
             </form>
         </section>
     </div>

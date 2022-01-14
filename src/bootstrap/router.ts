@@ -5,6 +5,10 @@ import { GetterTypes, UserState } from '../store/modules/user';
 
 const routes: RouteRecordRaw[] = [
     {
+        path: '/',
+        redirect: '/classes',
+    },
+    {
         path: '/login',
         component: () => import('../screens/Login.vue'),
         meta: {

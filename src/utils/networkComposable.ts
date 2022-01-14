@@ -4,6 +4,7 @@ import JoinClassroomInput from "../types/JoinClassroomInput";
 import LoginInput from "../types/LoginInput";
 import RegisterInput from "../types/RegisterInput";
 import RestorePasswordInput from "../types/RestorePasswordInput";
+import UpdateEditorInput from "../types/UpdateEditorInput";
 import UpdateEmailInput from "../types/UpdateEmailInput";
 import UpdateGeneralInput from "../types/UpdateGeneralInput";
 import UpdatePasswordInput from "../types/UpdatePasswordInput";
@@ -152,6 +153,19 @@ export const useNetwork = () => {
         },
     });
 
+    const updateAccountEditor = (token: string, body: UpdateEditorInput) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            mutation UpdateAccountEditor($data: UpdateEditorInput!) {
+                updateAccountEditor(data: $data)
+            }
+        `,
+        variables: {
+            data: {
+                preferredTheme: body.preferredTheme,
+            },
+        },
+    });
+
     const getClassroom = (token: string, classroomId: string) => handleData('graphql', token, 'POST', {
         query: /* GraphQL */ `
             query GetClassroom($classroomId: String!) {
@@ -228,6 +242,7 @@ export const useNetwork = () => {
         updateAccountGeneral,
         updateAccountEmail,
         updateAccountPassword,
+        updateAccountEditor,
         getClassroom,
         getMyJoinedClassrooms,
         addClassroom,

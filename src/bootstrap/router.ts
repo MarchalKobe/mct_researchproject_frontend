@@ -11,49 +11,29 @@ const routes: RouteRecordRaw[] = [
     {
         path: '/login',
         component: () => import('../screens/Login.vue'),
-        meta: {
-            loggedIn: false,
-            teacher: false,
-        },
     },
     {
         path: '/register',
         component: () => import('../screens/Register.vue'),
-        meta: {
-            loggedIn: false,
-            teacher: false,
-        },
     },
     {
         path: '/confirm',
         component: () => import('../screens/Confirm.vue'),
-        meta: {
-            loggedIn: false,
-            teacher: false,
-        },
     },
     {
         path: '/forgotpassword',
         component: () => import('../screens/ForgotPassword.vue'),
-        meta: {
-            loggedIn: false,
-            teacher: false,
-        },
     },
     {
         path: '/restorepassword',
         component: () => import('../screens/RestorePassword.vue'),
-        meta: {
-            loggedIn: false,
-            teacher: false,
-        },
     },
     {
         path: '/profile',
         component: () => import('../screens/Profile.vue'),
         meta: {
             loggedIn: true,
-            teacher: false,
+            roles: ['STUDENT', 'TEACHER'],
         },
     },
     {
@@ -61,15 +41,39 @@ const routes: RouteRecordRaw[] = [
         component: () => import('../screens/Classes.vue'),
         meta: {
             loggedIn: true,
-            teacher: false,
+            roles: ['STUDENT', 'TEACHER'],
         },
     },
     {
-        path: '/classes/:classroomId',
-        component: () => import('../screens/Class.vue'),
+        path: '/classes/:classroomId/assignments',
+        component: () => import('../screens/Assignments.teacher.vue'),
         meta: {
             loggedIn: true,
-            teacher: false,
+            roles: ['TEACHER'],
+        },
+    },
+    {
+        path: '/classes/:classroomId/members',
+        component: () => import('../screens/Members.teacher.vue'),
+        meta: {
+            loggedIn: true,
+            roles: ['TEACHER'],
+        },
+    },
+    {
+        path: '/classes/:classroomId/currentassignments',
+        component: () => import('../screens/CurrentAssignments.student.vue'),
+        meta: {
+            loggedIn: true,
+            roles: ['STUDENT'],
+        },
+    },
+    {
+        path: '/classes/:classroomId/finishedassignments',
+        component: () => import('../screens/FinishedAssignments.student.vue'),
+        meta: {
+            loggedIn: true,
+            roles: ['STUDENT'],
         },
     },
 ];
@@ -84,14 +88,15 @@ router.beforeEach(async (to: RouteLocationNormalized, _: RouteLocationNormalized
         const user: UserState = computed(() => store.getters[GetterTypes.GET_USER_INFORMATION]()).value;
 
         if(user.loggedIn) {
-            if(to.meta.teacher) {
-                if(user.type !== 1) {
-                    next('/login');
-                    return;
-                };
+            const roles = ['STUDENT', 'TEACHER'];
+            const role = roles[user.type];
+
+            if(!(to.meta.roles as String[]).includes(role)) {
+                next('/');
+                return;
             };
         } else {
-            next('/login');
+            next('/');
             return;
         };
     };

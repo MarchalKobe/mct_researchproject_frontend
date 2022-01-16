@@ -10,6 +10,7 @@
     import Classroom from '../types/Classroom';
     import router from '../bootstrap/router';
     import Input from '../components/Input.vue';
+    import Popup from '../components/Popup.vue';
 
     const { getMyJoinedClassrooms, addClassroom, joinClassroom, leaveClassroom } = useNetwork();
 
@@ -28,11 +29,9 @@
     });
 
     const addClassPopup = ref<boolean>(false);
-    // const classname = ref<string>('');
     const toggleAddClassPopup = () => addClassPopup.value = !addClassPopup.value;
 
     const joinClassPopup = ref<boolean>(false);
-    // const classcode = ref<string>('');
     const toggleJoinClassPopup = () => joinClassPopup.value = !joinClassPopup.value;
 
     const getThisMyJoinedClassrooms = async () => {
@@ -89,7 +88,14 @@
     };
 
     const goToClass = (classroomId: string) => {
-        router.push(`/classes/${classroomId}`);
+        switch(user.information.type) {
+            case 0:
+                router.push(`/classes/${classroomId}/currentassignments`);
+                break;
+            case 1:
+                router.push(`/classes/${classroomId}/assignments`);
+                break;
+        };
     };
 
     getThisMyJoinedClassrooms();
@@ -114,39 +120,11 @@
         </section>
     </div>
 
-    <div v-if="addClassPopup" @click.self="toggleAddClassPopup" class="c-popup__container">
-        <div class="c-popup">
-            <button class="c-popup__button c-button__icon c-button__icon-alpha" @click="toggleAddClassPopup">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
+    <Popup v-if="addClassPopup" title="Create class" :toggleClose="toggleAddClassPopup" buttonLabel="Create class" :buttonAction="addClassroomSubmit">
+        <Input label="Name" symbol="classroom" type="text" placeholder="4BOIN" :model="classroom" modelName="name" />
+    </Popup>
 
-            <h1 class="c-popup__title">Create class</h1>
-
-            <form @submit.prevent>
-                <Input label="Name" symbol="classroom" type="text" placeholder="4BOIN" :model="classroom" modelName="name" />
-    
-                <div class="u-flex u-align-center u-justify-end">
-                    <button class="c-button__normal c-button__normal-alpha" @click="addClassroomSubmit">Create class</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div v-if="joinClassPopup" @click.self="toggleJoinClassPopup" class="c-popup__container">
-        <div class="c-popup">
-            <button class="c-popup__button c-button__icon c-button__icon-alpha" @click="toggleJoinClassPopup">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
-
-            <h1 class="c-popup__title">Join class</h1>
-
-            <form @submit.prevent>
-                <Input label="Class code" symbol="classroom" type="text" placeholder="1234" :model="classroom" modelName="classcode" />
-    
-                <div class="u-flex u-align-center u-justify-end">
-                    <button class="c-button__normal c-button__normal-alpha" @click="joinClassroomSubmit">Join class</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    <Popup v-if="joinClassPopup" title="Join class" :toggleClose="toggleJoinClassPopup" buttonLabel="Join class" :buttonAction="joinClassroomSubmit">
+        <Input label="Class code" symbol="classroom" type="text" placeholder="1234" :model="classroom" modelName="classcode" />
+    </Popup>
 </template>

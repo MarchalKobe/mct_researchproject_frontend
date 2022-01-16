@@ -173,6 +173,13 @@ export const useNetwork = () => {
                     classroomId
                     name
                     classcode
+                    users {
+                        userId
+                        firstName
+                        lastName
+                        type
+                        avatar
+                    }
                 }
             }
         `,

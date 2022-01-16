@@ -4,6 +4,7 @@
     import RegisterInput, { RegisterError } from '../types/RegisterInput';
     import Input from '../components/Input.vue';
     import { validateEmail } from '../helpers/ValidateEmail';
+    import router from '../bootstrap/router';
 
     const { register } = useNetwork();
 
@@ -47,6 +48,7 @@
 
         // TODO: Check response
         window.alert(`An email has been send to ${registerData.email} with your confirmation link.`);
+        router.push('/login');
     };
 </script>
 

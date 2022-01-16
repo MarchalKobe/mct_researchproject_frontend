@@ -1,7 +1,12 @@
 .c-button {
     &__soft {
         all: unset;
+        color: var(--global-x-light);
         cursor: pointer;
+
+        &-selected {
+            color: var(--global-xx-light);
+        }
 
         &:hover {
             opacity: 0.9;

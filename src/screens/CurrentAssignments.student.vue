@@ -7,7 +7,6 @@
     import { GetterTypes, UserState } from '../store/modules/user';
     import store from '../store';
     import { useNetwork } from '../utils/networkComposable';
-    import router from '../bootstrap/router';
 
     const { getClassroom } = useNetwork();
 
@@ -17,7 +16,7 @@
 
     const path = new URL(location.href).pathname;
     const pathNew = path.split('/');
-    const classroomId = pathNew[pathNew.length - 1];
+    const classroomId = pathNew[pathNew.length - 2];
 
     const classroom = ref<Classroom | null>(null);
 
@@ -31,8 +30,6 @@
         });
     };
 
-    const goBack = () => router.push('/classes');
-
     getThisClassroom();
 </script>
 
@@ -40,6 +37,6 @@
     <Navbar />
 
     <div v-if="classroom" class="e-container">
-        <Header :title="`${classroom.name} - Assignments`" :backAction="goBack" />
+        <Header :title="`${classroom.name} - Current Assignments`" backPath="/classes" />
     </div>
 </template>

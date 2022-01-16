@@ -17,4 +17,8 @@
         border: 1px dashed var(--global-x-light);
         background: none;
     }
+
+    &__moving {
+        background: red;
+    }
 }

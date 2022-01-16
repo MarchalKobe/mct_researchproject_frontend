@@ -1,0 +1,20 @@
+.c-test {
+    width: calc(52rem - calc(2rem + 2px));
+    z-index: 2;
+    border: 1px solid var(--global-x-light);
+    background: var(--global-dark);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    
+    &__container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    &__placeholder {
+        z-index: 1;
+        border: 1px dashed var(--global-x-light);
+        background: none;
+    }
+}

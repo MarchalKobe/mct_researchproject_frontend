@@ -59,6 +59,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
+        border: 2px solid transparent;
         border-radius: 0.4rem;
         cursor: pointer;
 
@@ -83,6 +84,7 @@
 
         &:focus {
             border: var(--global-focus-border);
+            opacity: 0.9;
         }
     }
 }

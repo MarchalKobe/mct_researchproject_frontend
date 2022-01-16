@@ -38,5 +38,10 @@
 
     <div v-if="classroom" class="e-container">
         <Header :title="`${classroom.name} - Finished Assignments`" backPath="/classes" />
+
+        <nav class="u-flex u-align-center u-justify-center u-margin-bottom-lg">
+            <RouterLink class="c-button__soft u-margin-right-x-lg" :class="pathNew[pathNew.length - 1] === 'currentassignments' ? 'c-button__soft-selected' : ''" :to="`/classes/${classroomId}/currentassignments`">Current assignments</RouterLink>
+            <RouterLink class="c-button__soft" :class="pathNew[pathNew.length - 1] === 'finishedassignments' ? 'c-button__soft-selected' : ''" :to="`/classes/${classroomId}/finishedassignments`">Finished assignments</RouterLink>
+        </nav>
     </div>
 </template>

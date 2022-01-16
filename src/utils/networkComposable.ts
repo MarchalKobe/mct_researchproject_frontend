@@ -1,5 +1,7 @@
 import AddClassroomInput from "../types/AddClassroomInput";
+import DeleteUserFromClassroomInput from "../types/DeleteUserFromClassroomInput";
 import ForgotPasswordInput from "../types/forgotPasswordInput";
+import InviteUserToClassroomInput from "../types/InviteUserToClassroomInput";
 import JoinClassroomInput from "../types/JoinClassroomInput";
 import LoginInput from "../types/LoginInput";
 import RegisterInput from "../types/RegisterInput";
@@ -180,6 +182,9 @@ export const useNetwork = () => {
                         type
                         avatar
                     }
+                    userCreated {
+                        userId
+                    }
                 }
             }
         `,
@@ -240,6 +245,45 @@ export const useNetwork = () => {
         },
     });
 
+    const resetClasscode = (token: string, classroomId: string) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            mutation ResetClasscode($classroomId: String!) {
+                resetClasscode(classroomId: $classroomId)
+            }
+        `,
+        variables: {
+            classroomId: classroomId,
+        },
+    });
+
+    const deleteUserFromClassroom = (token: string, data: DeleteUserFromClassroomInput) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            mutation DeleteUserFromClassroom($data: DeleteUserFromClassroomInput!) {
+                deleteUserFromClassroom(data: $data)
+            }
+        `,
+        variables: {
+            data: {
+                userId: data.userId,
+                classroomId: data.classroomId,
+            }
+        },
+    });
+
+    const inviteUserToClassroom = (token: string, data: InviteUserToClassroomInput) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            mutation InviteUserToClassroom($data: InviteUserToClassroomInput!) {
+                inviteUserToClassroom(data: $data)
+            }
+        `,
+        variables: {
+            data: {
+                email: data.email,
+                classroomId: data.classroomId,
+            }
+        },
+    });
+
     return {
         register,
         login,
@@ -255,5 +299,8 @@ export const useNetwork = () => {
         addClassroom,
         joinClassroom,
         leaveClassroom,
+        resetClasscode,
+        deleteUserFromClassroom,
+        inviteUserToClassroom,
     };
 };

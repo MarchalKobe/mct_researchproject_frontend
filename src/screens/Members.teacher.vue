@@ -12,7 +12,7 @@
     import Popup from '../components/Popup.vue';
     import InviteInput from '../types/InviteInput';
 
-    const { getClassroom } = useNetwork();
+    const { getClassroom, resetClasscode, deleteUserFromClassroom, inviteUserToClassroom } = useNetwork();
 
     const user = reactive<{ information: UserState }>({
         information: computed(() => store.getters[GetterTypes.GET_USER_INFORMATION]()).value,
@@ -59,57 +59,33 @@
 
     const resetClasscodeSubmit = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
-            // const response = await getClassroom(token, classroomId);
-            // console.log({ response });
-            // classroom.value = response.data.getClassroom;
+            const response = await resetClasscode(token, classroomId);
+            console.log({ response });
+            getThisClassroom();
         }).catch((error: string) => {
             console.error(error);
         });
     };
     
-    const deleteThisStudent = (userId: string) => {
-        console.log(`Delete student ${userId}`);
-
+    const inviteUserToClassroomSubmit = (email: string) => {
         getIdToken(user.information.user as User).then(async (token: string) => {
-            // const response = await getClassroom(token, classroomId);
-            // console.log({ response });
-            // classroom.value = response.data.getClassroom;
+            const response = await inviteUserToClassroom(token, { email: email, classroomId: classroomId });
+            console.log({ response });
+            window.alert(`Invite successfully send to ${email}.`);
         }).catch((error: string) => {
             console.error(error);
         });
     };
     
-    const deleteThisTeacher = (userId: string) => {
-        console.log(`Delete teacher ${userId}`);
+    const inviteStudentSubmit = () => inviteUserToClassroomSubmit(inviteStudent.email);
 
-        getIdToken(user.information.user as User).then(async (token: string) => {
-            // const response = await getClassroom(token, classroomId);
-            // console.log({ response });
-            // classroom.value = response.data.getClassroom;
-        }).catch((error: string) => {
-            console.error(error);
-        });
-    };
+    const inviteTeacherSubmit = () => inviteUserToClassroomSubmit(inviteTeacher.email);
     
-    const inviteStudentSubmit = () => {
-        console.log(inviteStudent);
-
+    const deleteThisUserFromClassroom = (userId: string) => {
         getIdToken(user.information.user as User).then(async (token: string) => {
-            // const response = await getClassroom(token, classroomId);
-            // console.log({ response });
-            // classroom.value = response.data.getClassroom;
-        }).catch((error: string) => {
-            console.error(error);
-        });
-    };
-    
-    const inviteTeacherSubmit = () => {
-        console.log(inviteTeacher);
-
-        getIdToken(user.information.user as User).then(async (token: string) => {
-            // const response = await getClassroom(token, classroomId);
-            // console.log({ response });
-            // classroom.value = response.data.getClassroom;
+            const response = await deleteUserFromClassroom(token, { userId: userId, classroomId: classroomId });
+            console.log({ response });
+            getThisClassroom();
         }).catch((error: string) => {
             console.error(error);
         });
@@ -136,9 +112,9 @@
                 <h2 class="u-weight-400">Students ({{ classroom.users?.filter((user: any) => user.type === 0).length }})</h2>
                 <button class="c-button__soft u-color-x-light" @click="toggleStudentsEdit">{{ studentsEdit ? 'Done' : 'Edit' }}</button>
             </div>
-            <div class="c-userelements">
+            <div v-if="user.information.user" class="c-userelements">
                 <UserElement name="Invite student" :add="true" @click="toggleInviteStudentPopup" />
-                <UserElement v-for="(student, index) in classroom.users?.filter((user: any) => user.type === 0)" :key="index" :user="student" :edit="studentsEdit" :userId="student.userId" :deleteAction="deleteThisStudent" />
+                <UserElement v-for="(student, index) in classroom.users?.filter((user: any) => user.type === 0)" :key="index" :user="student" :classroom="classroom" :edit="studentsEdit" :userId="user.information.user!.uid" :deleteAction="deleteThisUserFromClassroom" />
             </div>
         </section>
 
@@ -147,9 +123,9 @@
                 <h2 class="u-weight-400">Teachers ({{ classroom.users?.filter((user: any) => user.type === 1).length }})</h2>
                 <button class="c-button__soft u-color-x-light" @click="toggleTeachersEdit">{{ teachersEdit ? 'Done' : 'Edit' }}</button>
             </div>
-            <div class="c-userelements">
+            <div v-if="user.information.user" class="c-userelements">
                 <UserElement name="Invite teacher" :add="true" @click="toggleInviteTeacherPopup" />
-                <UserElement v-for="(teacher, index) in classroom.users?.filter((user: any) => user.type === 1)" :key="index" :user="teacher" :edit="teachersEdit" :userId="user.information.user!.uid" :deleteAction="deleteThisTeacher" />
+                <UserElement v-for="(teacher, index) in classroom.users?.filter((user: any) => user.type === 1)" :key="index" :user="teacher" :classroom="classroom" :edit="teachersEdit" :userId="user.information.user!.uid" :deleteAction="deleteThisUserFromClassroom" />
             </div>
         </section>
     </div>

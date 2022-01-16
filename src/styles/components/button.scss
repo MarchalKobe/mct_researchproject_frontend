@@ -44,6 +44,11 @@
         &:hover {
             opacity: 0.9;
         }
+
+        &:focus {
+            // TODO
+            box-shadow: 0 0 4px 2px var(--global-red);
+        }
     }
 
     &__icon {
@@ -74,6 +79,10 @@
 
         &:hover {
             opacity: 0.9;
+        }
+
+        &:focus {
+            border: var(--global-focus-border);
         }
     }
 }

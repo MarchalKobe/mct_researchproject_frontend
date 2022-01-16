@@ -9,6 +9,8 @@
     import { useNetwork } from '../utils/networkComposable';
     import UserElement from '../components/UserElement.vue';
     import Input from '../components/Input.vue';
+    import Popup from '../components/Popup.vue';
+    import InviteInput from '../types/InviteInput';
 
     const { getClassroom } = useNetwork();
 
@@ -28,14 +30,22 @@
     const teachersEdit = ref<boolean>(false);
     const toggleTeachersEdit = () => teachersEdit.value = !teachersEdit.value;
 
+    const showClasscodePopup = ref<boolean>(false);
+    const toggleShowClasscodePopup = () => showClasscodePopup.value = !showClasscodePopup.value;
+
     const inviteStudentPopup = ref<boolean>(false);
     const toggleInviteStudentPopup = () => inviteStudentPopup.value = !inviteStudentPopup.value;
+
+    const inviteStudent = reactive<InviteInput>({
+        email: '',
+    });
 
     const inviteTeacherPopup = ref<boolean>(false);
     const toggleInviteTeacherPopup = () => inviteTeacherPopup.value = !inviteTeacherPopup.value;
 
-    const showClasscodePopup = ref<boolean>(false);
-    const toggleShowClasscodePopup = () => showClasscodePopup.value = !showClasscodePopup.value;
+    const inviteTeacher = reactive<InviteInput>({
+        email: '',
+    });
 
     const getThisClassroom = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
@@ -59,10 +69,50 @@
     
     const deleteThisStudent = (userId: string) => {
         console.log(`Delete student ${userId}`);
+
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            // const response = await getClassroom(token, classroomId);
+            // console.log({ response });
+            // classroom.value = response.data.getClassroom;
+        }).catch((error: string) => {
+            console.error(error);
+        });
     };
     
     const deleteThisTeacher = (userId: string) => {
         console.log(`Delete teacher ${userId}`);
+
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            // const response = await getClassroom(token, classroomId);
+            // console.log({ response });
+            // classroom.value = response.data.getClassroom;
+        }).catch((error: string) => {
+            console.error(error);
+        });
+    };
+    
+    const inviteStudentSubmit = () => {
+        console.log(inviteStudent);
+
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            // const response = await getClassroom(token, classroomId);
+            // console.log({ response });
+            // classroom.value = response.data.getClassroom;
+        }).catch((error: string) => {
+            console.error(error);
+        });
+    };
+    
+    const inviteTeacherSubmit = () => {
+        console.log(inviteTeacher);
+
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            // const response = await getClassroom(token, classroomId);
+            // console.log({ response });
+            // classroom.value = response.data.getClassroom;
+        }).catch((error: string) => {
+            console.error(error);
+        });
     };
 
     getThisClassroom();
@@ -99,26 +149,20 @@
             </div>
             <div class="c-userelements">
                 <UserElement name="Invite teacher" :add="true" @click="toggleInviteTeacherPopup" />
-                <UserElement v-for="(teacher, index) in classroom.users?.filter((user: any) => user.type === 1)" :key="index" :user="teacher" :edit="teachersEdit" :userId="teacher.userId" :deleteAction="deleteThisTeacher" />
+                <UserElement v-for="(teacher, index) in classroom.users?.filter((user: any) => user.type === 1)" :key="index" :user="teacher" :edit="teachersEdit" :userId="user.information.user!.uid" :deleteAction="deleteThisTeacher" />
             </div>
         </section>
     </div>
 
-    <div v-if="showClasscodePopup" @click.self="toggleShowClasscodePopup" class="c-popup__container">
-        <div class="c-popup">
-            <button class="c-popup__button c-button__icon c-button__icon-alpha" @click="toggleShowClasscodePopup">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-            </button>
+    <Popup v-if="showClasscodePopup" title="Classroom information" :toggleClose="toggleShowClasscodePopup" buttonLabel="Reset classcode" :buttonAction="resetClasscodeSubmit">
+        <p class="u-margin-0 u-margin-bottom-md u-size-32">{{ classroom?.classcode }}</p>
+    </Popup>
 
-            <h1 class="c-popup__title">Classroom information</h1>
+    <Popup v-if="inviteStudentPopup" title="Invite student" :toggleClose="toggleInviteStudentPopup" buttonLabel="Invite student" :buttonAction="inviteStudentSubmit">
+        <Input label="Email" symbol="email" type="email" placeholder="john.doe@example.com" :model="inviteStudent" modelName="email" />
+    </Popup>
 
-            <form @submit.prevent>
-                <Input label="Classcode" symbol="classroom" type="text" :placeholder="classroom?.classcode" :model="classroom!" modelName="" />
-    
-                <div class="u-flex u-align-center u-justify-end">
-                    <button class="c-button__normal c-button__normal-alpha" @click="resetClasscodeSubmit">Reset classcode</button>
-                </div>
-            </form>
-        </div>
-    </div>
+    <Popup v-if="inviteTeacherPopup" title="Invite teacher" :toggleClose="toggleInviteTeacherPopup" buttonLabel="Invite teacher" :buttonAction="inviteTeacherSubmit">
+        <Input label="Email" symbol="email" type="email" placeholder="john.doe@example.com" :model="inviteTeacher" modelName="email" />
+    </Popup>
 </template>

@@ -15,7 +15,7 @@
 <template>
     <div class="c-userelement__container">
         <!-- <button class="c-userelement__button c-button__icon c-button__icon-alpha" @click="props.deleteAction!(props.user?.userId)"> -->
-        <button v-if="props.edit" class="c-userelement__button c-button__icon c-button__icon-alpha" @click="props.deleteAction!(props.user?.userId)">
+        <button v-if="props.edit && props.userId !== props.user?.userId" class="c-userelement__button c-button__icon c-button__icon-alpha" @click="props.deleteAction!(props.user?.userId)">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
         
@@ -27,6 +27,8 @@
             </svg> -->
     
             <h2 class="c-userelement__name">{{ props.user ? `${props.user?.firstName} ${props.user?.lastName}` : props.name }}</h2>
+
+            <p v-if="props.user && props.user.userId === props.userId" class="c-userelement__me">Me</p>
         </div>
     </div>
 </template>

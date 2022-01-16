@@ -36,7 +36,7 @@
 
     &__name {
         color: var(--global-x-light);
-        font-size: 1.25rem;
+        font-size: 1rem;
         font-weight: 400;
         margin: 0;
         text-align: center;
@@ -51,13 +51,22 @@
         width: 4rem;
         height: 4rem;
         border-radius: 2rem;
-        margin-bottom: 1rem;
+        margin-bottom: 2rem;
         overflow: hidden;
 
         svg {
             width: 100%;
             height: 100%;
         }
+    }
+
+    &__me {
+        position: absolute;
+        font-size: 0.75rem;
+        right: 0.5rem;
+        bottom: 0.5rem;
+        color: var(--global-x-light);
+        margin: 0;
     }
 
     &:hover {

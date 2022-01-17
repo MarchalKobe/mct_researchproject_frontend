@@ -1,0 +1,42 @@
+<script setup lang="ts">
+    import Assignment from '../types/Assignment';
+
+    const props = defineProps({
+        add: Boolean as () => boolean | null,
+        name: String as () => string | null,
+        assignment: Object as () => Assignment | null,
+        edit: Boolean as () => boolean | null,
+        // userId: String as () => string | null,
+        updateAction: Function as () => Function | null,
+        deleteAction: Function as () => Function | null,
+        clickAction: Function as () => Function | null,
+    });
+</script>
+
+<template>
+    <div class="c-assignmentelement__container">
+        <button v-if="props.assignment && props.edit" class="c-assignmentelement__button2 c-button__icon c-button__icon-orange" @click="props.updateAction!(props.assignment?.assignmentId)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="16 3 21 8 8 21 3 21 3 16 16 3"></polygon></svg>
+        </button>
+        <button v-if="props.assignment && props.edit" class="c-assignmentelement__button c-button__icon c-button__icon-alpha" @click="props.deleteAction!(props.assignment?.assignmentId)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+        </button>
+        
+        <div v-if="props.add" class="c-assignmentelement c-assignmentelement-add u-flex u-align-center" @click="props.clickAction ? props.clickAction(props.assignment?.assignmentId) : null">
+            <div class="u-flex u-align-center">
+                <h2 class="c-assignmentelement__name u-margin-right-x-lg">{{ props.name }}</h2>
+                <svg class="c-assignmentelement__symbol" xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </div>
+        </div>
+        <div v-else class="c-assignmentelement u-flex u-align-center u-justify-space-between">
+            <div class="u-flex u-direction-column u-justify-space-between u-height-full">
+                <h3 class="c-assignmentelement__category">{{ props.assignment!.category!.name }}</h3>
+                <h2 class="c-assignmentelement__subject">{{ props.assignment!.subject }}</h2>
+            </div>
+            <div class="u-flex u-align-center">
+                <p class="u-margin-right-sm u-color-x-light">Levels</p>
+                <svg class="c-assignmentelement__symbol" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </div>
+        </div>
+    </div>
+</template>

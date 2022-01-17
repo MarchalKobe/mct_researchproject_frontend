@@ -1,3 +1,4 @@
+import AddAssignmentInput from "../types/AddAssignmentInput";
 import AddCategoryInput from "../types/AddCategoryInput";
 import AddClassroomInput from "../types/AddClassroomInput";
 import DeleteUserFromClassroomInput from "../types/DeleteUserFromClassroomInput";
@@ -7,6 +8,8 @@ import JoinClassroomInput from "../types/JoinClassroomInput";
 import LoginInput from "../types/LoginInput";
 import RegisterInput from "../types/RegisterInput";
 import RestorePasswordInput from "../types/RestorePasswordInput";
+import UpdateAssignmentInput from "../types/UpdateAssignmentInput";
+import UpdateCategoryInput from "../types/UpdateCategoryInput";
 import UpdateEditorInput from "../types/UpdateEditorInput";
 import UpdateEmailInput from "../types/UpdateEmailInput";
 import UpdateGeneralInput from "../types/UpdateGeneralInput";
@@ -327,6 +330,66 @@ export const useNetwork = () => {
         },
     });
 
+    const updateCategory = (token: string, data: UpdateCategoryInput) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            mutation UpdateCategory($data: UpdateCategoryInput!) {
+                updateCategory(data: $data)
+            }
+        `,
+        variables: {
+            data: {
+                categoryId: data.categoryId,
+                name: data.name,
+            },
+        },
+    });
+
+    const getAssignmentsByCategory = (token: string, categoryId: string) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            query GetAssignmentsByCategory($categoryId: String!) {
+                getAssignmentsByCategory(categoryId: $categoryId) {
+                    assignmentId
+                    subject
+                    category {
+                        categoryId
+                        name
+                    }
+                }
+            }
+        `,
+        variables: {
+            categoryId: categoryId,
+        },
+    });
+
+    const addAssignment = (token: string, data: AddAssignmentInput) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            mutation AddAssignment($data: AddAssignmentInput!) {
+                addAssignment(data: $data)
+            }
+        `,
+        variables: {
+            data: {
+                subject: data.subject,
+                categoryId: data.categoryId,
+            },
+        },
+    });
+
+    const updateAssignment = (token: string, data: UpdateAssignmentInput) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            mutation UpdateAssignment($data: UpdateAssignmentInput!) {
+                updateAssignment(data: $data)
+            }
+        `,
+        variables: {
+            data: {
+                assignmentId: data.assignmentId,
+                subject: data.subject,
+            },
+        },
+    });
+
     return {
         register,
         login,
@@ -348,5 +411,9 @@ export const useNetwork = () => {
         getCategory,
         getCategoriesByClassroom,
         addCategory,
+        updateCategory,
+        getAssignmentsByCategory,
+        addAssignment,
+        updateAssignment,
     };
 };

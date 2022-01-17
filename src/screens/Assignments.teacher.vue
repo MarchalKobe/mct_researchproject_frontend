@@ -13,8 +13,10 @@
     import CategoryOption from '../types/CategoryOption';
     import SelectOption from '../types/SelectOption';
     import Select from '../components/Select.vue';
+    import AssignmentElement from '../components/AssignmentElement.vue';
+    import Assignment from '../types/Assignment';
 
-    const { getClassroom, getCategory, getCategoriesByClassroom, addCategory } = useNetwork();
+    const { getClassroom, getCategory, getCategoriesByClassroom, addCategory, updateCategory, getAssignmentsByCategory, addAssignment, updateAssignment } = useNetwork();
 
     const user = reactive<{ information: UserState }>({
         information: computed(() => store.getters[GetterTypes.GET_USER_INFORMATION]()).value,
@@ -26,22 +28,46 @@
 
     const classroom = ref<Classroom | null>(null);
 
-    const newCategory = reactive<Category>({
-        name: '',
-    });
-
     const categoryOptions = ref<SelectOption[]>([]);
     const selectedCategory = reactive<CategoryOption>({
         categoryId: '',
     });
 
+    const addThisCategory = reactive<Category>({
+        name: '',
+    });
+
+    const updateThisCategory = reactive<Category>({
+        name: '',
+    });
+
+    const addThisAssignment = reactive<Assignment>({
+        subject: '',
+    });
+
+    const updateThisAssignment = reactive<Assignment>({
+        assignmentId: '',
+        subject: '',
+    });
+
     const category = ref<Category>();
+
+    const assignments = ref<Assignment[]>([]);
 
     const edit = ref<boolean>(false);
     const toggleEdit = () => edit.value = !edit.value;
 
     const addCategoryPopup = ref<boolean>(false);
     const toggleAddCategoryPopup = () => addCategoryPopup.value = !addCategoryPopup.value;
+
+    const updateCategoryPopup = ref<boolean>(false);
+    const toggleUpdateCategoryPopup = () => updateCategoryPopup.value = !updateCategoryPopup.value;
+
+    const addAssignmentPopup = ref<boolean>(false);
+    const toggleAddAssignmentPopup = () => addAssignmentPopup.value = !addAssignmentPopup.value;
+
+    const updateAssignmentPopup = ref<boolean>(false);
+    const toggleUpdateAssignmentPopup = () => updateAssignmentPopup.value = !updateAssignmentPopup.value;
 
     const getThisClassroom = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
@@ -58,6 +84,17 @@
             const response = await getCategory(token, selectedCategory.categoryId);
             console.log({ response });
             category.value = response.data.getCategory;
+            updateThisCategory.name = category.value!.name;
+        }).catch((error: string) => {
+            console.error(error);
+        });
+    };
+
+    const getThisAssignmentsByCategory = async () => {
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            const response = await getAssignmentsByCategory(token, selectedCategory.categoryId);
+            console.log({ response });
+            assignments.value = response.data.getAssignmentsByCategory;
         }).catch((error: string) => {
             console.error(error);
         });
@@ -85,16 +122,63 @@
 
     const addCategorySubmit = () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
-            const response = await addCategory(token, { name: newCategory.name, classroomId: classroomId });
+            const response = await addCategory(token, { name: addThisCategory.name, classroomId: classroomId });
             console.log({ response });
             getThisCategoriesByClassroom();
+            toggleAddCategoryPopup();
         }).catch((error: string) => {
             console.error(error);
         });
     };
 
+    const updateCategorySubmit = () => {
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            const response = await updateCategory(token, { categoryId: selectedCategory.categoryId, name: updateThisCategory.name });
+            console.log({ response });
+            getThisCategoriesByClassroom();
+            getThisCategory();
+            toggleUpdateCategoryPopup();
+        }).catch((error: string) => {
+            console.error(error);
+        });
+    };
+
+    const addAssignmentSubmit = () => {
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            const response = await addAssignment(token, { subject: addThisAssignment.subject, categoryId: selectedCategory.categoryId });
+            console.log({ response });
+            getThisAssignmentsByCategory();
+            toggleAddAssignmentPopup();
+        }).catch((error: string) => {
+            console.error(error);
+        });
+    };
+
+    const updateAssignmentSubmit = () => {
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            const response = await updateAssignment(token, { assignmentId: updateThisAssignment.assignmentId!, subject: updateThisAssignment.subject });
+            console.log({ response });
+            getThisAssignmentsByCategory();
+            toggleUpdateAssignmentPopup();
+        }).catch((error: string) => {
+            console.error(error);
+        });
+    };
+
+    const updateThisAssignmentAction = (assignmentId: string) => {
+        console.log('Update assignment', assignmentId);
+        updateThisAssignment.assignmentId = assignmentId;
+        updateThisAssignment.subject = assignments.value.find((assignment: Assignment) => assignment.assignmentId === assignmentId)!.subject;
+        toggleUpdateAssignmentPopup();
+    };
+
+    const deleteThisAssignemntAction = (assignmentId: string) => {
+        console.log('Delete assignment', assignmentId);
+    };
+    
     watch(() => selectedCategory.categoryId, () => {
         getThisCategory();
+        getThisAssignmentsByCategory();
     });
 
     getThisClassroom();
@@ -119,8 +203,8 @@
 
         <div v-if="category" class="u-flex u-align-center u-justify-space-between u-margin-bottom-lg">
             <div class="u-flex u-align-center">
-                <h2 class="u-margin-0 u-weight-400 u-margin-right-lg">{{ category.name }}</h2>
-                <button v-if="edit" class="c-button__icon c-button__icon-orange u-margin-right-md">
+                <h2 class="u-margin-0 u-weight-400 u-margin-right-md">{{ category.name }}</h2>
+                <button v-if="edit" class="c-button__icon c-button__icon-orange u-margin-right-x-md" @click="toggleUpdateCategoryPopup">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="16 3 21 8 8 21 3 21 3 16 16 3"></polygon></svg>
                 </button>
                 <button v-if="edit" class="c-button__icon c-button__icon-alpha">
@@ -133,9 +217,26 @@
         <div v-else>
             <p>No category selected</p>
         </div>
+
+        <div v-if="category">
+            <AssignmentElement class="u-margin-bottom-lg" :add="true" name="Create assignment" :edit="edit" @click="toggleAddAssignmentPopup" />
+            <AssignmentElement v-if="assignments" v-for="(assignment, index) in assignments" :key="index" :assignment="assignment" :edit="edit" :updateAction="updateThisAssignmentAction" :deleteAction="deleteThisAssignemntAction" />
+        </div>
     </div>
 
     <Popup v-if="addCategoryPopup" title="Create category" :toggleClose="toggleAddCategoryPopup" buttonLabel="Create category" :buttonAction="addCategorySubmit">
-        <Input label="Name" symbol="category" type="text" placeholder="Fundamentals" :model="newCategory" modelName="name" />
+        <Input label="Name" symbol="category" type="text" placeholder="Fundamentals" :model="addThisCategory" modelName="name" />
+    </Popup>
+
+    <Popup v-if="updateCategoryPopup" title="Update category" :toggleClose="toggleUpdateCategoryPopup" buttonLabel="Update category" :buttonAction="updateCategorySubmit">
+        <Input label="Name" symbol="category" type="text" placeholder="Fundamentals" :model="updateThisCategory" modelName="name" />
+    </Popup>
+
+    <Popup v-if="addAssignmentPopup" title="Create assignment" :toggleClose="toggleAddAssignmentPopup" buttonLabel="Create assignment" :buttonAction="addAssignmentSubmit">
+        <Input label="Subject" symbol="document" type="text" placeholder="Introduction to paragraphs" :model="addThisAssignment" modelName="subject" />
+    </Popup>
+
+    <Popup v-if="updateAssignmentPopup" title="Update assignment" :toggleClose="toggleUpdateAssignmentPopup" buttonLabel="Update assignment" :buttonAction="updateAssignmentSubmit">
+        <Input label="Subject" symbol="document" type="text" placeholder="Introduction to paragraphs" :model="updateThisAssignment" modelName="subject" />
     </Popup>
 </template>

@@ -12,8 +12,6 @@
         deleteAction: Function as () => Function | null,
         clickAction: Function as () => Function | null,
     });
-
-    console.log(props);
 </script>
 
 <template>

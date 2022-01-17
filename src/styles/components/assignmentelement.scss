@@ -1,0 +1,71 @@
+.c-assignmentelements {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    justify-items: center;
+    gap: 2rem;
+}
+
+.c-assignmentelement {
+    position: relative;
+    border: 1px solid var(--global-x-light);
+    background: var(--global-dark);
+    display: flex;
+    justify-content: center;
+    height: 5rem;
+    width: calc(100% - calc(3rem + 2px));
+    border-radius: 0.5rem;
+    cursor: pointer;
+    padding: 1.5rem;
+
+    &__container {
+        position: relative;
+    }
+
+    &__button {
+        position: absolute;
+        z-index: 100;
+        top: -1rem;
+        right: -1rem;
+    }
+
+    &__button2 {
+        position: absolute;
+        z-index: 100;
+        top: -1rem;
+        right: 2rem;
+    }
+
+    &__symbol {
+        stroke: var(--global-x-light);
+    }
+
+    &__name {
+        color: var(--global-x-light);
+        font-size: 1.5rem;
+        font-weight: 400;
+        margin: 0;
+    }
+
+    &__category {
+        color: var(--global-x-light);
+        font-size: 1rem;
+        font-weight: 400;
+        margin: 0;
+    }
+
+    &__subject {
+        color: var(--global-xx-light);
+        font-size: 1.5rem;
+        font-weight: 400;
+        margin: 0;
+    }
+
+    &-add {
+        border: 1px dashed var(--global-x-light);
+        background: none;
+    }
+
+    &:hover {
+        opacity: 0.8;
+    }
+}

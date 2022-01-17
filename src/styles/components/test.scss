@@ -1,11 +1,4 @@
 .c-test {
-    width: calc(52rem - calc(2rem + 2px));
-    z-index: 2;
-    border: 1px solid var(--global-x-light);
-    background: var(--global-dark);
-    border-radius: 0.5rem;
-    padding: 1rem;
-    
     &__container {
         display: grid;
         grid-template-columns: 1fr;
@@ -13,12 +6,23 @@
     }
 
     &__placeholder {
+        position: relative;
+        background: var(--global-opacity-red);
+        border-radius: 0.5rem;
         z-index: 1;
-        border: 1px dashed var(--global-x-light);
-        background: none;
+    }
+
+    &__content {
+        position: relative;
+        width: calc(52rem - 2rem);
+        background: var(--global-dark);
+        border: 1px solid var(--global-x-light);
+        border-radius: 0.5rem;
+        z-index: 3;
+        padding: 1rem;
     }
 
     &__moving {
-        background: red;
+        cursor: move;
     }
 }

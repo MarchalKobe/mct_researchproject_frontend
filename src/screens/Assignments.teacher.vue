@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import Navbar from '../components/Navbar.vue';
     import Header from '../components/Header.vue';
-    import { computed, reactive, ref, watch } from 'vue';
+    import { computed, onUpdated, reactive, ref } from 'vue';
     import Classroom from '../types/Classroom';
     import { getIdToken, User } from 'firebase/auth';
     import { GetterTypes, UserState } from '../store/modules/user';
@@ -32,103 +32,113 @@
 
     getThisClassroom();
 
-    const elements = reactive([
+    const edit = ref<boolean>(false);
+    const toggleEdit = () => edit.value = !edit.value;
+
+    interface Element {
+        name: string;
+        content: string;
+        position: number;
+        selected?: boolean;
+        top?: string;
+        left?: string;
+        width?: number;
+        height?: number;
+        xStart?: number;
+        xEnd?: number;
+        yStart?: number;
+        yEnd?: number;
+        ref?: HTMLElement;
+    };
+
+    const elements = reactive<Element[]>([
         {
             name: 'Element 1',
-            position: 1,
-            top: 'auto',
-            left: 'auto',
-            xStart: 0,
-            xEnd: 0,
-            yStart: 0,
-            yEnd: 0,
-            ref: undefined as HTMLElement | undefined,
-        },
-        {
-            type: 'placeholder',
-            position: 1,
+            content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi lacinia tempus ante, vitae aliquam tortor vehicula non. Donec eleifend eros sit amet ante luctus, sit amet iaculis massa tempus.',
+            position: 2,
         },
         {
             name: 'Element 2',
-            position: 2,
-            top: 'auto',
-            left: 'auto',
-            xStart: 0,
-            xEnd: 0,
-            yStart: 0,
-            yEnd: 0,
-            ref: undefined as HTMLElement | undefined,
-        },
-        {
-            type: 'placeholder',
-            position: 2,
+            content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi lacinia tempus ante, vitae aliquam tortor vehicula non. Donec eleifend eros sit amet ante luctus, sit amet iaculis massa tempus. Sed pellentesque odio vitae vulputate aliquet. Etiam nunc quam, venenatis sit amet magna in, tincidunt fringilla ipsum. Donec eu nisi leo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Interdum et malesuada fames ac ante ipsum primis in faucibus. In hac habitasse platea dictumst.',
+            position: 1,
         },
         {
             name: 'Element 3',
-            position: 3,
-            top: 'auto',
-            left: 'auto',
-            xStart: 0,
-            xEnd: 0,
-            yStart: 0,
-            yEnd: 0,
-            ref: undefined as HTMLElement | undefined,
-        },
-        {
-            type: 'placeholder',
+            content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi lacinia tempus ante, vitae aliquam tortor vehicula non. Donec eleifend eros sit amet ante luctus, sit amet iaculis massa tempus.',
             position: 3,
         },
         {
             name: 'Element 4',
-            position: 4,
-            top: 'auto',
-            left: 'auto',
-            xStart: 0,
-            xEnd: 0,
-            yStart: 0,
-            yEnd: 0,
-            ref: undefined as HTMLElement | undefined,
-        },
-        {
-            type: 'placeholder',
+            content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi lacinia tempus ante, vitae aliquam tortor vehicula non. Donec eleifend eros sit amet ante luctus, sit amet iaculis massa tempus.',
             position: 4,
         },
     ]);
 
-    const edit = ref<boolean>(false);
-    const toggleEdit = () => edit.value = !edit.value;
+    interface Mouse {
+        x: number;
+        y: number;
+        xOffset: number;
+        yOffset: number;
+        interval: number;
+    }
 
-    const mouseX = ref<number>();
-    const mouseY = ref<number>();
-    const mouseXOffset = ref<number>();
-    const mouseYOffset = ref<number>();
+    const mouse = reactive<Mouse>({
+        x: 0,
+        y: 0,
+        xOffset: 0,
+        yOffset: 0,
+        interval: 0,
+    });
 
-    const myInterval = ref<any>();
-    const movingElement = ref<HTMLElement | null>(null);
+    const setElementRef: any = (element: HTMLElement) => {
+        if(element && element.dataset && element.dataset.index) {
+            const el = elements[parseInt(element.dataset.index)];
+            el.ref = element;
+        };
+    };
+
+    const setCoordinates = () => {
+        elements.map((element: Element) => {
+            const rect = element.ref!.getBoundingClientRect();
+            element.width = rect.width;
+            element.height = rect.height;
+            element.xStart = rect.left;
+            element.xEnd = rect.left + rect.width;
+            element.yStart = rect.top;
+            element.yEnd = rect.top + rect.height;
+        });
+    };
 
     window.addEventListener('mousemove', (event: MouseEvent) => {
         if(edit.value) {
-            mouseX.value = event.clientX;
-            mouseY.value = event.clientY;
+            mouse.x = event.clientX;
+            mouse.y = event.clientY;
 
-            if(movingElement.value) {
-                const thisElements = elements.filter((element: any) => element.ref !== movingElement.value! && element.type !== 'placeholder');
-                const selectedElement = elements.find((element: any) => element.ref === movingElement.value);
+            if(elements.find((element: Element) => element.selected)) {
+                const thisElements = elements.filter((element: Element) => !element.selected);
+                const selectedElement = elements.find((element: Element) => element.selected);
 
-                thisElements.map((element: any) => {
-                    if(event.clientX >= element.xStart
-                    && event.clientX <= element.xEnd
-                    && event.clientY >= element.yStart
-                    && event.clientY <= element.yEnd) {
+                selectedElement!.top = `${mouse.y - mouse.yOffset + document.documentElement.scrollTop}px`;
+                selectedElement!.left = `${mouse.x - mouse.xOffset}px`;
+
+                thisElements.map((element: Element) => {
+                    if(event.clientX >= element.xStart!
+                    && event.clientX <= element.xEnd!
+                    && event.clientY >= element.yStart!
+                    && event.clientY <= element.yEnd!) {
                         const position = element.position;
 
-                        const elementPlaceholder = elements.find((el: any) => el.type === 'placeholder' && el.position === element.position) as any;
-                        element!.position = selectedElement?.position;
-                        elementPlaceholder!.position = selectedElement?.position;
+                        if(selectedElement!.position < element.position) {
+                            elements.map((el: Element) => {
+                                if(el.position <= element.position && el.position !== selectedElement!.position && el.position > selectedElement!.position) el.position--;
+                            });
+                        } else {
+                            elements.map((el: Element) => {
+                                if(el.position >= element.position && el.position !== selectedElement!.position && el.position < selectedElement!.position) el.position++;
+                            });
+                        };
                         
-                        const placeholder = elements.find((el: any) => el.type === 'placeholder' && el.position === selectedElement!.position) as any;
                         selectedElement!.position = position;
-                        placeholder!.position = position;
                     };
                 });
             };
@@ -136,52 +146,49 @@
     });
 
     window.addEventListener('mouseup', () => {
-        if(movingElement.value && edit.value) {
-            elements.find((element) => element.ref === movingElement.value)!.top = 'auto';
-            elements.find((element) => element.ref === movingElement.value)!.left = 'auto';
+        const selectedElement = elements.find((element: Element) => element.selected);
 
-            movingElement.value.style.zIndex = '2';
-            movingElement.value.style.userSelect = 'inherit';
-
-            movingElement.value = null;
+        if(selectedElement) {
+            selectedElement.selected = false;
+            selectedElement.top = 'auto';
+            selectedElement.left = 'auto';
+            selectedElement.ref!.style.zIndex = '3';
+            selectedElement.ref!.style.userSelect = 'inherit';
         };
-
-        clearInterval(myInterval.value);
     });
 
-    const setRef: any = (element: HTMLElement) => {
-        if(element && element.dataset && element.dataset.index) {
-            const el = elements[parseInt(element.dataset.index)];
-            el.ref = element;
+    let once = false;
 
-            const rect = el.ref.getBoundingClientRect();
-            el.xStart = rect.left;
-            el.xEnd = rect.left + rect.width;
-            el.yStart = rect.top;
-            el.yEnd = rect.top + rect.height;
+    onUpdated(() => {
+        setCoordinates();
+
+        if(!once) {
+            elements.map((element: Element) => {
+                if(element.ref) {
+                    element.selected = false;
+                    element.top = 'auto';
+                    element.left = 'auto';
     
-            element.addEventListener('mousedown', () => {
-                if(edit.value) {
-                    movingElement.value = element;
-
-                    movingElement.value.style.zIndex = '1000';
-                    movingElement.value.style.userSelect = 'none';
-                    
-                    mouseXOffset.value = (mouseX.value! - element.getBoundingClientRect().left) * 1;
-                    mouseYOffset.value = (mouseY.value! - element.getBoundingClientRect().top) * 1;
-
-                    myInterval.value = setInterval(interval, 10);
+                    element.ref.addEventListener('mousedown', () => {
+                        if(edit.value) {
+                            element.selected = true;
+                            
+                            element.ref!.style.zIndex = '1000';
+                            element.ref!.style.userSelect = 'none';
+                            
+                            mouse.xOffset = (mouse.x - element.ref!.getBoundingClientRect().left) * 1;
+                            mouse.yOffset = (mouse.y - element.ref!.getBoundingClientRect().top) * 1;
+                            
+                            element.top = `${mouse.y - mouse.yOffset + document.documentElement.scrollTop}px`;
+                            element.left = `${mouse.x - mouse.xOffset}px`;
+                        };
+                    });
                 };
             });
-        };
-    };
 
-    const interval = () => {
-        if(movingElement.value && edit.value) {
-            elements.find((element) => element.ref === movingElement.value)!.top = `${mouseY.value! - mouseYOffset.value!}px`;
-            elements.find((element) => element.ref === movingElement.value)!.left = `${mouseX.value! - mouseXOffset.value!}px`;
+            once = true;
         };
-    };
+    });
 
     const logElements = () => {
         console.log({ elements });
@@ -203,16 +210,13 @@
             <button class="c-button__normal" @click="logElements">Log elements</button>
             <button class="c-button__soft u-color-x-light" @click="toggleEdit">{{ edit ? 'Done' : 'Edit' }}</button>
         </div>
-
+        
         <section class="c-test__container">
-            <div :ref="element.type !== 'placeholder' ? setRef : null" v-for="(element, index) in elements" :key="index" :data-index="index" class="c-test" :class="element.type === 'placeholder' ? 'c-test__placeholder' : ''" :style="{ gridRow: `${element.position} / auto`, gridColumn: `1 / auto`, position: element.type === 'placeholder' ? 'inherit' : (element.top !== 'auto' || element.left !== 'auto' ? 'absolute' : 'inherit'), top: element.type === 'placeholder' ? 'auto' : element.top, left: element.type === 'placeholder' ? 'auto' : element.left }">
-                <div :style="{ opacity: element.type === 'placeholder' ? 0 : 1 }">
-                    <span>{{ element.name }}</span>
-                    <br />
-                    <span>Category</span>
-                    <br />
-                    <span>Items</span>
-                </div>
+            <div v-for="(placeholder, index) in elements" :key="index" class="c-test__placeholder" :style="{ gridRow: `${placeholder.position} / auto`, gridColumn: `1 / auto`, width: `${placeholder.width}px`, height: `${placeholder.height}px` }"></div>
+
+            <div :ref="setElementRef" v-for="(element, index) in elements" :key="index" :data-index="index" class="c-test__content" :class="edit ? 'c-test__moving' : ''" :style="{ gridRow: `${element.position} / auto`, gridColumn: `1 / auto`, top: element.top, left: element.left, position: element.selected ? 'absolute' : 'relative' }">
+                <h2>{{ element.name }} - {{ element.position }}</h2>
+                <p>{{ element.content }}</p>
             </div>
         </section>
     </div>

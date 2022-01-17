@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import Navbar from '../components/Navbar.vue';
     import Header from '../components/Header.vue';
-    import { computed, reactive, ref, watch } from 'vue';
+    import { computed, onUpdated, reactive, ref, watch } from 'vue';
     import Classroom from '../types/Classroom';
     import { getIdToken, User } from 'firebase/auth';
     import { GetterTypes, UserState } from '../store/modules/user';
@@ -15,6 +15,7 @@
     import Select from '../components/Select.vue';
     import AssignmentElement from '../components/AssignmentElement.vue';
     import Assignment from '../types/Assignment';
+    import Mouse from '../types/Mouse';
 
     const { getClassroom, getCategory, getCategoriesByClassroom, addCategory, updateCategory, getAssignmentsByCategory, addAssignment, updateAssignment } = useNetwork();
 
@@ -55,7 +56,13 @@
     const assignments = ref<Assignment[]>([]);
 
     const edit = ref<boolean>(false);
-    const toggleEdit = () => edit.value = !edit.value;
+    const toggleEdit = () => {
+        edit.value = !edit.value;
+
+        if(!edit.value) {
+
+        };
+    };
 
     const addCategoryPopup = ref<boolean>(false);
     const toggleAddCategoryPopup = () => addCategoryPopup.value = !addCategoryPopup.value;
@@ -183,10 +190,121 @@
 
     getThisClassroom();
     getThisCategoriesByClassroom();
+
+    const mouse = reactive<Mouse>({
+        x: 0,
+        y: 0,
+        xOffset: 0,
+        yOffset: 0,
+        interval: 0,
+    });
+
+    const setElementRef: any = (element: HTMLElement) => {
+        if(element && element.dataset && element.dataset.index) {
+            const el = assignments.value[parseInt(element.dataset.index)];
+            el.ref = element;
+        };
+    };
+
+    const setCoordinates = () => {
+        assignments.value.map((assignment: Assignment) => {
+            const rect = assignment.ref!.getBoundingClientRect();
+            assignment.width = rect.width;
+            assignment.height = rect.height;
+            assignment.xStart = rect.left;
+            assignment.xEnd = rect.left + rect.width;
+            assignment.yStart = rect.top;
+            assignment.yEnd = rect.top + rect.height;
+        });
+    };
+
+    window.addEventListener('mousemove', (event: MouseEvent) => {
+        if(edit.value) {
+            mouse.x = event.clientX;
+            mouse.y = event.clientY;
+
+            if(assignments.value.find((assignment: Assignment) => assignment.selected)) {
+                const thisAssignments = assignments.value.filter((assignment: Assignment) => !assignment.selected);
+                const selectedAssignment = assignments.value.find((assignment: Assignment) => assignment.selected);
+
+                selectedAssignment!.top = `${mouse.y - mouse.yOffset + document.documentElement.scrollTop}px`;
+                selectedAssignment!.left = `${mouse.x - mouse.xOffset}px`;
+
+                thisAssignments.map((assignment: Assignment) => {
+                    if(event.clientX >= assignment.xStart!
+                    && event.clientX <= assignment.xEnd!
+                    && event.clientY >= assignment.yStart!
+                    && event.clientY <= assignment.yEnd!) {
+                        const position = assignment.position;
+
+                        if(selectedAssignment!.position! < assignment.position!) {
+                            assignments.value.map((as: Assignment) => {
+                                if(as.position! <= assignment.position! && as.position !== selectedAssignment!.position && as.position! > selectedAssignment!.position!) as.position!--;
+                            });
+                        } else {
+                            assignments.value.map((as: Assignment) => {
+                                if(as.position! >= assignment.position! && as.position !== selectedAssignment!.position && as.position! < selectedAssignment!.position!) as.position!++;
+                            });
+                        };
+                        
+                        selectedAssignment!.position = position;
+                    };
+                });
+            };
+        };
+    });
+
+    window.addEventListener('mouseup', () => {
+        const selectedAssignment = assignments.value.find((assignment: Assignment) => assignment.selected);
+
+        if(selectedAssignment) {
+            selectedAssignment.selected = false;
+            selectedAssignment.top = 'auto';
+            selectedAssignment.left = 'auto';
+            selectedAssignment.ref!.style.zIndex = '3';
+            selectedAssignment.ref!.style.userSelect = 'inherit';
+        };
+    });
+
+    let once = false;
+
+    onUpdated(() => {
+        if(assignments.value.length) {
+            setCoordinates();
+    
+            if(!once) {
+                assignments.value.map((assignment: Assignment) => {
+                    if(assignment.ref) {
+                        assignment.selected = false;
+                        assignment.top = 'auto';
+                        assignment.left = 'auto';
+        
+                        assignment.ref.addEventListener('mousedown', () => {
+                            if(edit.value) {
+                                assignment.selected = true;
+                                
+                                assignment.ref!.style.zIndex = '1000';
+                                assignment.ref!.style.userSelect = 'none';
+                                
+                                mouse.xOffset = (mouse.x - assignment.ref!.getBoundingClientRect().left) * 1;
+                                mouse.yOffset = (mouse.y - assignment.ref!.getBoundingClientRect().top) * 1;
+                                
+                                assignment.top = `${mouse.y - mouse.yOffset + document.documentElement.scrollTop}px`;
+                                assignment.left = `${mouse.x - mouse.xOffset}px`;
+                            };
+                        });
+                    };
+                });
+    
+                once = true;
+            };
+        };
+    });
 </script>
 
 <template>
     <Navbar />
+
 
     <div v-if="classroom" class="e-container">
         <Header :title="`${classroom.name} - Assignments`" backPath="/classes" />
@@ -221,8 +339,10 @@
         <section v-if="category" class="u-margin-bottom-lg">
             <AssignmentElement class="u-margin-bottom-x-lg" :add="true" name="Create assignment" :edit="edit" @click="toggleAddAssignmentPopup" />
 
-            <div class="c-assignmentelements">
-                <AssignmentElement v-if="assignments" v-for="(assignment, index) in assignments" :key="index" :assignment="assignment" :edit="edit" :updateAction="updateThisAssignmentAction" :deleteAction="deleteThisAssignemntAction" :style="{ gridRow: `${assignment.position} / auto`, gridColumn: `1 / auto` }" />
+            <div v-if="assignments" class="c-assignmentelements">
+                <div v-for="(placeholder, index) in assignments" :key="index" class="c-assignmentelement__placeholder" :style="{ gridRow: `${placeholder.position} / auto`, gridColumn: `1 / auto`, width: `${placeholder.width}px`, height: `${placeholder.height}px` }"></div>
+
+                <AssignmentElement :setRef="setElementRef" v-for="(assignment, index) in assignments" :key="index" :index="index" class="c-assignmentelement" :class="edit ? 'c-assignmentelement__moving' : ''" :assignment="assignment" :edit="edit" :updateAction="updateThisAssignmentAction" :deleteAction="deleteThisAssignemntAction" :style="{ gridRow: `${assignment.position} / auto`, gridColumn: `1 / auto`, top: assignment.top, left: assignment.left, position: assignment.selected ? 'absolute' : 'relative' }"/>
             </div>
         </section>
     </div>

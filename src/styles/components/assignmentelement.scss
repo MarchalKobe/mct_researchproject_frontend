@@ -8,14 +8,18 @@
     position: relative;
     border: 1px solid var(--global-x-light);
     background: var(--global-dark);
-    // height: 5rem;
-    width: calc(100% - calc(3rem + 2px));
+    width: calc(52rem - calc(3rem + 2px));
+    // width: calc(100% - calc(3rem + 2px));
     border-radius: 0.5rem;
     padding: 1.5rem;
+    z-index: 3;
 
-    &__container {
-        position: relative;
-    }
+    // position: relative;
+    // background: var(--global-dark);
+    // border: 1px solid var(--global-x-light);
+    // border-radius: 0.5rem;
+    // z-index: 3;
+    // padding: 1rem;
 
     &__button {
         position: absolute;
@@ -64,5 +68,16 @@
         &:hover {
             opacity: 0.8;
         }
+    }
+
+    &__placeholder {
+        position: relative;
+        background: var(--global-opacity-red);
+        border-radius: 0.5rem;
+        z-index: 1;
+    }
+
+    &__moving {
+        cursor: move;
     }
 }

@@ -8,6 +8,8 @@
         assignment: Object as () => Assignment | null,
         edit: Boolean as () => boolean | null,
         // userId: String as () => string | null,
+        setRef: Function as () => Function | null,
+        index: Number as () => number | null,
         updateAction: Function as () => Function | null,
         deleteAction: Function as () => Function | null,
         clickAction: Function as () => Function | null,
@@ -18,7 +20,7 @@
 </script>
 
 <template>
-    <div class="c-assignmentelement__container">
+    <div :ref="(props.setRef! as any)" :data-index="props.index">
         <button v-if="props.assignment && props.edit" class="c-assignmentelement__button2 c-button__icon c-button__icon-orange" @click="props.updateAction!(props.assignment?.assignmentId)">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="16 3 21 8 8 21 3 21 3 16 16 3"></polygon></svg>
         </button>
@@ -32,7 +34,7 @@
                 <svg class="c-assignmentelement__symbol" xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             </div>
         </div>
-        <div v-else class="c-assignmentelement">
+        <div v-else>
             <div class="u-flex u-align-center u-justify-space-between u-width-full">
                 <div class="u-flex u-direction-column u-justify-space-between u-height-full">
                     <h3 class="c-assignmentelement__category u-margin-bottom-md">{{ props.assignment!.category!.name }}</h3>

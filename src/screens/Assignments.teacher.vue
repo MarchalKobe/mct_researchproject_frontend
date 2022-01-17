@@ -1,14 +1,20 @@
 <script setup lang="ts">
     import Navbar from '../components/Navbar.vue';
     import Header from '../components/Header.vue';
-    import { computed, onUpdated, reactive, ref } from 'vue';
+    import { computed, reactive, ref, watch } from 'vue';
     import Classroom from '../types/Classroom';
     import { getIdToken, User } from 'firebase/auth';
     import { GetterTypes, UserState } from '../store/modules/user';
     import store from '../store';
     import { useNetwork } from '../utils/networkComposable';
+    import Popup from '../components/Popup.vue';
+    import Category from '../types/Category';
+    import Input from '../components/Input.vue';
+    import CategoryOption from '../types/CategoryOption';
+    import SelectOption from '../types/SelectOption';
+    import Select from '../components/Select.vue';
 
-    const { getClassroom } = useNetwork();
+    const { getClassroom, getCategory, getCategoriesByClassroom, addCategory } = useNetwork();
 
     const user = reactive<{ information: UserState }>({
         information: computed(() => store.getters[GetterTypes.GET_USER_INFORMATION]()).value,
@@ -20,6 +26,23 @@
 
     const classroom = ref<Classroom | null>(null);
 
+    const newCategory = reactive<Category>({
+        name: '',
+    });
+
+    const categoryOptions = ref<SelectOption[]>([]);
+    const selectedCategory = reactive<CategoryOption>({
+        categoryId: '',
+    });
+
+    const category = ref<Category>();
+
+    const edit = ref<boolean>(false);
+    const toggleEdit = () => edit.value = !edit.value;
+
+    const addCategoryPopup = ref<boolean>(false);
+    const toggleAddCategoryPopup = () => addCategoryPopup.value = !addCategoryPopup.value;
+
     const getThisClassroom = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getClassroom(token, classroomId);
@@ -30,169 +53,52 @@
         });
     };
 
-    getThisClassroom();
-
-    const edit = ref<boolean>(false);
-    const toggleEdit = () => edit.value = !edit.value;
-
-    interface Element {
-        name: string;
-        content: string;
-        position: number;
-        selected?: boolean;
-        top?: string;
-        left?: string;
-        width?: number;
-        height?: number;
-        xStart?: number;
-        xEnd?: number;
-        yStart?: number;
-        yEnd?: number;
-        ref?: HTMLElement;
-    };
-
-    const elements = reactive<Element[]>([
-        {
-            name: 'Element 1',
-            content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi lacinia tempus ante, vitae aliquam tortor vehicula non. Donec eleifend eros sit amet ante luctus, sit amet iaculis massa tempus.',
-            position: 2,
-        },
-        {
-            name: 'Element 2',
-            content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi lacinia tempus ante, vitae aliquam tortor vehicula non. Donec eleifend eros sit amet ante luctus, sit amet iaculis massa tempus. Sed pellentesque odio vitae vulputate aliquet. Etiam nunc quam, venenatis sit amet magna in, tincidunt fringilla ipsum. Donec eu nisi leo. Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. Interdum et malesuada fames ac ante ipsum primis in faucibus. In hac habitasse platea dictumst.',
-            position: 1,
-        },
-        {
-            name: 'Element 3',
-            content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi lacinia tempus ante, vitae aliquam tortor vehicula non. Donec eleifend eros sit amet ante luctus, sit amet iaculis massa tempus.',
-            position: 3,
-        },
-        {
-            name: 'Element 4',
-            content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi lacinia tempus ante, vitae aliquam tortor vehicula non. Donec eleifend eros sit amet ante luctus, sit amet iaculis massa tempus.',
-            position: 4,
-        },
-    ]);
-
-    interface Mouse {
-        x: number;
-        y: number;
-        xOffset: number;
-        yOffset: number;
-        interval: number;
-    }
-
-    const mouse = reactive<Mouse>({
-        x: 0,
-        y: 0,
-        xOffset: 0,
-        yOffset: 0,
-        interval: 0,
-    });
-
-    const setElementRef: any = (element: HTMLElement) => {
-        if(element && element.dataset && element.dataset.index) {
-            const el = elements[parseInt(element.dataset.index)];
-            el.ref = element;
-        };
-    };
-
-    const setCoordinates = () => {
-        elements.map((element: Element) => {
-            const rect = element.ref!.getBoundingClientRect();
-            element.width = rect.width;
-            element.height = rect.height;
-            element.xStart = rect.left;
-            element.xEnd = rect.left + rect.width;
-            element.yStart = rect.top;
-            element.yEnd = rect.top + rect.height;
+    const getThisCategory = async () => {
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            const response = await getCategory(token, selectedCategory.categoryId);
+            console.log({ response });
+            category.value = response.data.getCategory;
+        }).catch((error: string) => {
+            console.error(error);
         });
     };
 
-    window.addEventListener('mousemove', (event: MouseEvent) => {
-        if(edit.value) {
-            mouse.x = event.clientX;
-            mouse.y = event.clientY;
+    const getThisCategoriesByClassroom = () => {
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            const response = await getCategoriesByClassroom(token, classroomId);
+            console.log({ response });
 
-            if(elements.find((element: Element) => element.selected)) {
-                const thisElements = elements.filter((element: Element) => !element.selected);
-                const selectedElement = elements.find((element: Element) => element.selected);
+            let options: SelectOption[] = [];
 
-                selectedElement!.top = `${mouse.y - mouse.yOffset + document.documentElement.scrollTop}px`;
-                selectedElement!.left = `${mouse.x - mouse.xOffset}px`;
-
-                thisElements.map((element: Element) => {
-                    if(event.clientX >= element.xStart!
-                    && event.clientX <= element.xEnd!
-                    && event.clientY >= element.yStart!
-                    && event.clientY <= element.yEnd!) {
-                        const position = element.position;
-
-                        if(selectedElement!.position < element.position) {
-                            elements.map((el: Element) => {
-                                if(el.position <= element.position && el.position !== selectedElement!.position && el.position > selectedElement!.position) el.position--;
-                            });
-                        } else {
-                            elements.map((el: Element) => {
-                                if(el.position >= element.position && el.position !== selectedElement!.position && el.position < selectedElement!.position) el.position++;
-                            });
-                        };
-                        
-                        selectedElement!.position = position;
-                    };
+            response.data.getCategoriesByClassroom.map((cat: Category) => {
+                options.push({
+                    id: cat.categoryId!,
+                    value: cat.name,
                 });
-            };
-        };
-    });
-
-    window.addEventListener('mouseup', () => {
-        const selectedElement = elements.find((element: Element) => element.selected);
-
-        if(selectedElement) {
-            selectedElement.selected = false;
-            selectedElement.top = 'auto';
-            selectedElement.left = 'auto';
-            selectedElement.ref!.style.zIndex = '3';
-            selectedElement.ref!.style.userSelect = 'inherit';
-        };
-    });
-
-    let once = false;
-
-    onUpdated(() => {
-        setCoordinates();
-
-        if(!once) {
-            elements.map((element: Element) => {
-                if(element.ref) {
-                    element.selected = false;
-                    element.top = 'auto';
-                    element.left = 'auto';
-    
-                    element.ref.addEventListener('mousedown', () => {
-                        if(edit.value) {
-                            element.selected = true;
-                            
-                            element.ref!.style.zIndex = '1000';
-                            element.ref!.style.userSelect = 'none';
-                            
-                            mouse.xOffset = (mouse.x - element.ref!.getBoundingClientRect().left) * 1;
-                            mouse.yOffset = (mouse.y - element.ref!.getBoundingClientRect().top) * 1;
-                            
-                            element.top = `${mouse.y - mouse.yOffset + document.documentElement.scrollTop}px`;
-                            element.left = `${mouse.x - mouse.xOffset}px`;
-                        };
-                    });
-                };
             });
 
-            once = true;
-        };
+            categoryOptions.value = options;
+        }).catch((error: string) => {
+            console.error(error);
+        });
+    };
+
+    const addCategorySubmit = () => {
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            const response = await addCategory(token, { name: newCategory.name, classroomId: classroomId });
+            console.log({ response });
+            getThisCategoriesByClassroom();
+        }).catch((error: string) => {
+            console.error(error);
+        });
+    };
+
+    watch(() => selectedCategory.categoryId, () => {
+        getThisCategory();
     });
 
-    const logElements = () => {
-        console.log({ elements });
-    };
+    getThisClassroom();
+    getThisCategoriesByClassroom();
 </script>
 
 <template>
@@ -207,17 +113,29 @@
         </nav>
 
         <div class="u-flex u-align-center u-justify-space-between u-margin-bottom-lg">
-            <button class="c-button__normal" @click="logElements">Log elements</button>
+            <button class="c-button__normal" @click="toggleAddCategoryPopup">Create category</button>
+            <Select class="u-width-14" description="Select category" :model="selectedCategory" modelName="categoryId" :options="categoryOptions" />
+        </div>
+
+        <div v-if="category" class="u-flex u-align-center u-justify-space-between u-margin-bottom-lg">
+            <div class="u-flex u-align-center">
+                <h2 class="u-margin-0 u-weight-400 u-margin-right-lg">{{ category.name }}</h2>
+                <button v-if="edit" class="c-button__icon c-button__icon-orange u-margin-right-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="16 3 21 8 8 21 3 21 3 16 16 3"></polygon></svg>
+                </button>
+                <button v-if="edit" class="c-button__icon c-button__icon-alpha">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                </button>
+            </div>
+            <span v-if="edit" class="u-color-orange">Hold the assignments to move them in order</span>
             <button class="c-button__soft u-color-x-light" @click="toggleEdit">{{ edit ? 'Done' : 'Edit' }}</button>
         </div>
-        
-        <section class="c-test__container">
-            <div v-for="(placeholder, index) in elements" :key="index" class="c-test__placeholder" :style="{ gridRow: `${placeholder.position} / auto`, gridColumn: `1 / auto`, width: `${placeholder.width}px`, height: `${placeholder.height}px` }"></div>
-
-            <div :ref="setElementRef" v-for="(element, index) in elements" :key="index" :data-index="index" class="c-test__content" :class="edit ? 'c-test__moving' : ''" :style="{ gridRow: `${element.position} / auto`, gridColumn: `1 / auto`, top: element.top, left: element.left, position: element.selected ? 'absolute' : 'relative' }">
-                <h2>{{ element.name }} - {{ element.position }}</h2>
-                <p>{{ element.content }}</p>
-            </div>
-        </section>
+        <div v-else>
+            <p>No category selected</p>
+        </div>
     </div>
+
+    <Popup v-if="addCategoryPopup" title="Create category" :toggleClose="toggleAddCategoryPopup" buttonLabel="Create category" :buttonAction="addCategorySubmit">
+        <Input label="Name" symbol="category" type="text" placeholder="Fundamentals" :model="newCategory" modelName="name" />
+    </Popup>
 </template>

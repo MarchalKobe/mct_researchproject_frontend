@@ -1,3 +1,4 @@
+import AddCategoryInput from "../types/AddCategoryInput";
 import AddClassroomInput from "../types/AddClassroomInput";
 import DeleteUserFromClassroomInput from "../types/DeleteUserFromClassroomInput";
 import ForgotPasswordInput from "../types/forgotPasswordInput";
@@ -284,6 +285,48 @@ export const useNetwork = () => {
         },
     });
 
+    const getCategory = (token: string, categoryId: string) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            query GetCategory($categoryId: String!) {
+                getCategory(categoryId: $categoryId) {
+                    categoryId
+                    name
+                }
+            }
+        `,
+        variables: {
+            categoryId: categoryId,
+        },
+    });
+
+    const getCategoriesByClassroom = (token: string, classroomId: string) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            query GetCategoriesByClassroom($classroomId: String!) {
+                getCategoriesByClassroom(classroomId: $classroomId) {
+                    categoryId
+                    name
+                }
+            }
+        `,
+        variables: {
+            classroomId: classroomId,
+        },
+    });
+
+    const addCategory = (token: string, data: AddCategoryInput) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            mutation AddCategory($data: AddCategoryInput!) {
+                addCategory(data: $data)
+            }
+        `,
+        variables: {
+            data: {
+                name: data.name,
+                classroomId: data.classroomId,
+            },
+        },
+    });
+
     return {
         register,
         login,
@@ -302,5 +345,8 @@ export const useNetwork = () => {
         resetClasscode,
         deleteUserFromClassroom,
         inviteUserToClassroom,
+        getCategory,
+        getCategoriesByClassroom,
+        addCategory,
     };
 };

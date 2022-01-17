@@ -1,4 +1,5 @@
 <script setup lang="ts">
+    import { ref } from 'vue';
     import Assignment from '../types/Assignment';
 
     const props = defineProps({
@@ -11,6 +12,9 @@
         deleteAction: Function as () => Function | null,
         clickAction: Function as () => Function | null,
     });
+
+    const open = ref<boolean>(false);
+    const toggleOpen = () => open.value = !open.value;
 </script>
 
 <template>
@@ -23,19 +27,27 @@
         </button>
         
         <div v-if="props.add" class="c-assignmentelement c-assignmentelement-add u-flex u-align-center" @click="props.clickAction ? props.clickAction(props.assignment?.assignmentId) : null">
-            <div class="u-flex u-align-center">
+            <div class="u-flex u-align-center u-justify-center u-width-full">
                 <h2 class="c-assignmentelement__name u-margin-right-x-lg">{{ props.name }}</h2>
                 <svg class="c-assignmentelement__symbol" xmlns="http://www.w3.org/2000/svg" width="50" height="50" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             </div>
         </div>
-        <div v-else class="c-assignmentelement u-flex u-align-center u-justify-space-between">
-            <div class="u-flex u-direction-column u-justify-space-between u-height-full">
-                <h3 class="c-assignmentelement__category">{{ props.assignment!.category!.name }}</h3>
-                <h2 class="c-assignmentelement__subject">{{ props.assignment!.subject }}</h2>
+        <div v-else class="c-assignmentelement">
+            <div class="u-flex u-align-center u-justify-space-between u-width-full">
+                <div class="u-flex u-direction-column u-justify-space-between u-height-full">
+                    <h3 class="c-assignmentelement__category u-margin-bottom-md">{{ props.assignment!.category!.name }}</h3>
+                    <h2 class="c-assignmentelement__subject">{{ props.assignment!.subject }}</h2>
+                </div>
+                <div class="c-button__soft u-flex u-align-center" @click="toggleOpen">
+                    <p class="u-margin-right-sm u-color-x-light">Levels</p>
+                    <svg class="c-assignmentelement__symbol" :style="{ transform: `rotateX(${open ? '-180deg' : '0'})` }" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                </div>
             </div>
-            <div class="u-flex u-align-center">
-                <p class="u-margin-right-sm u-color-x-light">Levels</p>
-                <svg class="c-assignmentelement__symbol" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            <div v-if="open" class="u-margin-top-md">
+                <span>No levels found</span>
+                <div class="u-flex u-align-center u-justify-end">
+                    <button class="c-button__normal">Add level</button>
+                </div>
             </div>
         </div>
     </div>

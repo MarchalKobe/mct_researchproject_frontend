@@ -350,6 +350,7 @@ export const useNetwork = () => {
                 getAssignmentsByCategory(categoryId: $categoryId) {
                     assignmentId
                     subject
+                    position
                     category {
                         categoryId
                         name

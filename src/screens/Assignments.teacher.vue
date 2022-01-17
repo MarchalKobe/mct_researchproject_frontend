@@ -218,10 +218,13 @@
             <p>No category selected</p>
         </div>
 
-        <div v-if="category">
-            <AssignmentElement class="u-margin-bottom-lg" :add="true" name="Create assignment" :edit="edit" @click="toggleAddAssignmentPopup" />
-            <AssignmentElement v-if="assignments" v-for="(assignment, index) in assignments" :key="index" :assignment="assignment" :edit="edit" :updateAction="updateThisAssignmentAction" :deleteAction="deleteThisAssignemntAction" />
-        </div>
+        <section v-if="category" class="u-margin-bottom-lg">
+            <AssignmentElement class="u-margin-bottom-x-lg" :add="true" name="Create assignment" :edit="edit" @click="toggleAddAssignmentPopup" />
+
+            <div class="c-assignmentelements">
+                <AssignmentElement v-if="assignments" v-for="(assignment, index) in assignments" :key="index" :assignment="assignment" :edit="edit" :updateAction="updateThisAssignmentAction" :deleteAction="deleteThisAssignemntAction" :style="{ gridRow: `${assignment.position} / auto`, gridColumn: `1 / auto` }" />
+            </div>
+        </section>
     </div>
 
     <Popup v-if="addCategoryPopup" title="Create category" :toggleClose="toggleAddCategoryPopup" buttonLabel="Create category" :buttonAction="addCategorySubmit">

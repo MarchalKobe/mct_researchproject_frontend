@@ -16,6 +16,7 @@
     import AssignmentElement from '../components/AssignmentElement.vue';
     import Assignment from '../types/Assignment';
     import Mouse from '../types/Mouse';
+    import LevelElement from '../components/LevelElement.vue';
 
     const { getClassroom, getCategory, getCategoriesByClassroom, addCategory, updateCategory, getAssignmentsByCategory, addAssignment, updateAssignment } = useNetwork();
 
@@ -329,11 +330,11 @@
             <RouterLink class="c-button__soft" :class="pathNew[pathNew.length - 1] === 'members' ? 'c-button__soft-selected' : ''" :to="`/classes/${classroomId}/members`">Members</RouterLink>
         </nav>
 
-        <button class="c-button__normal" @click="logAssignments">Test</button>
+        <!-- <button class="c-button__normal" @click="logAssignments">Test</button> -->
 
         <div class="u-flex u-align-center u-justify-space-between u-margin-bottom-lg">
             <button class="c-button__normal" @click="toggleAddCategoryPopup">Create category</button>
-            <Select class="u-width-14" description="Select category" :model="selectedCategory" modelName="categoryId" :options="categoryOptions" />
+            <Select class="u-width-14" :description="categoryOptions.length ? 'Select category' : 'No categories found'" :model="selectedCategory" modelName="categoryId" :options="categoryOptions" />
         </div>
 
         <div v-if="category" class="u-flex u-align-center u-justify-space-between u-margin-bottom-lg">
@@ -360,9 +361,31 @@
                 <div v-for="(placeholder, index) in assignments" :key="index" class="c-assignmentelement__placeholder" :style="{ gridRow: `${placeholder.position} / auto`, gridColumn: `1 / auto`, width: `${placeholder.width}px`, height: `${placeholder.height}px` }"></div>
 
                 <AssignmentElement :setRef="setElementRef" v-for="(assignment, index) in assignments" :key="index" :index="index" openLabel="Levels" class="c-assignmentelement" :class="edit ? 'c-assignmentelement__moving' : ''" :assignment="assignment" :edit="edit" :updateAction="updateThisAssignmentAction" :deleteAction="deleteThisAssignemntAction" :style="{ gridRow: `${assignment.position} / auto`, gridColumn: `1 / auto`, top: assignment.top, left: assignment.left, position: assignment.selected ? 'absolute' : 'relative' }">
-                    <span>No levels found</span>
-                    <div class="u-flex u-align-center u-justify-end">
-                        <button class="c-button__normal">Add level</button>
+                    <div class="u-margin-top-x-md">
+                        <LevelElement v-for="(level, index) in assignment.levels" :key="index" :level="level" />
+                    </div>
+                    <div class="u-flex u-align-center">
+                        <div class="u-flex u-align-center u-margin-right-lg">
+                            <div class="c-block u-background-green u-margin-right-sm"></div>
+                            <span>Level made</span>
+                        </div>
+                        <div class="u-flex u-align-center u-margin-right-lg">
+                            <div class="c-block u-background-orange u-margin-right-sm"></div>
+                            <span>Level in progress</span>
+                        </div>
+                        <div class="u-flex u-align-center">
+                            <div class="c-block u-background-red u-margin-right-sm"></div>
+                            <span>Level not started</span>
+                        </div>
+                    </div>
+                    <div class="u-flex u-align-center u-justify-end u-margin-top-lg">
+                        <div class="u-flex u-align-center">
+                            <div class="u-flex u-align-center u-margin-right-sm" v-if="assignment.levels!.filter((level) => level.status === 2).length !== 3">
+                                <svg class="u-margin-right-sm u-stroke-red" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                                <p class="u-margin-0 u-color-red">All levels need to be <span class="u-color-green">green</span> before you can make the assignment visible</p>
+                            </div>
+                            <button class="c-button__normal" :class="{ 'c-button__disabled': assignment.levels!.filter((level) => level.status === 2).length !== 3 }">Make assignment visible</button>
+                        </div>
                     </div>
                 </AssignmentElement>
             </div>

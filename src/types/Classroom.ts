@@ -4,10 +4,10 @@ export default interface Classroom {
     classroomId?: string;
     name?: string;
     classcode?: string;
-    userCreated?: UserCreated;
+    userCreated?: UserType;
     users?: UserType[];
 };
 
-interface UserCreated {
-    userId: string;
-};
+// interface UserCreated {
+//     userId: string;
+// };

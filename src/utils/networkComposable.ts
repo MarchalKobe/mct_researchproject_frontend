@@ -355,6 +355,11 @@ export const useNetwork = () => {
                         categoryId
                         name
                     }
+                    levels {
+                        levelId
+                        level
+                        status
+                    }
                 }
             }
         `,

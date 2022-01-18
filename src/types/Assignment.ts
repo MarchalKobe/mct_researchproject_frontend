@@ -1,10 +1,13 @@
 import Category from "./Category";
+import Level from "./Level";
 
 export default interface Assignment {
     assignmentId?: string;
     subject: string;
     category?: Category;
     position?: number;
+    visible?: boolean;
+    levels?: Level[];
 
     selected?: boolean;
     top?: string;

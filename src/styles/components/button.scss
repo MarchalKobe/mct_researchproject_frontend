@@ -2,6 +2,7 @@
     &__soft {
         all: unset;
         color: var(--global-x-light);
+        white-space: nowrap;
         cursor: pointer;
 
         &-selected {
@@ -21,6 +22,7 @@
         padding: 0.75rem 0;
         width: 100%;
         text-align: center;
+        white-space: nowrap;
         cursor: pointer;
     
         &:hover {
@@ -39,6 +41,7 @@
         background: var(--global-alpha);
         border-radius: 0.5rem;
         padding: 0.5rem 1rem;
+        white-space: nowrap;
         cursor: pointer;
     
         &:hover {
@@ -110,5 +113,11 @@
             border: var(--global-focus-border);
             opacity: 0.9;
         }
+    }
+
+    &__disabled {
+        pointer-events: none;
+        cursor: not-allowed;
+        opacity: 0.4;
     }
 }

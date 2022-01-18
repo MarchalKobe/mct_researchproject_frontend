@@ -31,6 +31,7 @@
 @import "./components/userelement.scss";
 @import "./components/assignmentelement.scss";
 @import "./components/popup.scss";
+@import "./components/block.scss";
 
 @import "./components/test.scss";
 
@@ -38,6 +39,8 @@
 // utilities
 @import "./utilities/margin.scss";
 @import "./utilities/color.scss";
+@import "./utilities/stroke.scss";
+@import "./utilities/background.scss";
 @import "./utilities/flex.scss";
 @import "./utilities/weight.scss";
 @import "./utilities/height.scss";

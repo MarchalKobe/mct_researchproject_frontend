@@ -1,0 +1,50 @@
+.c-alert {
+    position: relative;
+    width: 100%;
+    padding: 0.5rem;
+    box-sizing: border-box;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    border-radius: 0.4rem;
+    margin-bottom: 1rem;
+
+    p {
+        margin: 0;
+        width: 90%;
+    }
+
+    &__container {
+        position: fixed;
+        width: 18rem;
+        top: 1rem;
+        right: 1rem;
+    }
+
+    &__success {
+        color: var(--global-success-text);
+        background: var(--global-success);
+
+        svg {
+            stroke: var(--global-success-text);
+        }
+    }
+    
+    &__warning {
+        color: var(--global-warning-text);
+        background: var(--global-warning);
+
+        svg {
+            stroke: var(--global-warning-text);
+        }
+    }
+    
+    &__error {
+        color: var(--global-error-text);
+        background: var(--global-error);
+
+        svg {
+            stroke: var(--global-error-text);
+        }
+    }
+}

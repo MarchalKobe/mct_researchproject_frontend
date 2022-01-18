@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { ref } from 'vue';
+    import { ref, watch } from 'vue';
     import Assignment from '../types/Assignment';
 
     const props = defineProps({
@@ -10,6 +10,7 @@
         // userId: String as () => string | null,
         setRef: Function as () => Function | null,
         index: Number as () => number | null,
+        openLabel: String as () => string | null,
         updateAction: Function as () => Function | null,
         deleteAction: Function as () => Function | null,
         clickAction: Function as () => Function | null,
@@ -17,6 +18,10 @@
 
     const open = ref<boolean>(false);
     const toggleOpen = () => open.value = !open.value;
+
+    watch(() => props.edit, () => {
+        if(props.edit) open.value = false;
+    });
 </script>
 
 <template>
@@ -40,16 +45,13 @@
                     <h3 class="c-assignmentelement__category u-margin-bottom-md">{{ props.assignment!.category!.name }}</h3>
                     <h2 class="c-assignmentelement__subject">{{ props.assignment!.subject }}</h2>
                 </div>
-                <div class="c-button__soft u-flex u-align-center" @click="toggleOpen">
-                    <p class="u-margin-right-sm u-color-x-light">Levels</p>
+                <div v-if="!props.edit && props.openLabel" class="c-button__soft u-flex u-align-center" @click="toggleOpen">
+                    <p class="u-margin-right-sm u-color-x-light">{{ props.openLabel }}</p>
                     <svg class="c-assignmentelement__symbol" :style="{ transform: `rotateX(${open ? '-180deg' : '0'})` }" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
                 </div>
             </div>
             <div v-if="open" class="u-margin-top-md">
-                <span>No levels found</span>
-                <div class="u-flex u-align-center u-justify-end">
-                    <button class="c-button__normal">Add level</button>
-                </div>
+                <slot></slot>
             </div>
         </div>
     </div>

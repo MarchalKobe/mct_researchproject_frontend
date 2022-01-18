@@ -99,9 +99,18 @@
 
     const getThisAssignmentsByCategory = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
+            if(assignments.value.length) {
+                assignments.value.map((assignment: Assignment) => {
+                    assignment.ref!.removeEventListener('mousedown', assignmentMouseDownAction.bind(null, assignment), false);
+
+                    console.log('test');
+                });
+            };
+
             const response = await getAssignmentsByCategory(token, selectedCategory.categoryId);
             console.log({ response });
             assignments.value = response.data.getAssignmentsByCategory;
+            once.value = false;
         }).catch((error: string) => {
             console.error(error);
         });
@@ -184,6 +193,7 @@
     };
     
     watch(() => selectedCategory.categoryId, () => {
+        edit.value = false;
         getThisCategory();
         getThisAssignmentsByCategory();
     });
@@ -266,40 +276,45 @@
         };
     });
 
-    let once = false;
+    const once = ref<boolean>(false);
+
+    const assignmentMouseDownAction = (assignment: Assignment) => {
+        if(edit.value) {
+            assignment.selected = true;
+            
+            assignment.ref!.style.zIndex = '1000';
+            assignment.ref!.style.userSelect = 'none';
+            
+            mouse.xOffset = (mouse.x - assignment.ref!.getBoundingClientRect().left) * 1;
+            mouse.yOffset = (mouse.y - assignment.ref!.getBoundingClientRect().top) * 1;
+            
+            assignment.top = `${mouse.y - mouse.yOffset + document.documentElement.scrollTop}px`;
+            assignment.left = `${mouse.x - mouse.xOffset}px`;
+        };
+    };
 
     onUpdated(() => {
         if(assignments.value.length) {
             setCoordinates();
     
-            if(!once) {
+            if(!once.value) {
                 assignments.value.map((assignment: Assignment) => {
                     if(assignment.ref) {
                         assignment.selected = false;
                         assignment.top = 'auto';
                         assignment.left = 'auto';
-        
-                        assignment.ref.addEventListener('mousedown', () => {
-                            if(edit.value) {
-                                assignment.selected = true;
-                                
-                                assignment.ref!.style.zIndex = '1000';
-                                assignment.ref!.style.userSelect = 'none';
-                                
-                                mouse.xOffset = (mouse.x - assignment.ref!.getBoundingClientRect().left) * 1;
-                                mouse.yOffset = (mouse.y - assignment.ref!.getBoundingClientRect().top) * 1;
-                                
-                                assignment.top = `${mouse.y - mouse.yOffset + document.documentElement.scrollTop}px`;
-                                assignment.left = `${mouse.x - mouse.xOffset}px`;
-                            };
-                        });
+                        console.log('test2');
+                        
+                        assignment.ref.addEventListener('mousedown', assignmentMouseDownAction.bind(null, assignment), false);
                     };
                 });
     
-                once = true;
+                once.value = true;
             };
         };
     });
+
+    const logAssignments = () => console.log(assignments.value);
 </script>
 
 <template>
@@ -313,6 +328,8 @@
             <RouterLink class="c-button__soft u-margin-right-x-lg" :class="pathNew[pathNew.length - 1] === 'assignments' ? 'c-button__soft-selected' : ''" :to="`/classes/${classroomId}/assignments`">Assignments</RouterLink>
             <RouterLink class="c-button__soft" :class="pathNew[pathNew.length - 1] === 'members' ? 'c-button__soft-selected' : ''" :to="`/classes/${classroomId}/members`">Members</RouterLink>
         </nav>
+
+        <button class="c-button__normal" @click="logAssignments">Test</button>
 
         <div class="u-flex u-align-center u-justify-space-between u-margin-bottom-lg">
             <button class="c-button__normal" @click="toggleAddCategoryPopup">Create category</button>
@@ -342,7 +359,12 @@
             <div v-if="assignments" class="c-assignmentelements">
                 <div v-for="(placeholder, index) in assignments" :key="index" class="c-assignmentelement__placeholder" :style="{ gridRow: `${placeholder.position} / auto`, gridColumn: `1 / auto`, width: `${placeholder.width}px`, height: `${placeholder.height}px` }"></div>
 
-                <AssignmentElement :setRef="setElementRef" v-for="(assignment, index) in assignments" :key="index" :index="index" class="c-assignmentelement" :class="edit ? 'c-assignmentelement__moving' : ''" :assignment="assignment" :edit="edit" :updateAction="updateThisAssignmentAction" :deleteAction="deleteThisAssignemntAction" :style="{ gridRow: `${assignment.position} / auto`, gridColumn: `1 / auto`, top: assignment.top, left: assignment.left, position: assignment.selected ? 'absolute' : 'relative' }"/>
+                <AssignmentElement :setRef="setElementRef" v-for="(assignment, index) in assignments" :key="index" :index="index" openLabel="Levels" class="c-assignmentelement" :class="edit ? 'c-assignmentelement__moving' : ''" :assignment="assignment" :edit="edit" :updateAction="updateThisAssignmentAction" :deleteAction="deleteThisAssignemntAction" :style="{ gridRow: `${assignment.position} / auto`, gridColumn: `1 / auto`, top: assignment.top, left: assignment.left, position: assignment.selected ? 'absolute' : 'relative' }">
+                    <span>No levels found</span>
+                    <div class="u-flex u-align-center u-justify-end">
+                        <button class="c-button__normal">Add level</button>
+                    </div>
+                </AssignmentElement>
             </div>
         </section>
     </div>

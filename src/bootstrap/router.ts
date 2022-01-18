@@ -53,6 +53,14 @@ const routes: RouteRecordRaw[] = [
         },
     },
     {
+        path: '/classes/:classroomId/makelevel/:levelId',
+        component: () => import('../screens/Level.teacher.vue'),
+        meta: {
+            loggedIn: true,
+            roles: ['TEACHER'],
+        },
+    },
+    {
         path: '/classes/:classroomId/members',
         component: () => import('../screens/Members.teacher.vue'),
         meta: {

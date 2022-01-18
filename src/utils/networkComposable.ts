@@ -5,6 +5,7 @@ import DeleteUserFromClassroomInput from "../types/DeleteUserFromClassroomInput"
 import ForgotPasswordInput from "../types/forgotPasswordInput";
 import InviteUserToClassroomInput from "../types/InviteUserToClassroomInput";
 import JoinClassroomInput from "../types/JoinClassroomInput";
+import Level from "../types/Level";
 import LoginInput from "../types/LoginInput";
 import RegisterInput from "../types/RegisterInput";
 import RestorePasswordInput from "../types/RestorePasswordInput";
@@ -392,6 +393,46 @@ export const useNetwork = () => {
             data: {
                 assignmentId: data.assignmentId,
                 subject: data.subject,
+                position: data.position,
+            },
+        },
+    });
+
+    const getLevel = (token: string, levelId: string) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            query GetLevel($levelId: String!) {
+                getLevel(levelId: $levelId) {
+                    levelId
+                    level
+                    description
+                    status
+                    assignment {
+                        assignmentId
+                        category {
+                            categoryId
+                            name
+                        }
+                        subject
+                    }
+                }
+            }
+        `,
+        variables: {
+            levelId: levelId,
+        },
+    });
+
+    const updateLevel = (token: string, data: Level) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            mutation UpdateLevel($data: UpdateLevelInput!) {
+                updateLevel(data: $data)
+            }
+        `,
+        variables: {
+            data: {
+                levelId: data.levelId,
+                description: data.description,
+                status: data.status,
             },
         },
     });
@@ -421,5 +462,7 @@ export const useNetwork = () => {
         getAssignmentsByCategory,
         addAssignment,
         updateAssignment,
+        getLevel,
+        updateLevel,
     };
 };

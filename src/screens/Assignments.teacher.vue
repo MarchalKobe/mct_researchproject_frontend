@@ -17,6 +17,7 @@
     import Assignment from '../types/Assignment';
     import Mouse from '../types/Mouse';
     import LevelElement from '../components/LevelElement.vue';
+    import UpdateAssignmentInput from '../types/UpdateAssignmentInput';
 
     const { getClassroom, getCategory, getCategoriesByClassroom, addCategory, updateCategory, getAssignmentsByCategory, addAssignment, updateAssignment } = useNetwork();
 
@@ -250,15 +251,40 @@
 
                         if(selectedAssignment!.position! < assignment.position!) {
                             assignments.value.map((as: Assignment) => {
-                                if(as.position! <= assignment.position! && as.position !== selectedAssignment!.position && as.position! > selectedAssignment!.position!) as.position!--;
+                                if(as.position! <= assignment.position! && as.position !== selectedAssignment!.position && as.position! > selectedAssignment!.position!) {
+                                    as.position!--;
+
+                                    getIdToken(user.information.user as User).then(async (token: string) => {
+                                        const response = await updateAssignment(token, as as UpdateAssignmentInput);
+                                        console.log({ response });
+                                    }).catch((error: string) => {
+                                        console.error(error);
+                                    });
+                                };
                             });
                         } else {
                             assignments.value.map((as: Assignment) => {
-                                if(as.position! >= assignment.position! && as.position !== selectedAssignment!.position && as.position! < selectedAssignment!.position!) as.position!++;
+                                if(as.position! >= assignment.position! && as.position !== selectedAssignment!.position && as.position! < selectedAssignment!.position!) {
+                                    as.position!++;
+                                    
+                                    getIdToken(user.information.user as User).then(async (token: string) => {
+                                        const response = await updateAssignment(token, as as UpdateAssignmentInput);
+                                        console.log({ response });
+                                    }).catch((error: string) => {
+                                        console.error(error);
+                                    });
+                                };
                             });
                         };
                         
                         selectedAssignment!.position = position;
+
+                        getIdToken(user.information.user as User).then(async (token: string) => {
+                            const response = await updateAssignment(token, selectedAssignment as UpdateAssignmentInput);
+                            console.log({ response });
+                        }).catch((error: string) => {
+                            console.error(error);
+                        });
                     };
                 });
             };
@@ -362,7 +388,7 @@
 
                 <AssignmentElement :setRef="setElementRef" v-for="(assignment, index) in assignments" :key="index" :index="index" openLabel="Levels" class="c-assignmentelement" :class="edit ? 'c-assignmentelement__moving' : ''" :assignment="assignment" :edit="edit" :updateAction="updateThisAssignmentAction" :deleteAction="deleteThisAssignemntAction" :style="{ gridRow: `${assignment.position} / auto`, gridColumn: `1 / auto`, top: assignment.top, left: assignment.left, position: assignment.selected ? 'absolute' : 'relative' }">
                     <div class="u-margin-top-x-md">
-                        <LevelElement v-for="(level, index) in assignment.levels" :key="index" :level="level" />
+                        <LevelElement v-for="(level, index) in assignment.levels" :key="index" :level="level" :classroomId="classroomId" />
                     </div>
                     <div class="u-flex u-align-center">
                         <div class="u-flex u-align-center u-margin-right-lg">

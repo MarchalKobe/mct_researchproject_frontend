@@ -43,7 +43,15 @@
         padding: 0.5rem 1rem;
         white-space: nowrap;
         cursor: pointer;
-    
+
+        &-orange {
+            background: var(--global-orange);
+        }
+
+        &-green {
+            background: var(--global-green);
+        }
+        
         &:hover {
             opacity: 0.9;
         }

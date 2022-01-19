@@ -17,9 +17,6 @@
         user: Object as () => UserState,
     });
 
-    // const tab = ref<string>('code');
-    // const language = ref<string>('html');
-
     // @ts-ignore
     self.MonacoEnvironment = {
         getWorker(_: string, label: string) {
@@ -43,6 +40,8 @@
         editor = monaco.editor.create(editorcontainer.value!, {
             language: 'html',
             theme: props.user!.preferredTheme === 'dark' ? 'vs-dark' : 'vs',
+            // contextmenu: false,
+            // readOnly: true,
         });
 
         // @ts-ignore
@@ -52,10 +51,6 @@
             // @ts-ignore
             props[props.editorNavigation!.tab][props.editorNavigation!.language] = editor.getValue();
         }, 500));
-    });
-
-    onUnmounted(() => {
-        editor?.dispose();
     });
 
     watch(() => props.editorNavigation!.tab, () => {
@@ -70,6 +65,10 @@
         // @ts-ignore
         editor.setValue(props[props.editorNavigation!.tab][props.editorNavigation!.language]);
         editor.focus();
+    });
+
+    onUnmounted(() => {
+        editor?.dispose();
     });
 </script>
 
@@ -91,3 +90,10 @@
         </div>
     </section>
 </template>
+
+<style>
+    /* .monaco-editor .editor-widget {
+        display: none !important;
+        visibility: hidden !important;
+    } */
+</style>

@@ -8,7 +8,6 @@
     import Level from '../types/Level';
     import { useNetwork } from '../utils/networkComposable';
     import Textarea from '../components/Textarea.vue';
-    import Languages from '../types/Languages';
     import Editor from '../components/Editor.vue';
     import EditorNavigation from '../types/EditorNavigation';
     import LivePreview from '../components/LivePreview.vue';
@@ -100,7 +99,7 @@
             <Editor :code="level.code" :startcode="level.startcode" :editorNavigation="editorNavigation" :user="user.information" />
         </div>
         <div class="c-level__fullspan">
-            <LivePreview :code="editorNavigation.tab === 'code' ? level.code!.html! : level.startcode!.html" />
+            <LivePreview :label="editorNavigation.tab === 'code' ? 'Assignment' : 'Startcode'" :code="editorNavigation.tab === 'code' ? level.code!.html! : level.startcode!.html" />
         </div>
     </div>
 </template>

@@ -4,6 +4,7 @@
         grid-template-columns: 1fr 1fr;
         grid-template-rows: 18rem 1fr;
         height: 100vh;
+        overflow: hidden;
     }
 
     &__fullspan {

@@ -123,6 +123,28 @@
         }
     }
 
+    &__header {
+        all: unset;
+        padding: 0.25rem 0.5rem;
+        margin: 0 0.25rem;
+        border: 2px solid transparent;
+        font-size: 0.8rem;
+        box-sizing: border-box;
+        cursor: pointer;
+        
+        &-selected {
+            background: var(--global-xx-dark);
+        }
+
+        &:hover {
+            opacity: 0.8;
+        }
+
+        &:focus {
+            border: var(--global-focus-border);
+        }
+    }
+
     &__disabled {
         pointer-events: none;
         cursor: not-allowed;

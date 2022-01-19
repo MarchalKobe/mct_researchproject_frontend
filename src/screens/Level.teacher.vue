@@ -10,6 +10,8 @@
     import Textarea from '../components/Textarea.vue';
     import Languages from '../types/Languages';
     import Editor from '../components/Editor.vue';
+    import EditorNavigation from '../types/EditorNavigation';
+    import LivePreview from '../components/LivePreview.vue';
 
     const { getLevel, updateLevel } = useNetwork();
 
@@ -24,31 +26,22 @@
 
     const level = ref<Level | null>();
 
-    const code = reactive<Languages>({
-        html: `<!DOCTYPE html>
-<html>
-    <head>
-        <title>Titleee</title>
-    </head>
-    <body>
-        <h1>Title</h1>
-        <h2>Subtitle</h2>
-        <p>Dit is een paragraaf</p>
-    </body>
-</html>`,
-        css: '',
-        javascript: '',
+    const editorNavigation = reactive<EditorNavigation>({
+        tab: 'code',
+        language: 'html',
     });
 
-    const startcode = reactive<Languages>({
-        html: '',
-        css: '',
-        javascript: '',
-    });
+    // const code = reactive<Languages>({ html: '' });
+    // const startcode = reactive<Languages>({ html: '' });
 
     const getThisLevel = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getLevel(token, levelId);
+            console.log({ response });
+
+            response.data.getLevel.code = JSON.parse(response.data.getLevel.code);
+            response.data.getLevel.startcode = JSON.parse(response.data.getLevel.startcode);
+
             console.log({ response });
             level.value = response.data.getLevel;
         }).catch((error: string) => {
@@ -85,11 +78,6 @@
     const levels = ref<string[]>(['Easy', 'Normal', 'Hard']);
 
     getThisLevel();
-
-    // const { head, body } = new DOMParser().parseFromString(code.assignment.html, 'text/html');
-    // const value = head.querySelector('title')!.innerText;
-    // const value2 = body.querySelector('p')!.innerText;
-    // console.log(value, value2);
 </script>
 
 <template>
@@ -109,10 +97,10 @@
             </div>
         </div>
         <div>
-            <Editor :code="code" :startcode="startcode" :user="user.information" />
+            <Editor :code="level.code" :startcode="level.startcode" :editorNavigation="editorNavigation" :user="user.information" />
         </div>
-        <div class="c-level__fullspan u-background-orange">
-            <iframe :srcdoc="code.html" frameborder="0" style="background: white; width: 100%; height: 100%;"></iframe>
+        <div class="c-level__fullspan">
+            <LivePreview :code="editorNavigation.tab === 'code' ? level.code!.html! : level.startcode!.html" />
         </div>
     </div>
 </template>

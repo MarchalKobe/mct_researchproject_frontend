@@ -8,15 +8,17 @@
     import { useDebounceFn } from '@vueuse/core';
     import Languages from '../types/Languages';
     import { UserState } from '../store/modules/user';
+    import EditorNavigation from '../types/EditorNavigation';
 
     const props = defineProps({
         code: Object as () => Languages | null,
         startcode: Object as () => Languages | null,
+        editorNavigation: Object as () => EditorNavigation,
         user: Object as () => UserState,
     });
 
-    const tab = ref<string>('code');
-    const language = ref<string>('html');
+    // const tab = ref<string>('code');
+    // const language = ref<string>('html');
 
     // @ts-ignore
     self.MonacoEnvironment = {
@@ -44,11 +46,11 @@
         });
 
         // @ts-ignore
-        editor.setValue(props[tab.value][language.value]);
+        editor.setValue(props[props.editorNavigation!.tab][props.editorNavigation!.language]);
 
         editor.onDidChangeModelContent(useDebounceFn(() => {
             // @ts-ignore
-            props[tab.value][language.value] = editor.getValue();
+            props[props.editorNavigation!.tab][props.editorNavigation!.language] = editor.getValue();
         }, 500));
     });
 
@@ -56,17 +58,17 @@
         editor?.dispose();
     });
 
-    watch(() => tab.value, () => {
+    watch(() => props.editorNavigation!.tab, () => {
         // @ts-ignore
-        editor.setValue(props[tab.value][language.value]);
+        editor.setValue(props[props.editorNavigation!.tab][props.editorNavigation!.language]);
         editor.focus();
     });
 
-    watch(() => language.value, () => {
-        monaco.editor.setModelLanguage(editor.getModel()!, language.value);
+    watch(() => props.editorNavigation!.language, () => {
+        monaco.editor.setModelLanguage(editor.getModel()!, props.editorNavigation!.language);
 
         // @ts-ignore
-        editor.setValue(props[tab.value][language.value]);
+        editor.setValue(props[props.editorNavigation!.tab][props.editorNavigation!.language]);
         editor.focus();
     });
 </script>
@@ -75,13 +77,13 @@
     <section class="c-editor__container">
         <div class="c-editor__navbar">
             <div v-if="props.code && props.startcode" class="u-margin-bottom-sm">
-                <button class="c-editor__button" :class="{ 'c-editor__button-selected': tab === 'code' }" @click="tab = 'code'">Assignment</button>
-                <button class="c-editor__button" :class="{ 'c-editor__button-selected': tab === 'startcode' }" @click="tab = 'startcode'">Startcode (not required)</button>
+                <button class="c-button__header" :class="{ 'c-button__header-selected': props.editorNavigation!.tab === 'code' }" @click="props.editorNavigation!.tab = 'code'">Assignment</button>
+                <button class="c-button__header" :class="{ 'c-button__header-selected': props.editorNavigation!.tab === 'startcode' }" @click="props.editorNavigation!.tab = 'startcode'">Startcode (not required)</button>
             </div>
             <div>
-                <button v-if="(tab === 'code' && Object.keys(props.code!).includes('html')) || tab === 'startcode'" class="c-editor__button" :class="{ 'c-editor__button-selected': language === 'html' }" @click="language = 'html'">index.html</button>
-                <button v-if="(tab === 'code' && Object.keys(props.code!).includes('css')) || tab === 'startcode'" class="c-editor__button" :class="{ 'c-editor__button-selected': language === 'css' }" @click="language = 'css'">style.css</button>
-                <button v-if="(tab === 'code' && Object.keys(props.code!).includes('javascript')) || tab === 'startcode'" class="c-editor__button" :class="{ 'c-editor__button-selected': language === 'javascript' }" @click="language = 'javascript'">javascript.js</button>
+                <button v-if="(props.editorNavigation!.tab === 'code' && Object.keys(props.code!).includes('html')) || (props.editorNavigation!.tab === 'startcode' && Object.keys(props.startcode!).includes('html'))" class="c-button__header" :class="{ 'c-button__header-selected': props.editorNavigation!.language === 'html' }" @click="props.editorNavigation!.language = 'html'">index.html</button>
+                <button v-if="(props.editorNavigation!.tab === 'code' && Object.keys(props.code!).includes('css')) || (props.editorNavigation!.tab === 'startcode' && Object.keys(props.startcode!).includes('css'))" class="c-button__header" :class="{ 'c-button__header-selected': props.editorNavigation!.language === 'css' }" @click="props.editorNavigation!.language = 'css'">style.css</button>
+                <button v-if="(props.editorNavigation!.tab === 'code' && Object.keys(props.code!).includes('javascript')) || (props.editorNavigation!.tab === 'startcode' && Object.keys(props.startcode!).includes('javascript'))" class="c-button__header" :class="{ 'c-button__header-selected': props.editorNavigation!.language === 'javascript' }" @click="props.editorNavigation!.language = 'javascript'">javascript.js</button>
             </div>
         </div>
         <div class="c-editor">

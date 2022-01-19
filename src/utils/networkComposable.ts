@@ -414,6 +414,8 @@ export const useNetwork = () => {
                         }
                         subject
                     }
+                    code
+                    startcode
                 }
             }
         `,
@@ -433,6 +435,8 @@ export const useNetwork = () => {
                 levelId: data.levelId,
                 description: data.description,
                 status: data.status,
+                code: JSON.stringify(data.code),
+                startcode: JSON.stringify(data.startcode),
             },
         },
     });

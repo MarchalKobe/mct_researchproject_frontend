@@ -1,4 +1,5 @@
 import Assignment from "./Assignment";
+import Languages from "./Languages";
 
 export default interface Level {
     levelId?: string;
@@ -6,4 +7,6 @@ export default interface Level {
     description?: string;
     status?: number; // 0: not started; 1: in progress; 2: ready
     assignment?: Assignment;
+    code?: Languages;
+    startcode?: Languages;
 };

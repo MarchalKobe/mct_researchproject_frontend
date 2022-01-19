@@ -9,7 +9,7 @@
     import { useNetwork } from '../utils/networkComposable';
     import Textarea from '../components/Textarea.vue';
     import Languages from '../types/Languages';
-import Editor from '../components/Editor.vue';
+    import Editor from '../components/Editor.vue';
 
     const { getLevel, updateLevel } = useNetwork();
 
@@ -36,20 +36,14 @@ import Editor from '../components/Editor.vue';
         <p>Dit is een paragraaf</p>
     </body>
 </html>`,
+        css: '',
+        javascript: '',
     });
 
     const startcode = reactive<Languages>({
-        html: `
-            <!DOCTYPE html>
-            <html>
-                <head>
-                    <title>Titleee</title>
-                </head>
-                <body>
-                    <h1>Title</h1>
-                </body>
-            </html>
-        `,
+        html: '',
+        css: '',
+        javascript: '',
     });
 
     const getThisLevel = async () => {
@@ -115,7 +109,7 @@ import Editor from '../components/Editor.vue';
             </div>
         </div>
         <div>
-            <Editor :code="code" :startcode="startcode" />
+            <Editor :code="code" :startcode="startcode" :user="user.information" />
         </div>
         <div class="c-level__fullspan u-background-orange">
             <iframe :srcdoc="code.html" frameborder="0" style="background: white; width: 100%; height: 100%;"></iframe>

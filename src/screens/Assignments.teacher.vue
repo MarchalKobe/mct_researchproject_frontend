@@ -18,6 +18,7 @@
     import Mouse from '../types/Mouse';
     import LevelElement from '../components/LevelElement.vue';
     import UpdateAssignmentInput from '../types/UpdateAssignmentInput';
+import { useAlerts } from '../store/alerts';
 
     const { getClassroom, getCategory, getCategoriesByClassroom, addCategory, updateCategory, getAssignmentsByCategory, addAssignment, updateAssignment } = useNetwork();
 
@@ -340,13 +341,10 @@
             };
         };
     });
-
-    const logAssignments = () => console.log(assignments.value);
 </script>
 
 <template>
     <Navbar />
-
 
     <div v-if="classroom" class="e-container">
         <Header :title="`${classroom.name} - Assignments`" backPath="/classes" />

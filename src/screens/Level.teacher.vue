@@ -7,6 +7,7 @@
     import { GetterTypes, UserState } from '../store/modules/user';
     import Level from '../types/Level';
     import { useNetwork } from '../utils/networkComposable';
+import Textarea from '../components/Textarea.vue';
 
     const { getLevel, updateLevel } = useNetwork();
 
@@ -65,20 +66,24 @@
 <template>
     <Navbar />
 
-    <div v-if="level && level.assignment" class="u-margin-left-navbar">
-        <div class="u-margin-left-navbar-button">
-            <h2 class="u-margin-0 u-weight-400">{{ level.assignment.category!.name }}</h2>
-            <h3 class="u-margin-0 u-weight-400">Difficulty: {{ levels[level.level! - 1] }}</h3>
-            <h1 class="u-margin-0 u-weight-400 u-margin-bottom-md">{{ level.assignment.subject }}</h1>
-            <span>Description</span>
-            <br />
-            <textarea class="u-margin-bottom-md" style="width: 26rem; font-size: 1.5rem;" rows="3" v-model="level.description" />
+    <div v-if="level" class="c-level__container u-margin-left-navbar">
+        <div class="c-level__information">
+            <h2 class="c-level__category">{{ level.assignment!.category!.name }}</h2>
+            <h1 class="c-level__subject"><span  :class="{ 'u-color-green': level.status === 2, 'u-color-orange': level.status === 1, 'u-color-red': level.status === 0 }">{{ levels[level.level! - 1] }}</span> - {{ level.assignment!.subject }}</h1>
 
-            <div class="u-flex u-align-center">
+            <Textarea label="Description" placeholder="Add a description for this assignment" :rows="3" :model="level" modelName="description" />
+
+            <div class="u-flex u-align-center u-justify-end">
                 <button class="c-button__normal u-margin-right-sm" @click="cancelLevelSubmit">Go back</button>
                 <button class="c-button__normal c-button__normal-orange u-margin-right-sm" @click="saveLevelSubmit">Save level</button>
                 <button class="c-button__normal c-button__normal-green" @click="submitLevelSubmit">Submit level</button>
             </div>
+        </div>
+        <div class="u-background-red">
+            <span>2</span>
+        </div>
+        <div class="c-level__fullspan u-background-orange">
+            <span>3</span>
         </div>
     </div>
 </template>

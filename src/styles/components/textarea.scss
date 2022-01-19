@@ -1,0 +1,28 @@
+.c-textarea {
+    &__container {
+        display: block;
+        width: 100%;
+        text-align: left;
+    }
+    
+    &__label {
+        display: block;
+        font-size: 0.75rem;
+        margin-bottom: 0.25rem;
+    }
+
+    &__field {
+        all: unset;
+        color: var(--global-xx-light);
+        background: var(--global-x-dark);
+        border: 2px solid var(--global-light);
+        border-radius: 0.35rem;
+        padding: 0.5rem;
+        cursor: text;
+        width: calc(100% - calc(1rem + 4px));
+
+        &:focus {
+            border: var(--global-focus-border);
+        }
+    }
+}

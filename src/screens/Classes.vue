@@ -99,12 +99,28 @@
     };
 
     getThisMyJoinedClassrooms();
+
+    const html = ref<string>(`
+        <!DOCTYPE html>
+        <html>
+            <head>
+                <title>Title</title>
+            </head>
+            <body>
+                <h1>Title</h1>
+                <h2>Subtitle</h2>
+                <p>Dit is een paragraaf</p>
+            </body>
+        </html>
+    `);
 </script>
 
 <template>
     <Navbar />
 
     <div class="e-container">
+        <!-- <iframe :srcdoc="html" frameborder="0" style="background: white; width: 100%; height: 300px;"></iframe> -->
+
         <Header title="Classes" />
 
         <section>

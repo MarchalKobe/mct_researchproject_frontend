@@ -1,0 +1,38 @@
+.c-editor {
+    position: relative;
+    height: 100%;
+
+    &__container {
+        width: 100%;
+        height: 100%;
+    }
+
+    &__navbar {
+        width: 100%;
+        background: var(--global-dark);
+        padding-top: 0.5rem;
+        padding-left: 0.25rem;
+    }
+
+    &__button {
+        all: unset;
+        padding: 0.25rem 0.5rem;
+        margin: 0 0.25rem;
+        border: 2px solid transparent;
+        font-size: 0.8rem;
+        box-sizing: border-box;
+        cursor: pointer;
+        
+        &-selected {
+            background: var(--global-xx-dark);
+        }
+
+        &:hover {
+            opacity: 0.8;
+        }
+
+        &:focus {
+            border: var(--global-focus-border);
+        }
+    }
+}

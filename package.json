@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "firebase": "^9.6.2",
+    "monaco-editor": "^0.31.1",
     "sass": "^1.47.0",
     "vue": "^3.2.25",
     "vue-router": "^4.0.12",

@@ -15,6 +15,7 @@
     import UpdateEditorInput from '../types/UpdateEditorInput';
     import SelectOption from '../types/SelectOption';
     import { validateEmail } from '../helpers/ValidateEmail';
+import { useAlerts } from '../store/alerts';
 
     const { updateAccountGeneral, updateAccountEmail, updateAccountPassword, updateAccountEditor } = useNetwork();
 
@@ -146,6 +147,12 @@
             console.error(error);
         });
     };
+
+    const { addAlert } = useAlerts();
+
+    const success = () => addAlert('success', 'This is a success alert.');
+    const warning = () => addAlert('warning', 'This is a warning alert.');
+    const error = () => addAlert('error', 'This is an error alert.');
 </script>
 
 <template>
@@ -153,6 +160,12 @@
 
     <div class="e-container">
         <Header title="Profile" />
+
+        <div class="u-margin-bottom-md">
+            <button class="c-button__normal c-button__normal-green u-margin-right-sm" @click="success">Success</button>
+            <button class="c-button__normal c-button__normal-orange u-margin-right-sm" @click="warning">Warning</button>
+            <button class="c-button__normal c-button__normal-red" @click="error">Error</button>
+        </div>
 
         <section class="u-width-24 u-margin-bottom-lg">
             <h2 class="u-margin-0 u-margin-bottom-md u-weight-400">General</h2>

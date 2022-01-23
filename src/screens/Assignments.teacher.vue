@@ -18,7 +18,6 @@
     import Mouse from '../types/Mouse';
     import LevelElement from '../components/LevelElement.vue';
     import UpdateAssignmentInput from '../types/UpdateAssignmentInput';
-import { useAlerts } from '../store/alerts';
 
     const { getClassroom, getCategory, getCategoriesByClassroom, addCategory, updateCategory, getAssignmentsByCategory, addAssignment, updateAssignment } = useNetwork();
 
@@ -62,9 +61,9 @@ import { useAlerts } from '../store/alerts';
     const toggleEdit = () => {
         edit.value = !edit.value;
 
-        if(!edit.value) {
+        // if(!edit.value) {
 
-        };
+        // };
     };
 
     const addCategoryPopup = ref<boolean>(false);
@@ -150,6 +149,19 @@ import { useAlerts } from '../store/alerts';
         });
     };
 
+    const toggleCategoryVisible = () => {
+        updateThisCategory.visible = !category.value!.visible;
+
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            const response = await updateCategory(token, { categoryId: selectedCategory.categoryId, name: updateThisCategory.name, visible: updateThisCategory.visible });
+            console.log({ response });
+            getThisCategoriesByClassroom();
+            getThisCategory();
+        }).catch((error: string) => {
+            console.error(error);
+        });
+    };
+
     const updateCategorySubmit = () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await updateCategory(token, { categoryId: selectedCategory.categoryId, name: updateThisCategory.name });
@@ -168,6 +180,20 @@ import { useAlerts } from '../store/alerts';
             console.log({ response });
             getThisAssignmentsByCategory();
             toggleAddAssignmentPopup();
+        }).catch((error: string) => {
+            console.error(error);
+        });
+    };
+
+    const toggleAssignmentReady = (as: Assignment) => {
+        console.log(as);
+        
+        as.ready = !as.ready;
+
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            const response = await updateAssignment(token, { assignmentId: as.assignmentId!, subject: as.subject, ready: as.ready });
+            console.log({ response });
+            getThisAssignmentsByCategory();
         }).catch((error: string) => {
             console.error(error);
         });
@@ -358,6 +384,13 @@ import { useAlerts } from '../store/alerts';
 
         <div class="u-flex u-align-center u-justify-space-between u-margin-bottom-lg">
             <button class="c-button__normal" @click="toggleAddCategoryPopup">Create category</button>
+
+            <div v-if="category && assignments.length && !assignments.find((as) => !as.ready)">
+                <button v-if="!category.visible" class="c-button__normal" @click="toggleCategoryVisible">Make category visible</button>
+                <button v-else class="c-button__normal" @click="toggleCategoryVisible">Make category invisible</button>
+            </div>
+            <p v-else class="u-margin-0 u-color-x-light">Category is invisible</p>
+
             <Select class="u-width-14" :description="categoryOptions.length ? 'Select category' : 'No categories found'" :model="selectedCategory" modelName="categoryId" :options="categoryOptions" />
         </div>
 
@@ -388,7 +421,7 @@ import { useAlerts } from '../store/alerts';
                     <div class="u-margin-top-x-md">
                         <LevelElement v-for="(level, index) in assignment.levels" :key="index" :level="level" :classroomId="classroomId" />
                     </div>
-                    <div class="u-flex u-align-center">
+                    <!-- <div class="u-flex u-align-center">
                         <div class="u-flex u-align-center u-margin-right-lg">
                             <div class="c-block u-background-green u-margin-right-sm"></div>
                             <span>Level made</span>
@@ -401,14 +434,15 @@ import { useAlerts } from '../store/alerts';
                             <div class="c-block u-background-red u-margin-right-sm"></div>
                             <span>Level not started</span>
                         </div>
-                    </div>
+                    </div> -->
                     <div class="u-flex u-align-center u-justify-end u-margin-top-lg">
                         <div class="u-flex u-align-center">
-                            <div class="u-flex u-align-center u-margin-right-sm" v-if="assignment.levels!.filter((level) => level.status === 2).length !== 3">
+                            <div class="u-flex u-align-start u-margin-right-sm" v-if="assignment.levels!.filter((level) => level.status === 2).length !== 3">
                                 <svg class="u-margin-right-sm u-stroke-red" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                                <p class="u-margin-0 u-color-red">All levels need to be <span class="u-color-green">green</span> before you can make the assignment visible</p>
+                                <p class="u-margin-0 u-color-red">All levels need to be finished before you can make the assignment visible</p>
                             </div>
-                            <button class="c-button__normal" :class="{ 'c-button__disabled': assignment.levels!.filter((level) => level.status === 2).length !== 3 }">Make assignment visible</button>
+                            <button v-if="!assignment.ready" class="c-button__normal" :class="{ 'c-button__disabled': assignment.levels!.filter((level) => level.status === 2).length !== 3 }" @click="toggleAssignmentReady(assignment)">Make assignment visible</button>
+                            <button v-else class="c-button__normal" @click="toggleAssignmentReady(assignment)">Make assignment invisible</button>
                         </div>
                     </div>
                 </AssignmentElement>

@@ -85,7 +85,7 @@
     <div v-if="level" class="c-level__container u-margin-left-navbar">
         <div class="c-level__information">
             <h2 class="c-level__category">{{ level.assignment!.category!.name }}</h2>
-            <h1 class="c-level__subject"><span  :class="{ 'u-color-green': level.status === 2, 'u-color-orange': level.status === 1, 'u-color-red': level.status === 0 }">{{ levels[level.level! - 1] }}</span> - {{ level.assignment!.subject }}</h1>
+            <h1 class="c-level__subject"><span class="u-color-x-light">{{ levels[level.level! - 1] }} -</span> {{ level.assignment!.subject }}</h1>
 
             <Textarea label="Description" placeholder="Add a description for this assignment" :rows="3" :model="level" modelName="description" />
 

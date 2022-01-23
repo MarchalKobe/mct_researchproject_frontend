@@ -15,12 +15,13 @@
     &__button {
         all: unset;
         position: absolute;
-        top: 1.5rem;
-        right: -2.5rem;
+        top: 3.5rem;
+        right: -1rem;
         width: 2rem;
         height: 2rem;
         border-radius: 1rem;
-        display: flex;
+        // display: flex;
+        display: none;
         align-items: center;
         justify-content: center;
         background: var(--global-dark);
@@ -33,6 +34,10 @@
         &:hover {
             opacity: 0.8;
         }
+    }
+
+    &:hover &__button {
+        display: flex;
     }
 
     &__section {

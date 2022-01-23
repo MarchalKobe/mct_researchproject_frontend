@@ -295,6 +295,7 @@ export const useNetwork = () => {
                 getCategory(categoryId: $categoryId) {
                     categoryId
                     name
+                    visible
                 }
             }
         `,
@@ -341,6 +342,7 @@ export const useNetwork = () => {
             data: {
                 categoryId: data.categoryId,
                 name: data.name,
+                visible: data.visible,
             },
         },
     });
@@ -352,6 +354,7 @@ export const useNetwork = () => {
                     assignmentId
                     subject
                     position
+                    ready
                     category {
                         categoryId
                         name
@@ -394,6 +397,7 @@ export const useNetwork = () => {
                 assignmentId: data.assignmentId,
                 subject: data.subject,
                 position: data.position,
+                ready: data.ready,
             },
         },
     });

@@ -7,8 +7,12 @@
     import { GetterTypes, UserState } from '../store/modules/user';
     import store from '../store';
     import { useNetwork } from '../utils/networkComposable';
+    import Category from '../types/Category';
+    import Assignment from '../types/Assignment';
+    import AssignmentElement from '../components/AssignmentElement.vue';
+    import router from '../bootstrap/router';
 
-    const { getClassroom } = useNetwork();
+    const { getClassroom, getCurrentCategoryByClassroom, getAssignmentsByCategory, getMyAssignmentsByCategory } = useNetwork();
 
     const user = reactive<{ information: UserState }>({
         information: computed(() => store.getters[GetterTypes.GET_USER_INFORMATION]()).value,
@@ -20,14 +24,44 @@
 
     const classroom = ref<Classroom | null>(null);
 
+    const category = ref<Category | null>(null);
+
+    const assignments = ref<Assignment[]>([]);
+
     const getThisClassroom = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getClassroom(token, classroomId);
             console.log({ response });
             classroom.value = response.data.getClassroom;
+            getThisCurrentCategoryByClassroom();
         }).catch((error: string) => {
             console.error(error);
         });
+    };
+
+    const getThisCurrentCategoryByClassroom = async () => {
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            const response = await getCurrentCategoryByClassroom(token, classroomId);
+            console.log({ response });
+            category.value = response.data.getCurrentCategoryByClassroom;
+            getThisAssignmentsByCategory();
+        }).catch((error: string) => {
+            console.error(error);
+        });
+    };
+
+    const getThisAssignmentsByCategory = async () => {
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            const response = await getMyAssignmentsByCategory(token, category.value!.categoryId!);
+            console.log({ response });
+            assignments.value = response.data.getMyAssignmentsByCategory;
+        }).catch((error: string) => {
+            console.error(error);
+        });
+    };
+
+    const clickThisAssignmentAction = (scoreId: string) => {
+        router.push(`/classes/${classroomId}/makeassignment/${scoreId}`);
     };
 
     getThisClassroom();
@@ -39,9 +73,19 @@
     <div v-if="classroom" class="e-container">
         <Header :title="`${classroom.name} - Current Assignments`" backPath="/classes" />
 
-        <nav class="u-flex u-align-center u-justify-center u-margin-bottom-lg">
+        <nav class="u-flex u-align-center u-justify-center u-margin-bottom-md">
             <RouterLink class="c-button__soft u-margin-right-x-lg" :class="pathNew[pathNew.length - 1] === 'currentassignments' ? 'c-button__soft-selected' : ''" :to="`/classes/${classroomId}/currentassignments`">Current</RouterLink>
             <RouterLink class="c-button__soft" :class="pathNew[pathNew.length - 1] === 'finishedassignments' ? 'c-button__soft-selected' : ''" :to="`/classes/${classroomId}/finishedassignments`">Finished</RouterLink>
         </nav>
+
+        <div v-if="category">
+            <h2 class="u-margin-0 u-margin-bottom-md u-weight-400">{{ category.name }}</h2>
+
+            <div v-if="assignments && assignments.length" class="c-assignmentelements">
+                <AssignmentElement v-for="(assignment, index) in assignments" :key="index" class="c-assignmentelement" :assignment="assignment" :current="true" :clickAction="clickThisAssignmentAction"></AssignmentElement>
+            </div>
+
+            <p v-else>No assignments left, you can rest now :)</p>
+        </div>
     </div>
 </template>

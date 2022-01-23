@@ -1,5 +1,6 @@
 import Assignment from "./Assignment";
 import Languages from "./Languages";
+import Score from "./Score";
 
 export default interface Level {
     levelId?: string;
@@ -9,4 +10,5 @@ export default interface Level {
     assignment?: Assignment;
     code?: Languages;
     startcode?: Languages;
+    scores?: Score[];
 };

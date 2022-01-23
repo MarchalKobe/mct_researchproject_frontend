@@ -1,4 +1,4 @@
 export default interface EditorNavigation {
-    tab: string;
+    tab?: string;
     language: string;
 };

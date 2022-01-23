@@ -11,6 +11,7 @@
     import EditorNavigation from '../types/EditorNavigation';
 
     const props = defineProps({
+        student: Boolean as () => boolean | null,
         code: Object as () => Languages | null,
         startcode: Object as () => Languages | null,
         editorNavigation: Object as () => EditorNavigation,
@@ -40,7 +41,7 @@
         editor = monaco.editor.create(editorcontainer.value!, {
             language: 'html',
             theme: props.user!.preferredTheme === 'dark' ? 'vs-dark' : 'vs',
-            // contextmenu: false,
+            contextmenu: props.student ? false : true,
             // readOnly: true,
         });
 
@@ -85,15 +86,15 @@
                 <button v-if="(props.editorNavigation!.tab === 'code' && Object.keys(props.code!).includes('javascript')) || (props.editorNavigation!.tab === 'startcode' && Object.keys(props.startcode!).includes('javascript'))" class="c-button__header" :class="{ 'c-button__header-selected': props.editorNavigation!.language === 'javascript' }" @click="props.editorNavigation!.language = 'javascript'">javascript.js</button>
             </div>
         </div>
-        <div class="c-editor">
+        <div class="c-editor" :class="{ 'c-editor__student': props.student }">
             <div ref="editorcontainer" style="height: 100%;"></div>
         </div>
     </section>
 </template>
 
 <style>
-    /* .monaco-editor .editor-widget {
+    .c-editor__student .monaco-editor .editor-widget {
         display: none !important;
         visibility: hidden !important;
-    } */
+    }
 </style>

@@ -1,11 +1,13 @@
 <script setup lang="ts">
     import { ref, watch } from 'vue';
     import Assignment from '../types/Assignment';
+    import Level from '../types/Level';
 
     const props = defineProps({
         add: Boolean as () => boolean | null,
         name: String as () => string | null,
         assignment: Object as () => Assignment | null,
+        current: Boolean as () => Boolean | null,
         edit: Boolean as () => boolean | null,
         // userId: String as () => string | null,
         setRef: Function as () => Function | null,
@@ -18,6 +20,12 @@
 
     const open = ref<boolean>(false);
     const toggleOpen = () => open.value = !open.value;
+
+    const level = ref<Level>();
+
+    if(props.current) {
+        level.value = props.assignment!.levels!.find((level: Level) => level.scores!.length)!;
+    };
 
     watch(() => props.edit, () => {
         if(props.edit) open.value = false;
@@ -48,6 +56,13 @@
                 <div v-if="!props.edit && props.openLabel" class="c-button__soft u-flex u-align-center" @click="toggleOpen">
                     <p class="u-margin-right-sm u-color-x-light">{{ props.openLabel }}</p>
                     <svg class="c-assignmentelement__symbol" :style="{ transform: `rotateX(${open ? '-180deg' : '0'})` }" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                </div>
+                <div v-else-if="props.current">
+                    <div v-if="level" class="c-button__soft u-flex u-align-center" @click="props.clickAction ? props.clickAction(level!.scores![0].scoreId) : null">
+                        <p class="u-margin-right-sm u-color-x-light">Start assignment</p>
+                        <svg class="c-assignmentelement__symbol" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8l4 4-4 4M8 12h7"/></svg>
+                    </div>
+                    <p v-else class="u-margin-0 u-color-x-light">Finish previous assignment first</p>
                 </div>
             </div>
             <div v-if="open" class="u-margin-top-md">

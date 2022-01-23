@@ -9,6 +9,7 @@ import Level from "../types/Level";
 import LoginInput from "../types/LoginInput";
 import RegisterInput from "../types/RegisterInput";
 import RestorePasswordInput from "../types/RestorePasswordInput";
+import Score from "../types/Score";
 import UpdateAssignmentInput from "../types/UpdateAssignmentInput";
 import UpdateCategoryInput from "../types/UpdateCategoryInput";
 import UpdateEditorInput from "../types/UpdateEditorInput";
@@ -304,6 +305,20 @@ export const useNetwork = () => {
         },
     });
 
+    const getCurrentCategoryByClassroom = (token: string, classroomId: string) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            query GetCurrentCategoryByClassroom($classroomId: String!) {
+                getCurrentCategoryByClassroom(classroomId: $classroomId) {
+                    categoryId
+                    name
+                }
+            }
+        `,
+        variables: {
+            classroomId: classroomId,
+        },
+    });
+
     const getCategoriesByClassroom = (token: string, classroomId: string) => handleData('graphql', token, 'POST', {
         query: /* GraphQL */ `
             query GetCategoriesByClassroom($classroomId: String!) {
@@ -344,6 +359,32 @@ export const useNetwork = () => {
                 name: data.name,
                 visible: data.visible,
             },
+        },
+    });
+
+    const getMyAssignmentsByCategory = (token: string, categoryId: string) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            query GetMyAssignmentsByCategory($categoryId: String!) {
+                getMyAssignmentsByCategory(categoryId: $categoryId) {
+                    assignmentId
+                    subject
+                    position
+                    category {
+                        name
+                    }
+                    levels {
+                        levelId
+                        level
+                        scores {
+                            scoreId
+                            status
+                        }
+                    }
+                }
+            }
+        `,
+        variables: {
+            categoryId: categoryId,
         },
     });
 
@@ -445,6 +486,74 @@ export const useNetwork = () => {
         },
     });
 
+    const getScore = (token: string, scoreId: string) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            query GetScore($scoreId: String!) {
+                getScore(scoreId: $scoreId) {
+                    scoreId
+                    code
+                    level {
+                        levelId
+                        level
+                        description
+                        code
+                        startcode
+                        assignment {
+                            assignmentId
+                            subject
+                            category {
+                                categoryId
+                                name
+                            }
+                        }
+                    }
+                }
+            }
+        `,
+        variables: {
+            scoreId: scoreId,
+        },
+    });
+
+    const getMyScoresByCategory = (token: string, categoryId: string) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            query GetMyScoresByCategory($categoryId: String!) {
+                getMyScoresByCategory(categoryId: $categoryId) {
+                    scoreId
+                    level {
+                        levelId
+                        assignment {
+                            assignmentId
+                            subject
+                            category {
+                                categoryId
+                                name
+                            }
+                        }
+                    }
+                }
+            }
+        `,
+        variables: {
+            categoryId: categoryId,
+        },
+    });
+
+    const updateScore = (token: string, data: Score) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            mutation UpdateScore($data: UpdateScoreInput!) {
+                updateScore(data: $data)
+            }
+        `,
+        variables: {
+            data: {
+                scoreId: data.scoreId,
+                status: data.status,
+                code: JSON.stringify(data.code),
+            },
+        },
+    });
+
     return {
         register,
         login,
@@ -464,13 +573,18 @@ export const useNetwork = () => {
         deleteUserFromClassroom,
         inviteUserToClassroom,
         getCategory,
+        getCurrentCategoryByClassroom,
         getCategoriesByClassroom,
         addCategory,
         updateCategory,
+        getMyAssignmentsByCategory,
         getAssignmentsByCategory,
         addAssignment,
         updateAssignment,
         getLevel,
         updateLevel,
+        getScore,
+        getMyScoresByCategory,
+        updateScore,
     };
 };

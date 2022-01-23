@@ -82,6 +82,7 @@
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getClassroom(token, classroomId);
             console.log({ response });
+            getThisCategoriesByClassroom();
             classroom.value = response.data.getClassroom;
         }).catch((error: string) => {
             console.error(error);
@@ -104,8 +105,6 @@
             if(assignments.value.length) {
                 assignments.value.map((assignment: Assignment) => {
                     assignment.ref!.removeEventListener('mousedown', assignmentMouseDownAction.bind(null, assignment), false);
-
-                    console.log('test');
                 });
             };
 
@@ -228,7 +227,6 @@
     });
 
     getThisClassroom();
-    getThisCategoriesByClassroom();
 
     const mouse = reactive<Mouse>({
         x: 0,
@@ -385,11 +383,13 @@
         <div class="u-flex u-align-center u-justify-space-between u-margin-bottom-lg">
             <button class="c-button__normal" @click="toggleAddCategoryPopup">Create category</button>
 
-            <div v-if="category && assignments.length && !assignments.find((as) => !as.ready)">
-                <button v-if="!category.visible" class="c-button__normal" @click="toggleCategoryVisible">Make category visible</button>
-                <button v-else class="c-button__normal" @click="toggleCategoryVisible">Make category invisible</button>
+            <div v-if="category">
+                <div v-if="assignments.length && !assignments.find((as) => !as.ready)">
+                    <button v-if="!category.visible" class="c-button__normal" @click="toggleCategoryVisible">Make category visible</button>
+                    <button v-else class="c-button__normal" @click="toggleCategoryVisible">Make category invisible</button>
+                </div>
+                <p v-else class="u-margin-0 u-color-x-light">Category is invisible</p>
             </div>
-            <p v-else class="u-margin-0 u-color-x-light">Category is invisible</p>
 
             <Select class="u-width-14" :description="categoryOptions.length ? 'Select category' : 'No categories found'" :model="selectedCategory" modelName="categoryId" :options="categoryOptions" />
         </div>

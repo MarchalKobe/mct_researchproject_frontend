@@ -7,6 +7,10 @@ const routes: RouteRecordRaw[] = [
     {
         path: '/',
         redirect: '/classes',
+        meta: {
+            loggedIn: true,
+            roles: ['STUDENT', 'TEACHER'],
+        }
     },
     {
         path: '/login',
@@ -108,11 +112,11 @@ router.beforeEach(async (to: RouteLocationNormalized, _: RouteLocationNormalized
             const role = roles[user.type];
 
             if(!(to.meta.roles as String[]).includes(role)) {
-                next('/');
+                next('/login');
                 return;
             };
         } else {
-            next('/');
+            next('/login');
             return;
         };
     };

@@ -2,6 +2,7 @@
     import { ref, watch } from 'vue';
     import Assignment from '../types/Assignment';
     import Level from '../types/Level';
+    import Score from '../types/Score';
 
     const props = defineProps({
         add: Boolean as () => boolean | null,
@@ -22,9 +23,17 @@
     const toggleOpen = () => open.value = !open.value;
 
     const level = ref<Level>();
+    const score = ref<Score>();
 
     if(props.current) {
-        level.value = props.assignment!.levels!.find((level: Level) => level.scores!.length)!;
+        props.assignment!.levels!.map((lev: Level) => {
+            lev.scores!.map((sco: Score) => {
+                if(sco.status === 0) {
+                    level.value = lev;
+                    score.value = sco;
+                };
+            });
+        });
     };
 
     watch(() => props.edit, () => {
@@ -58,7 +67,7 @@
                     <svg class="c-assignmentelement__symbol" :style="{ transform: `rotateX(${open ? '-180deg' : '0'})` }" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
                 </div>
                 <div v-else-if="props.current">
-                    <div v-if="level" class="c-button__soft u-flex u-align-center" @click="props.clickAction ? props.clickAction(level!.scores![0].scoreId) : null">
+                    <div v-if="level" class="c-button__soft u-flex u-align-center" @click="props.clickAction ? props.clickAction(score!.scoreId) : null">
                         <p class="u-margin-right-sm u-color-x-light">Start assignment</p>
                         <svg class="c-assignmentelement__symbol" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8l4 4-4 4M8 12h7"/></svg>
                     </div>

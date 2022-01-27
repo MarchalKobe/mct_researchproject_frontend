@@ -31,6 +31,6 @@
             <p class="c-livepreview__label u-margin-right-sm">{{ props.label }}</p>
             <button class="c-button__header c-button__header-selected">{{ title }}</button>
         </div>
-        <iframe class="c-livepreview" :srcdoc="props.code" frameborder="0" style="background: white; width: 100%; height: 100%;"></iframe>
+        <iframe class="c-livepreview" sandbox="allow-same-origin allow-scripts allow-popups allow-forms allow-presentation" :srcdoc="props.code" frameborder="0" style="background: white; width: 100%; height: 100%;"></iframe>
     </section>
 </template>

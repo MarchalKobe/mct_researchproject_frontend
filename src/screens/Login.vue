@@ -6,7 +6,6 @@
     import Input from '../components/Input.vue';
     import LoginInput, { LoginError } from '../types/LoginInput';
     import { validateEmail } from '../helpers/ValidateEmail';
-import { useAlerts } from '../store/alerts';
 
     const auth: Auth = getAuth();
 

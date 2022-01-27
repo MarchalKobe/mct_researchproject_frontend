@@ -44,13 +44,13 @@
             const response = await getCurrentCategoryByClassroom(token, classroomId);
             console.log({ response });
             category.value = response.data.getCurrentCategoryByClassroom;
-            getThisAssignmentsByCategory();
+            getThisMyAssignmentsByCategory();
         }).catch((error: string) => {
             console.error(error);
         });
     };
 
-    const getThisAssignmentsByCategory = async () => {
+    const getThisMyAssignmentsByCategory = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getMyAssignmentsByCategory(token, category.value!.categoryId!);
             console.log({ response });

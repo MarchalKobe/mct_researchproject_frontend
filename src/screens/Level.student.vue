@@ -22,7 +22,6 @@
     const classroomId = pathNew[pathNew.length - 3];
     const scoreId = pathNew[pathNew.length - 1];
 
-    // const level = ref<Level | null>();
     const score = ref<Score | null>();
 
     const editorNavigation = reactive<EditorNavigation>({
@@ -56,7 +55,7 @@
             console.log(score.value);
             const response = await updateScore(token, score.value!);
             console.log({ response });
-            router.push(`/classes/${classroomId}/currentassignments`);
+            router.push(`/classes/${classroomId}/finishedassignments`);
         }).catch((error: string) => {
             console.error(error);
         });

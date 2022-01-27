@@ -13,7 +13,7 @@
 </script>
 
 <template>
-    <label class="c-select__container u-margin-bottom-md" :for="props.label">
+    <label class="c-select__container" :for="props.label">
         <span class="c-select__label">{{ props.label }}<span v-if="props.required" class="u-color-alpha">*</span></span>
         <div class="c-select">
             <svg class="c-select__symbol" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>

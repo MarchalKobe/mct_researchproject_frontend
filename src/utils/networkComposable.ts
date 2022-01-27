@@ -20,7 +20,8 @@ import UpdatePasswordInput from "../types/UpdatePasswordInput";
 const handleData = async (path: string, token: string | null = null, method: string = 'GET', body: any = null) => {
     const t0 = performance.now();
 
-    const response = await fetch(`http://localhost:5001/${path}`, {
+    // const response = await fetch(`http://localhost:5001/${path}`, {
+    const response = await fetch(`http://192.168.1.100:5001/${path}`, {
         headers: {
             'Content-Type': 'application/json',
             'Authorization': 'Bearer ' + token,
@@ -297,6 +298,7 @@ export const useNetwork = () => {
                     categoryId
                     name
                     visible
+                    done
                 }
             }
         `,
@@ -358,6 +360,7 @@ export const useNetwork = () => {
                 categoryId: data.categoryId,
                 name: data.name,
                 visible: data.visible,
+                done: data.done,
             },
         },
     });
@@ -395,7 +398,6 @@ export const useNetwork = () => {
                     assignmentId
                     subject
                     position
-                    ready
                     category {
                         categoryId
                         name
@@ -438,7 +440,6 @@ export const useNetwork = () => {
                 assignmentId: data.assignmentId,
                 subject: data.subject,
                 position: data.position,
-                ready: data.ready,
             },
         },
     });
@@ -515,20 +516,47 @@ export const useNetwork = () => {
         },
     });
 
+    // const getMyScoresByCategory = (token: string, categoryId: string) => handleData('graphql', token, 'POST', {
+    //     query: /* GraphQL */ `
+    //         query GetMyScoresByCategory($categoryId: String!) {
+    //             getMyScoresByCategory(categoryId: $categoryId) {
+    //                 scoreId
+    //                 level {
+    //                     levelId
+    //                     assignment {
+    //                         assignmentId
+    //                         subject
+    //                         category {
+    //                             categoryId
+    //                             name
+    //                         }
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     `,
+    //     variables: {
+    //         categoryId: categoryId,
+    //     },
+    // });
+
     const getMyScoresByCategory = (token: string, categoryId: string) => handleData('graphql', token, 'POST', {
         query: /* GraphQL */ `
             query GetMyScoresByCategory($categoryId: String!) {
                 getMyScoresByCategory(categoryId: $categoryId) {
-                    scoreId
-                    level {
+                    assignmentId
+                    subject
+                    category {
+                        categoryId
+                        name
+                    }
+                    levels {
                         levelId
-                        assignment {
-                            assignmentId
-                            subject
-                            category {
-                                categoryId
-                                name
-                            }
+                        level
+                        scores {
+                            scoreId
+                            scores
+                            updated_at
                         }
                     }
                 }

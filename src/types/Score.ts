@@ -6,6 +6,7 @@ export default interface Score {
     scoreId: string;
     code?: Languages;
     status: number;
+    scores?: string;
     user?: UserState;
     level?: Level;
 };

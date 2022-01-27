@@ -6,7 +6,6 @@ export default interface Assignment {
     subject: string;
     category?: Category;
     position?: number;
-    ready?: boolean;
     levels?: Level[];
 
     selected?: boolean;

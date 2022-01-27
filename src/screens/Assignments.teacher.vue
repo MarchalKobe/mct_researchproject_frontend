@@ -18,6 +18,7 @@
     import Mouse from '../types/Mouse';
     import LevelElement from '../components/LevelElement.vue';
     import UpdateAssignmentInput from '../types/UpdateAssignmentInput';
+    import Level from '../types/Level';
 
     const { getClassroom, getCategory, getCategoriesByClassroom, addCategory, updateCategory, getAssignmentsByCategory, addAssignment, updateAssignment } = useNetwork();
 
@@ -57,14 +58,10 @@
 
     const assignments = ref<Assignment[]>([]);
 
+    const levelsDone = ref<boolean>(false);
+
     const edit = ref<boolean>(false);
-    const toggleEdit = () => {
-        edit.value = !edit.value;
-
-        // if(!edit.value) {
-
-        // };
-    };
+    const toggleEdit = () => edit.value = !edit.value;;
 
     const addCategoryPopup = ref<boolean>(false);
     const toggleAddCategoryPopup = () => addCategoryPopup.value = !addCategoryPopup.value;
@@ -111,6 +108,15 @@
             const response = await getAssignmentsByCategory(token, selectedCategory.categoryId);
             console.log({ response });
             assignments.value = response.data.getAssignmentsByCategory;
+
+            levelsDone.value = true;
+
+            assignments.value.map((as: Assignment) => {
+                as.levels!.map((level: Level) => {
+                    if(level.status !== 2) levelsDone.value = false;
+                });
+            });
+
             once.value = false;
         }).catch((error: string) => {
             console.error(error);
@@ -161,6 +167,19 @@
         });
     };
 
+    const makeCategoryDone = () => {
+        if(window.confirm('Are you sure you want to finalize this category? You can\'t edit the assignments after this action and this can\'t be undone.')) {
+            getIdToken(user.information.user as User).then(async (token: string) => {
+                const response = await updateCategory(token, { categoryId: selectedCategory.categoryId, name: updateThisCategory.name, done: true });
+                console.log({ response });
+                getThisCategoriesByClassroom();
+                getThisCategory();
+            }).catch((error: string) => {
+                console.error(error);
+            });
+        };
+    };
+
     const updateCategorySubmit = () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await updateCategory(token, { categoryId: selectedCategory.categoryId, name: updateThisCategory.name });
@@ -184,19 +203,19 @@
         });
     };
 
-    const toggleAssignmentReady = (as: Assignment) => {
-        console.log(as);
+    // const toggleAssignmentReady = (as: Assignment) => {
+    //     console.log(as);
         
-        as.ready = !as.ready;
+    //     as.ready = !as.ready;
 
-        getIdToken(user.information.user as User).then(async (token: string) => {
-            const response = await updateAssignment(token, { assignmentId: as.assignmentId!, subject: as.subject, ready: as.ready });
-            console.log({ response });
-            getThisAssignmentsByCategory();
-        }).catch((error: string) => {
-            console.error(error);
-        });
-    };
+    //     getIdToken(user.information.user as User).then(async (token: string) => {
+    //         const response = await updateAssignment(token, { assignmentId: as.assignmentId!, subject: as.subject, ready: as.ready });
+    //         console.log({ response });
+    //         getThisAssignmentsByCategory();
+    //     }).catch((error: string) => {
+    //         console.error(error);
+    //     });
+    // };
 
     const updateAssignmentSubmit = () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
@@ -355,8 +374,6 @@
                         assignment.selected = false;
                         assignment.top = 'auto';
                         assignment.left = 'auto';
-                        console.log('test2');
-                        
                         assignment.ref.addEventListener('mousedown', assignmentMouseDownAction.bind(null, assignment), false);
                     };
                 });
@@ -378,17 +395,12 @@
             <RouterLink class="c-button__soft" :class="pathNew[pathNew.length - 1] === 'members' ? 'c-button__soft-selected' : ''" :to="`/classes/${classroomId}/members`">Members</RouterLink>
         </nav>
 
-        <!-- <button class="c-button__normal" @click="logAssignments">Test</button> -->
-
         <div class="u-flex u-align-center u-justify-space-between u-margin-bottom-lg">
             <button class="c-button__normal" @click="toggleAddCategoryPopup">Create category</button>
 
-            <div v-if="category">
-                <div v-if="assignments.length && !assignments.find((as) => !as.ready)">
-                    <button v-if="!category.visible" class="c-button__normal" @click="toggleCategoryVisible">Make category visible</button>
-                    <button v-else class="c-button__normal" @click="toggleCategoryVisible">Make category invisible</button>
-                </div>
-                <p v-else class="u-margin-0 u-color-x-light">Category is invisible</p>
+            <div v-if="category && assignments.length">
+                <button v-if="!category.done && levelsDone" class="c-button__normal" @click="makeCategoryDone">Finalize this category</button>
+                <button v-if="category.done && levelsDone" class="c-button__normal" @click="toggleCategoryVisible">{{ category.visible ? 'Make category invisible' : 'Make category visible' }}</button>
             </div>
 
             <Select class="u-width-14" :description="categoryOptions.length ? 'Select category' : 'No categories found'" :model="selectedCategory" modelName="categoryId" :options="categoryOptions" />
@@ -397,29 +409,29 @@
         <div v-if="category" class="u-flex u-align-center u-justify-space-between u-margin-bottom-lg">
             <div class="u-flex u-align-center">
                 <h2 class="u-margin-0 u-weight-400 u-margin-right-md">{{ category.name }}</h2>
-                <button v-if="edit" class="c-button__icon c-button__icon-orange u-margin-right-x-md" @click="toggleUpdateCategoryPopup">
+                <button v-if="!category.done && edit" class="c-button__icon c-button__icon-orange u-margin-right-x-md" @click="toggleUpdateCategoryPopup">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="16 3 21 8 8 21 3 21 3 16 16 3"></polygon></svg>
                 </button>
-                <button v-if="edit" class="c-button__icon c-button__icon-alpha">
+                <button v-if="!category.done && edit" class="c-button__icon c-button__icon-alpha">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
                 </button>
             </div>
-            <span v-if="edit" class="u-color-orange">Hold the assignments to move them in order</span>
-            <button class="c-button__soft u-color-x-light" @click="toggleEdit">{{ edit ? 'Done' : 'Edit' }}</button>
+            <span v-if="!category.done && edit" class="u-color-orange">Hold the assignments to move them in order</span>
+            <button v-if="!category.done" class="c-button__soft u-color-x-light" @click="toggleEdit">{{ edit ? 'Done' : 'Edit' }}</button>
         </div>
         <div v-else>
             <p>No category selected</p>
         </div>
 
         <section v-if="category" class="u-margin-bottom-lg">
-            <AssignmentElement class="u-margin-bottom-x-lg" :add="true" name="Create assignment" :edit="edit" @click="toggleAddAssignmentPopup" />
+            <AssignmentElement v-if="!category.done" class="u-margin-bottom-x-lg" :add="true" name="Create assignment" :edit="edit" @click="toggleAddAssignmentPopup" />
 
             <div v-if="assignments" class="c-assignmentelements">
                 <div v-for="(placeholder, index) in assignments" :key="index" class="c-assignmentelement__placeholder" :style="{ gridRow: `${placeholder.position} / auto`, gridColumn: `1 / auto`, width: `${placeholder.width}px`, height: `${placeholder.height}px` }"></div>
 
                 <AssignmentElement :setRef="setElementRef" v-for="(assignment, index) in assignments" :key="index" :index="index" openLabel="Levels" class="c-assignmentelement" :class="edit ? 'c-assignmentelement__moving' : ''" :assignment="assignment" :edit="edit" :updateAction="updateThisAssignmentAction" :deleteAction="deleteThisAssignemntAction" :style="{ gridRow: `${assignment.position} / auto`, gridColumn: `1 / auto`, top: assignment.top, left: assignment.left, position: assignment.selected ? 'absolute' : 'relative' }">
                     <div class="u-margin-top-x-md">
-                        <LevelElement v-for="(level, index) in assignment.levels" :key="index" :level="level" :classroomId="classroomId" />
+                        <LevelElement v-for="(level, index) in assignment.levels" :key="index" :level="level" :classroomId="classroomId" :category="category" />
                     </div>
                     <!-- <div class="u-flex u-align-center">
                         <div class="u-flex u-align-center u-margin-right-lg">
@@ -435,7 +447,7 @@
                             <span>Level not started</span>
                         </div>
                     </div> -->
-                    <div class="u-flex u-align-center u-justify-end u-margin-top-lg">
+                    <!-- <div class="u-flex u-align-center u-justify-end u-margin-top-lg">
                         <div class="u-flex u-align-center">
                             <div class="u-flex u-align-start u-margin-right-sm" v-if="assignment.levels!.filter((level) => level.status === 2).length !== 3">
                                 <svg class="u-margin-right-sm u-stroke-red" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
@@ -444,7 +456,7 @@
                             <button v-if="!assignment.ready" class="c-button__normal" :class="{ 'c-button__disabled': assignment.levels!.filter((level) => level.status === 2).length !== 3 }" @click="toggleAssignmentReady(assignment)">Make assignment visible</button>
                             <button v-else class="c-button__normal" @click="toggleAssignmentReady(assignment)">Make assignment invisible</button>
                         </div>
-                    </div>
+                    </div> -->
                 </AssignmentElement>
             </div>
         </section>

@@ -52,16 +52,16 @@
         router.push(`/classes/${classroomId}/assignments`);
     };
 
-    const saveLevelSubmit = () => {
-        getIdToken(user.information.user as User).then(async (token: string) => {
-            level.value!.status = 1;
-            const response = await updateLevel(token, level.value!);
-            console.log({ response });
-            router.push(`/classes/${classroomId}/assignments`);
-        }).catch((error: string) => {
-            console.error(error);
-        });
-    };
+    // const saveLevelSubmit = () => {
+    //     getIdToken(user.information.user as User).then(async (token: string) => {
+    //         level.value!.status = 1;
+    //         const response = await updateLevel(token, level.value!);
+    //         console.log({ response });
+    //         router.push(`/classes/${classroomId}/assignments`);
+    //     }).catch((error: string) => {
+    //         console.error(error);
+    //     });
+    // };
 
     const submitLevelSubmit = () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
@@ -91,7 +91,7 @@
 
             <div class="u-flex u-align-center u-justify-end">
                 <button class="c-button__normal u-margin-right-sm" @click="cancelLevelSubmit">Go back</button>
-                <button class="c-button__normal c-button__normal-orange u-margin-right-sm" @click="saveLevelSubmit">Save level</button>
+                <!-- <button class="c-button__normal c-button__normal-orange u-margin-right-sm" @click="saveLevelSubmit">Save level</button> -->
                 <button class="c-button__normal c-button__normal-green" @click="submitLevelSubmit">Submit level</button>
             </div>
         </div>

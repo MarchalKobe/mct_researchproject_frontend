@@ -11,8 +11,8 @@
     import Category from '../types/Category';
     import CategoryOption from '../types/CategoryOption';
     import Select from '../components/Select.vue';
-    import Score from '../types/Score';
-import AssignmentElement from '../components/AssignmentElement.vue';
+    import AssignmentElement from '../components/AssignmentElement.vue';
+    import Assignment from '../types/Assignment';
 
     const { getClassroom, getCategoriesByClassroom, getMyScoresByCategory } = useNetwork();
 
@@ -31,7 +31,7 @@ import AssignmentElement from '../components/AssignmentElement.vue';
         categoryId: '',
     });
 
-    const scores = ref<Score[]>([]);
+    const assignments = ref<Assignment[]>([]);
 
     const getThisClassroom = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
@@ -64,25 +64,23 @@ import AssignmentElement from '../components/AssignmentElement.vue';
         });
     };
 
-    const getThisScoresByCategory = async () => {
+    const getThisMyScoresByCategory = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getMyScoresByCategory(token, selectedCategory.categoryId);
             console.log({ response })
-            scores.value = response.data.getMyScoresByCategory;
+            assignments.value = response.data.getMyScoresByCategory;
         }).catch((error: string) => {
             console.error(error);
         });
     };
 
-    const clickThisScoreAction = () => {
-        console.log('clicked');
-    };
-
     getThisClassroom();
 
     watch(() => selectedCategory.categoryId, () => {
-        getThisScoresByCategory();
+        getThisMyScoresByCategory();
     });
+
+    const levels = ref<string[]>(['Easy', 'Normal', 'Hard']);
 </script>
 
 <template>
@@ -101,9 +99,14 @@ import AssignmentElement from '../components/AssignmentElement.vue';
             <Select class="u-width-14" :description="categoryOptions.length ? 'Select category' : 'No categories found'" :model="selectedCategory" modelName="categoryId" :options="categoryOptions" />
         </div>
 
-        <div v-if="selectedCategory.categoryId">
-            <div v-if="scores && scores.length" class="c-assignmentelements">
-                <AssignmentElement v-for="(score, index) in scores" :key="index" class="c-assignmentelement" :assignment="score.level!.assignment" :clickAction="clickThisScoreAction"></AssignmentElement>
+        <div v-if="selectedCategory.categoryId" class="u-margin-bottom-lg">
+            <div v-if="assignments && assignments.length" class="c-assignmentelements">
+                <AssignmentElement v-for="(assignment, index) in assignments" :key="index" class="c-assignmentelement" :assignment="assignment" openLabel="Scores">
+                    <div v-for="(level, index) in assignment.levels" :key="index">
+                        <p>{{ levels[level.level! - 1] }}</p>
+                        <p v-for="(score, index) in level.scores" :key="index">{{ score.scores }}</p>
+                    </div>
+                </AssignmentElement>
             </div>
     
             <p v-else>No scores found.</p>

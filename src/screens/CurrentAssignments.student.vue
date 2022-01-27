@@ -81,7 +81,7 @@
         <div v-if="category">
             <h2 class="u-margin-0 u-margin-bottom-md u-weight-400">{{ category.name }}</h2>
 
-            <div v-if="assignments && assignments.length" class="c-assignmentelements">
+            <div v-if="assignments && assignments.length" class="c-assignmentelements u-margin-bottom-lg">
                 <AssignmentElement v-for="(assignment, index) in assignments" :key="index" class="c-assignmentelement" :assignment="assignment" :current="true" :clickAction="clickThisAssignmentAction"></AssignmentElement>
             </div>
 

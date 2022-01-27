@@ -1,7 +1,9 @@
 <script setup lang="ts">
     import { ref } from 'vue';
+    import { UserState } from '../store/modules/user';
     import Category from '../types/Category';
     import Level from '../types/Level';
+    import Score from '../types/Score';
 
     const props = defineProps({
         level: Object as () => Level,
@@ -10,6 +12,14 @@
     });
 
     const levels = ref<string[]>(['Easy', 'Normal', 'Hard']);
+
+    const users = ref<UserState[]>([]);
+
+    if(props.category!.done) {
+        props.level!.scores!.map((score: Score) => {
+            if(!users.value.includes((score.user! as any).userId) && score.status === 1) users.value.push((score.user! as any).userId);
+        });
+    };
 </script>
 
 <template>
@@ -23,5 +33,9 @@
     
             <svg class="u-stroke-x-light" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8l4 4-4 4M8 12h7"/></svg>
         </RouterLink>
+
+        <div v-else>
+           <p class="u-margin-0">{{ users.length }} student{{ users.length === 1 ? '' : 's' }}</p>
+        </div>
     </div>
 </template>

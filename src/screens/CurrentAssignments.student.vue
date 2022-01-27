@@ -44,7 +44,8 @@
             const response = await getCurrentCategoryByClassroom(token, classroomId);
             console.log({ response });
             category.value = response.data.getCurrentCategoryByClassroom;
-            getThisMyAssignmentsByCategory();
+
+            if(category.value) getThisMyAssignmentsByCategory();
         }).catch((error: string) => {
             console.error(error);
         });
@@ -85,7 +86,9 @@
                 <AssignmentElement v-for="(assignment, index) in assignments" :key="index" class="c-assignmentelement" :assignment="assignment" :current="true" :clickAction="clickThisAssignmentAction"></AssignmentElement>
             </div>
 
-            <p v-else>No assignments left, you can rest now :)</p>
+            <p v-else>No assignments left, you can take a rest :)</p>
         </div>
+
+        <p v-else>No assignments left, you can take a rest :)</p>
     </div>
 </template>

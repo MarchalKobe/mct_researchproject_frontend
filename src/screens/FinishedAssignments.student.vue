@@ -13,6 +13,7 @@
     import Select from '../components/Select.vue';
     import AssignmentElement from '../components/AssignmentElement.vue';
     import Assignment from '../types/Assignment';
+import ProgressBar from '../components/ProgressBar.vue';
 
     const { getClassroom, getCategoriesByClassroom, getMyScoresByCategory } = useNetwork();
 
@@ -103,8 +104,12 @@
             <div v-if="assignments && assignments.length" class="c-assignmentelements">
                 <AssignmentElement v-for="(assignment, index) in assignments" :key="index" class="c-assignmentelement" :assignment="assignment" openLabel="Scores">
                     <div v-for="(level, index) in assignment.levels" :key="index">
-                        <p>{{ levels[level.level! - 1] }}</p>
-                        <p v-for="(score, index) in level.scores" :key="index">{{ score.scores }}</p>
+                        <p class="u-margin-0 u-margin-bottom-sm u-size-20">{{ levels[level.level! - 1] }}</p>
+                        <div v-for="(score, index) in level.scores" :key="index" class="u-margin-bottom-md">
+                            <p class="u-margin-0 u-size-20 u-color-x-light">Total: <span class="u-color-xx-light">{{ JSON.parse(score.scores!).total }}%</span></p>
+                            <p class="u-margin-0 u-margin-bottom-sm u-color-x-light">(Tags: {{ JSON.parse(score.scores!).tags }}% - Attributes: {{ JSON.parse(score.scores!).attributes }}% - Text: {{ JSON.parse(score.scores!).text }}%)</p>
+                            <ProgressBar style="width: 24rem" :progress="JSON.parse(score.scores!).total" />
+                        </div>
                     </div>
                 </AssignmentElement>
             </div>

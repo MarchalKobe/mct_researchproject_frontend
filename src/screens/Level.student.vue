@@ -55,7 +55,7 @@
             console.log(score.value);
             const response = await updateScore(token, score.value!);
             console.log({ response });
-            router.push(`/classes/${classroomId}/finishedassignments`);
+            router.push(`/classes/${classroomId}/currentassignments`);
         }).catch((error: string) => {
             console.error(error);
         });
@@ -85,7 +85,7 @@
             <Editor :student="true" :code="score.code" :editorNavigation="editorNavigation" :user="user.information" />
         </div>
         <div class="c-level__fullspan">
-            <div class="u-flex u-direction-column u-height-full">
+            <div class="u-flex u-direction-column" style="height: calc(100% - 5rem)">
                 <LivePreview label="Assignment" :code="score.level!.code!.html" />
                 <LivePreview label="Your code" :code="score.code!.html!" />
             </div>

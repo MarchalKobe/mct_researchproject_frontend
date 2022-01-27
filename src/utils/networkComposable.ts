@@ -406,6 +406,15 @@ export const useNetwork = () => {
                         levelId
                         level
                         status
+                        scores {
+                            scoreId
+                            scores
+                            user {
+                                userId
+                                firstName
+                                lastName
+                            }
+                        }
                     }
                 }
             }

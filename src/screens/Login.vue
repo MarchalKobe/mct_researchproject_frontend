@@ -31,7 +31,6 @@
         if(!Object.values(loginError).every(error => error === null)) return;
 
         const response = await login(loginData);
-        console.log({ response });
 
         if(response.data.login) {
             signInWithCustomToken(auth, response.data.login.token).then((_: UserCredential) => {

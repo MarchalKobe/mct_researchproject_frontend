@@ -7,10 +7,6 @@
     });
 </script>
 
-<Popup title="" :toggleClose="" buttonLabel="" :buttonAction="">
-
-</Popup>
-
 <template>
     <div @click.self="props.toggleClose!()" class="c-popup__container">
         <div class="c-popup">

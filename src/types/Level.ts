@@ -1,6 +1,6 @@
-import Assignment from "./Assignment";
-import Languages from "./Languages";
-import Score from "./Score";
+import Assignment from './Assignment';
+import Languages from './Languages';
+import Score from './Score';
 
 export default interface Level {
     levelId?: string;

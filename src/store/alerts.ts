@@ -1,5 +1,5 @@
-import { ref } from "vue";
-import Alert from "../types/Alert";
+import { ref } from 'vue';
+import Alert from '../types/Alert';
 
 const alerts = ref<Alert[]>([]);
 

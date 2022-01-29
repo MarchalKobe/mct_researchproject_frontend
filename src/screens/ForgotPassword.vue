@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { reactive } from 'vue';
-    import ForgotPasswordInput from '../types/forgotPasswordInput';
+    import ForgotPasswordInput from '../types/ForgotPasswordInput';
     import { useNetwork } from '../utils/networkComposable';
     import Input from '../components/Input.vue';
 
@@ -11,9 +11,7 @@
     });
 
     const forgotPasswordSubmit = async () => {
-        console.log(forgotPasswordData);
         const response = await forgotPassword(forgotPasswordData);
-        console.log({ response });
 
         // TODO: Check response
         window.alert(`You will receive an email at ${forgotPasswordData.email} if it exists.`);

@@ -10,7 +10,6 @@
     const confirmSubmit = async () => {
         if(token.value) {
             const response = await confirm(token.value);
-            console.log({ response });
 
             // TODO: Check response
             window.alert('Account has been confirmed');

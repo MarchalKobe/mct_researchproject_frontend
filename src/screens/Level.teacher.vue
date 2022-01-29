@@ -30,18 +30,13 @@
         language: 'html',
     });
 
-    // const code = reactive<Languages>({ html: '' });
-    // const startcode = reactive<Languages>({ html: '' });
-
     const getThisLevel = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getLevel(token, levelId);
-            console.log({ response });
 
             response.data.getLevel.code = JSON.parse(response.data.getLevel.code);
             response.data.getLevel.startcode = JSON.parse(response.data.getLevel.startcode);
 
-            console.log({ response });
             level.value = response.data.getLevel;
         }).catch((error: string) => {
             console.error(error);
@@ -52,22 +47,10 @@
         router.push(`/classes/${classroomId}/assignments`);
     };
 
-    // const saveLevelSubmit = () => {
-    //     getIdToken(user.information.user as User).then(async (token: string) => {
-    //         level.value!.status = 1;
-    //         const response = await updateLevel(token, level.value!);
-    //         console.log({ response });
-    //         router.push(`/classes/${classroomId}/assignments`);
-    //     }).catch((error: string) => {
-    //         console.error(error);
-    //     });
-    // };
-
     const submitLevelSubmit = () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             level.value!.status = 2;
             const response = await updateLevel(token, level.value!);
-            console.log({ response });
             router.push(`/classes/${classroomId}/assignments`);
         }).catch((error: string) => {
             console.error(error);
@@ -96,7 +79,6 @@
 
             <div class="u-flex u-align-center u-justify-end">
                 <button class="c-button__normal u-margin-right-sm" @click="cancelLevelSubmit">Go back</button>
-                <!-- <button class="c-button__normal c-button__normal-orange u-margin-right-sm" @click="saveLevelSubmit">Save level</button> -->
                 <button class="c-button__normal c-button__normal-green" @click="submitLevelSubmit">Submit level</button>
             </div>
         </div>

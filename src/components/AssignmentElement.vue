@@ -11,7 +11,6 @@
         showScore: Boolean as () => boolean | null,
         current: Boolean as () => boolean | null,
         edit: Boolean as () => boolean | null,
-        // userId: String as () => string | null,
         setRef: Function as () => Function | null,
         index: Number as () => number | null,
         openLabel: String as () => string | null,

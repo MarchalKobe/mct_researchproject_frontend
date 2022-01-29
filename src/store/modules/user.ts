@@ -78,7 +78,6 @@ export default {
 
                 signOut(auth).then(() => {
                     commit(MutationTypes.LOGOUT_USER);
-                    // console.log('LOGGED OUT!');
                     resolve(true);
                 }).catch((error) => {
                     console.error(error);

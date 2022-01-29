@@ -77,7 +77,6 @@
 
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await updateAccountGeneral(token, general);
-            console.log({ response });
             window.alert('Account general successfully changed. Log back in to see the changes.');
             
             store.dispatch(ActionTypes.LOGOUT_USER).then(() => {
@@ -96,7 +95,6 @@
 
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await updateAccountEmail(token, email);
-            console.log({ response });
             window.alert('Account email successfully changed. Confirm email and log back in.');
 
             store.dispatch(ActionTypes.LOGOUT_USER).then(() => {
@@ -123,7 +121,6 @@
 
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await updateAccountPassword(token, password);
-            console.log({ response });
             window.alert('Account password successfully changed. Log back in to see the changes.');
 
             store.dispatch(ActionTypes.LOGOUT_USER).then(() => {
@@ -137,7 +134,6 @@
     const updateThisEditor = () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await updateAccountEditor(token, editor);
-            console.log({ response });
             window.alert('Account editor successfully changed. Log back in to see the changes.');
 
             store.dispatch(ActionTypes.LOGOUT_USER).then(() => {

@@ -1,6 +1,6 @@
-import { UserState } from "../store/modules/user";
-import Languages from "./Languages";
-import Level from "./Level";
+import { UserState } from '../store/modules/user';
+import Languages from './Languages';
+import Level from './Level';
 
 export default interface Score {
     scoreId: string;

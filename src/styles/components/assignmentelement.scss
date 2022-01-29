@@ -9,17 +9,9 @@
     border: 1px solid var(--global-x-light);
     background: var(--global-dark);
     width: calc(100% - calc(3rem + 2px));
-    // width: calc(100% - calc(3rem + 2px));
     border-radius: 0.5rem;
     padding: 1.5rem;
     z-index: 3;
-
-    // position: relative;
-    // background: var(--global-dark);
-    // border: 1px solid var(--global-x-light);
-    // border-radius: 0.5rem;
-    // z-index: 3;
-    // padding: 1rem;
 
     &__button {
         position: absolute;

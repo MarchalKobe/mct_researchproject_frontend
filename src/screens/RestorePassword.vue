@@ -15,9 +15,7 @@
 
     const restorePasswordSubmit = async () => {
         if(token.value) {
-            console.log(restorePasswordData);
             const response = await restorePassword(token.value, restorePasswordData);
-            console.log({ response });
 
             // TODO: Check response
             window.alert('Password has been restored.');

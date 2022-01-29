@@ -11,7 +11,7 @@
     import Input from '../components/Input.vue';
     import Popup from '../components/Popup.vue';
     import InviteInput from '../types/InviteInput';
-import router from '../bootstrap/router';
+    import router from '../bootstrap/router';
 
     const { getClassroom, resetClasscode, deleteUserFromClassroom, inviteUserToClassroom } = useNetwork();
 
@@ -51,7 +51,6 @@ import router from '../bootstrap/router';
     const getThisClassroom = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getClassroom(token, classroomId);
-            console.log({ response });
             classroom.value = response.data.getClassroom;
         }).catch((error: string) => {
             console.error(error);
@@ -61,7 +60,6 @@ import router from '../bootstrap/router';
     const resetClasscodeSubmit = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await resetClasscode(token, classroomId);
-            console.log({ response });
             getThisClassroom();
         }).catch((error: string) => {
             console.error(error);
@@ -71,7 +69,6 @@ import router from '../bootstrap/router';
     const inviteUserToClassroomSubmit = (email: string) => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await inviteUserToClassroom(token, { email: email, classroomId: classroomId });
-            console.log({ response });
             window.alert(`Invite successfully send to ${email}.`);
         }).catch((error: string) => {
             console.error(error);
@@ -85,7 +82,6 @@ import router from '../bootstrap/router';
     const deleteThisUserFromClassroom = (userId: string) => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await deleteUserFromClassroom(token, { userId: userId, classroomId: classroomId });
-            console.log({ response });
             getThisClassroom();
         }).catch((error: string) => {
             console.error(error);

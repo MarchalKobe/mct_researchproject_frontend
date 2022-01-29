@@ -7,9 +7,6 @@
         options: Object,
         required: Boolean as () => boolean | null,
     });
-
-    console.log(props);
-    
 </script>
 
 <template>

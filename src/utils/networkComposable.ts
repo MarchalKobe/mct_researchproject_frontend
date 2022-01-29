@@ -1,21 +1,21 @@
-import AddAssignmentInput from "../types/AddAssignmentInput";
-import AddCategoryInput from "../types/AddCategoryInput";
-import AddClassroomInput from "../types/AddClassroomInput";
-import DeleteUserFromClassroomInput from "../types/DeleteUserFromClassroomInput";
-import ForgotPasswordInput from "../types/forgotPasswordInput";
-import InviteUserToClassroomInput from "../types/InviteUserToClassroomInput";
-import JoinClassroomInput from "../types/JoinClassroomInput";
-import Level from "../types/Level";
-import LoginInput from "../types/LoginInput";
-import RegisterInput from "../types/RegisterInput";
-import RestorePasswordInput from "../types/RestorePasswordInput";
-import Score from "../types/Score";
-import UpdateAssignmentInput from "../types/UpdateAssignmentInput";
-import UpdateCategoryInput from "../types/UpdateCategoryInput";
-import UpdateEditorInput from "../types/UpdateEditorInput";
-import UpdateEmailInput from "../types/UpdateEmailInput";
-import UpdateGeneralInput from "../types/UpdateGeneralInput";
-import UpdatePasswordInput from "../types/UpdatePasswordInput";
+import AddAssignmentInput from '../types/AddAssignmentInput';
+import AddCategoryInput from '../types/AddCategoryInput';
+import AddClassroomInput from '../types/AddClassroomInput';
+import DeleteUserFromClassroomInput from '../types/DeleteUserFromClassroomInput';
+import ForgotPasswordInput from '../types/ForgotPasswordInput';
+import InviteUserToClassroomInput from '../types/InviteUserToClassroomInput';
+import JoinClassroomInput from '../types/JoinClassroomInput';
+import Level from '../types/Level';
+import LoginInput from '../types/LoginInput';
+import RegisterInput from '../types/RegisterInput';
+import RestorePasswordInput from '../types/RestorePasswordInput';
+import Score from '../types/Score';
+import UpdateAssignmentInput from '../types/UpdateAssignmentInput';
+import UpdateCategoryInput from '../types/UpdateCategoryInput';
+import UpdateEditorInput from '../types/UpdateEditorInput';
+import UpdateEmailInput from '../types/UpdateEmailInput';
+import UpdateGeneralInput from '../types/UpdateGeneralInput';
+import UpdatePasswordInput from '../types/UpdatePasswordInput';
 
 const handleData = async (path: string, token: string | null = null, method: string = 'GET', body: any = null) => {
     const t0 = performance.now();
@@ -42,6 +42,7 @@ const handleData = async (path: string, token: string | null = null, method: str
     const t1 = performance.now();
 
     console.log(`%c Time: ${(t1 - t0) / 1000} seconds - ${path}`, 'color: #7CFC00;');
+    console.log({ response });
 
     return response;
 };
@@ -563,30 +564,6 @@ export const useNetwork = () => {
             scoreId: scoreId,
         },
     });
-
-    // const getMyScoresByCategory = (token: string, categoryId: string) => handleData('graphql', token, 'POST', {
-    //     query: /* GraphQL */ `
-    //         query GetMyScoresByCategory($categoryId: String!) {
-    //             getMyScoresByCategory(categoryId: $categoryId) {
-    //                 scoreId
-    //                 level {
-    //                     levelId
-    //                     assignment {
-    //                         assignmentId
-    //                         subject
-    //                         category {
-    //                             categoryId
-    //                             name
-    //                         }
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     `,
-    //     variables: {
-    //         categoryId: categoryId,
-    //     },
-    // });
 
     const getMyScoresByCategory = (token: string, categoryId: string) => handleData('graphql', token, 'POST', {
         query: /* GraphQL */ `

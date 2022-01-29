@@ -7,7 +7,3 @@ export default interface Classroom {
     userCreated?: UserType;
     users?: UserType[];
 };
-
-// interface UserCreated {
-//     userId: string;
-// };

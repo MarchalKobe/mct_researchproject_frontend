@@ -37,7 +37,6 @@
     const getThisMyJoinedClassrooms = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getMyJoinedClassrooms(token);
-            console.log({ response });
             classrooms.value = response.data.getMyJoinedClassrooms;
         }).catch((error: string) => {
             console.error(error);
@@ -47,7 +46,6 @@
     const addClassroomSubmit = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await addClassroom(token, { name: classroom.name! });
-            console.log({ response });
             getThisMyJoinedClassrooms();
             toggleAddClassPopup();
         }).catch((error: string) => {
@@ -58,7 +56,6 @@
     const joinClassroomSubmit = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await joinClassroom(token, { classcode: classroom.classcode! });
-            console.log({ response });
             getThisMyJoinedClassrooms();
             toggleJoinClassPopup();
         }).catch((error: string) => {
@@ -69,7 +66,6 @@
     const leaveThisClassroom = async (classroomId: string) => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await leaveClassroom(token, classroomId);
-            console.log({ response });
             getThisMyJoinedClassrooms();
         }).catch((error: string) => {
             console.error(error);
@@ -77,10 +73,11 @@
     };
 
     const deleteThisClassroom = async (classroomId: string) => {
-        console.log({classroomId});
+        // console.log(classroomId);
         
         getIdToken(user.information.user as User).then(async (token: string) => {
             // TODO: delete classroom
+            
             getThisMyJoinedClassrooms();
         }).catch((error: string) => {
             console.error(error);

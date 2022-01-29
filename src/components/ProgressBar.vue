@@ -2,9 +2,6 @@
     const props = defineProps({
         progress: Number,
     });
-
-    console.log(props);
-    
 </script>
 
 <template>

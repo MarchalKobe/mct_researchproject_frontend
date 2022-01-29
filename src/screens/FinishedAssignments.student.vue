@@ -39,7 +39,6 @@
     const getThisClassroom = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getClassroom(token, classroomId);
-            console.log({ response });
             classroom.value = response.data.getClassroom;
             getThisCategoriesByClassroom();
         }).catch((error: string) => {
@@ -50,7 +49,6 @@
     const getThisCategoriesByClassroom = () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getCategoriesByClassroom(token, classroomId);
-            console.log({ response });
 
             let options: SelectOption[] = [];
 
@@ -70,7 +68,6 @@
     const getThisMyScoresByCategory = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getMyScoresByCategory(token, selectedCategory.categoryId);
-            console.log({ response })
             assignments.value = response.data.getMyScoresByCategory;
 
             assignments.value.map((assignment: Assignment) => {

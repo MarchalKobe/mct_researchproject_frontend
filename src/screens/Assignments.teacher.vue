@@ -78,7 +78,6 @@
     const getThisClassroom = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getClassroom(token, classroomId);
-            console.log({ response });
             getThisCategoriesByClassroom();
             classroom.value = response.data.getClassroom;
         }).catch((error: string) => {
@@ -89,7 +88,6 @@
     const getThisCategory = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getCategory(token, selectedCategory.categoryId);
-            console.log({ response });
             category.value = response.data.getCategory;
             updateThisCategory.name = category.value!.name;
         }).catch((error: string) => {
@@ -106,7 +104,6 @@
             };
 
             const response = await getAssignmentsByCategory(token, selectedCategory.categoryId);
-            console.log({ response });
             assignments.value = response.data.getAssignmentsByCategory;
 
             levelsDone.value = true;
@@ -126,7 +123,6 @@
     const getThisCategoriesByClassroom = () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getCategoriesByClassroom(token, classroomId);
-            console.log({ response });
 
             let options: SelectOption[] = [];
 
@@ -146,7 +142,6 @@
     const addCategorySubmit = () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await addCategory(token, { name: addThisCategory.name, classroomId: classroomId });
-            console.log({ response });
             getThisCategoriesByClassroom();
             toggleAddCategoryPopup();
         }).catch((error: string) => {
@@ -159,7 +154,6 @@
 
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await updateCategory(token, { categoryId: selectedCategory.categoryId, name: updateThisCategory.name, visible: updateThisCategory.visible });
-            console.log({ response });
             getThisCategoriesByClassroom();
             getThisCategory();
         }).catch((error: string) => {
@@ -171,7 +165,6 @@
         if(window.confirm('Are you sure you want to finalize this category? You can\'t edit the assignments after this action and this can\'t be undone.')) {
             getIdToken(user.information.user as User).then(async (token: string) => {
                 const response = await updateCategory(token, { categoryId: selectedCategory.categoryId, name: updateThisCategory.name, done: true });
-                console.log({ response });
                 getThisCategoriesByClassroom();
                 getThisCategory();
             }).catch((error: string) => {
@@ -183,7 +176,6 @@
     const updateCategorySubmit = () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await updateCategory(token, { categoryId: selectedCategory.categoryId, name: updateThisCategory.name });
-            console.log({ response });
             getThisCategoriesByClassroom();
             getThisCategory();
             toggleUpdateCategoryPopup();
@@ -195,7 +187,6 @@
     const deleteThisCategoryAction = () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await deleteCategory(token, selectedCategory.categoryId );
-            console.log({ response });
             getThisCategoriesByClassroom();
             selectedCategory.categoryId = '';
             assignments.value = [];
@@ -209,7 +200,6 @@
     const addAssignmentSubmit = () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await addAssignment(token, { subject: addThisAssignment.subject, categoryId: selectedCategory.categoryId });
-            console.log({ response });
             getThisAssignmentsByCategory();
             toggleAddAssignmentPopup();
         }).catch((error: string) => {
@@ -217,24 +207,9 @@
         });
     };
 
-    // const toggleAssignmentReady = (as: Assignment) => {
-    //     console.log(as);
-        
-    //     as.ready = !as.ready;
-
-    //     getIdToken(user.information.user as User).then(async (token: string) => {
-    //         const response = await updateAssignment(token, { assignmentId: as.assignmentId!, subject: as.subject, ready: as.ready });
-    //         console.log({ response });
-    //         getThisAssignmentsByCategory();
-    //     }).catch((error: string) => {
-    //         console.error(error);
-    //     });
-    // };
-
     const updateAssignmentSubmit = () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await updateAssignment(token, { assignmentId: updateThisAssignment.assignmentId!, subject: updateThisAssignment.subject });
-            console.log({ response });
             getThisAssignmentsByCategory();
             toggleUpdateAssignmentPopup();
         }).catch((error: string) => {
@@ -243,7 +218,6 @@
     };
 
     const updateThisAssignmentAction = (assignmentId: string) => {
-        console.log('Update assignment', assignmentId);
         updateThisAssignment.assignmentId = assignmentId;
         updateThisAssignment.subject = assignments.value.find((assignment: Assignment) => assignment.assignmentId === assignmentId)!.subject;
         toggleUpdateAssignmentPopup();
@@ -252,7 +226,6 @@
     const deleteThisAssignmentAction = (assignmentId: string) => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await deleteAssignment(token, assignmentId);
-            console.log({ response });
             getThisAssignmentsByCategory();
         }).catch((error: string) => {
             console.error(error);
@@ -322,7 +295,6 @@
 
                                     getIdToken(user.information.user as User).then(async (token: string) => {
                                         const response = await updateAssignment(token, as as UpdateAssignmentInput);
-                                        console.log({ response });
                                     }).catch((error: string) => {
                                         console.error(error);
                                     });
@@ -335,7 +307,6 @@
                                     
                                     getIdToken(user.information.user as User).then(async (token: string) => {
                                         const response = await updateAssignment(token, as as UpdateAssignmentInput);
-                                        console.log({ response });
                                     }).catch((error: string) => {
                                         console.error(error);
                                     });
@@ -347,7 +318,6 @@
 
                         getIdToken(user.information.user as User).then(async (token: string) => {
                             const response = await updateAssignment(token, selectedAssignment as UpdateAssignmentInput);
-                            console.log({ response });
                         }).catch((error: string) => {
                             console.error(error);
                         });
@@ -455,30 +425,6 @@
                     <div class="u-margin-top-x-md">
                         <LevelElement v-for="(level, index) in assignment.levels" :key="index" :level="level" :classroomId="classroomId" :category="category" />
                     </div>
-                    <!-- <div class="u-flex u-align-center">
-                        <div class="u-flex u-align-center u-margin-right-lg">
-                            <div class="c-block u-background-green u-margin-right-sm"></div>
-                            <span>Level made</span>
-                        </div>
-                        <div class="u-flex u-align-center u-margin-right-lg">
-                            <div class="c-block u-background-orange u-margin-right-sm"></div>
-                            <span>Level in progress</span>
-                        </div>
-                        <div class="u-flex u-align-center">
-                            <div class="c-block u-background-red u-margin-right-sm"></div>
-                            <span>Level not started</span>
-                        </div>
-                    </div> -->
-                    <!-- <div class="u-flex u-align-center u-justify-end u-margin-top-lg">
-                        <div class="u-flex u-align-center">
-                            <div class="u-flex u-align-start u-margin-right-sm" v-if="assignment.levels!.filter((level) => level.status === 2).length !== 3">
-                                <svg class="u-margin-right-sm u-stroke-red" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                                <p class="u-margin-0 u-color-red">All levels need to be finished before you can make the assignment visible</p>
-                            </div>
-                            <button v-if="!assignment.ready" class="c-button__normal" :class="{ 'c-button__disabled': assignment.levels!.filter((level) => level.status === 2).length !== 3 }" @click="toggleAssignmentReady(assignment)">Make assignment visible</button>
-                            <button v-else class="c-button__normal" @click="toggleAssignmentReady(assignment)">Make assignment invisible</button>
-                        </div>
-                    </div> -->
                 </AssignmentElement>
             </div>
         </section>

@@ -32,13 +32,11 @@
     const getThisScore = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getScore(token, scoreId);
-            // console.log({ response });
 
             response.data.getScore.code = JSON.parse(response.data.getScore.code);
             response.data.getScore.level.code = JSON.parse(response.data.getScore.level.code);
             response.data.getScore.level.startcode = JSON.parse(response.data.getScore.level.startcode);
 
-            console.log({ response });
             score.value = response.data.getScore;
         }).catch((error: string) => {
             console.error(error);
@@ -52,9 +50,7 @@
     const submitScoreSubmit = () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             score.value!.status = 1;
-            console.log(score.value);
             const response = await updateScore(token, score.value!);
-            console.log({ response });
             router.push(`/classes/${classroomId}/currentassignments`);
         }).catch((error: string) => {
             console.error(error);

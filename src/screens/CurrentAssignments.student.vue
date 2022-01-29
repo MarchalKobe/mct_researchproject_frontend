@@ -12,7 +12,7 @@
     import AssignmentElement from '../components/AssignmentElement.vue';
     import router from '../bootstrap/router';
 
-    const { getClassroom, getCurrentCategoryByClassroom, getAssignmentsByCategory, getMyAssignmentsByCategory } = useNetwork();
+    const { getClassroom, getCurrentCategoryByClassroom, getMyAssignmentsByCategory } = useNetwork();
 
     const user = reactive<{ information: UserState }>({
         information: computed(() => store.getters[GetterTypes.GET_USER_INFORMATION]()).value,
@@ -31,7 +31,6 @@
     const getThisClassroom = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getClassroom(token, classroomId);
-            console.log({ response });
             classroom.value = response.data.getClassroom;
             getThisCurrentCategoryByClassroom();
         }).catch((error: string) => {
@@ -42,9 +41,7 @@
     const getThisCurrentCategoryByClassroom = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getCurrentCategoryByClassroom(token, classroomId);
-            console.log({ response });
             category.value = response.data.getCurrentCategoryByClassroom;
-
             if(category.value) getThisMyAssignmentsByCategory();
         }).catch((error: string) => {
             console.error(error);
@@ -54,7 +51,6 @@
     const getThisMyAssignmentsByCategory = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getMyAssignmentsByCategory(token, category.value!.categoryId!);
-            console.log({ response });
             assignments.value = response.data.getMyAssignmentsByCategory;
         }).catch((error: string) => {
             console.error(error);

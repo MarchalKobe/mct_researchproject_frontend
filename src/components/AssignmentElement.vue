@@ -58,7 +58,7 @@
             </div>
         </div>
         <div v-else>
-            <div class="u-flex u-align-center u-justify-space-between u-width-full">
+            <div class="u-flex u-align-center u-justify-space-between u-wrap u-width-full">
                 <div class="u-flex u-direction-column u-justify-space-between u-height-full">
                     <h3 class="c-assignmentelement__category u-margin-bottom-md">{{ props.assignment!.category!.name }}</h3>
                     <h2 class="c-assignmentelement__subject">{{ props.assignment!.subject }}</h2>

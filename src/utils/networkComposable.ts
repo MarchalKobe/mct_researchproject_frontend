@@ -381,6 +381,17 @@ export const useNetwork = () => {
         },
     });
 
+    const deleteCategory = (token: string, categoryId: string) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            mutation DeleteCategory($categoryId: String!) {
+                deleteCategory(categoryId: $categoryId)
+            }
+        `,
+        variables: {
+            categoryId: categoryId,
+        },
+    });
+
     const getMyAssignmentsByCategory = (token: string, categoryId: string) => handleData('graphql', token, 'POST', {
         query: /* GraphQL */ `
             query GetMyAssignmentsByCategory($categoryId: String!) {
@@ -467,6 +478,17 @@ export const useNetwork = () => {
                 subject: data.subject,
                 position: data.position,
             },
+        },
+    });
+
+    const deleteAssignment = (token: string, assignmentId: string) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            mutation DeleteAssignment($assignmentId: String!) {
+                deleteAssignment(assignmentId: $assignmentId)
+            }
+        `,
+        variables: {
+            assignmentId: assignmentId,
         },
     });
 
@@ -660,10 +682,12 @@ export const useNetwork = () => {
         getCategoriesByClassroom,
         addCategory,
         updateCategory,
+        deleteCategory,
         getMyAssignmentsByCategory,
         getAssignmentsByCategory,
         addAssignment,
         updateAssignment,
+        deleteAssignment,
         getLevel,
         updateLevel,
         getScore,

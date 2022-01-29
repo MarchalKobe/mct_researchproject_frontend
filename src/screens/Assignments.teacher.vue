@@ -20,7 +20,7 @@
     import UpdateAssignmentInput from '../types/UpdateAssignmentInput';
     import Level from '../types/Level';
 
-    const { getClassroom, getCategory, getCategoriesByClassroom, addCategory, updateCategory, getAssignmentsByCategory, addAssignment, updateAssignment } = useNetwork();
+    const { getClassroom, getCategory, getCategoriesByClassroom, addCategory, updateCategory, deleteCategory, getAssignmentsByCategory, addAssignment, updateAssignment, deleteAssignment } = useNetwork();
 
     const user = reactive<{ information: UserState }>({
         information: computed(() => store.getters[GetterTypes.GET_USER_INFORMATION]()).value,
@@ -54,7 +54,7 @@
         subject: '',
     });
 
-    const category = ref<Category>();
+    const category = ref<Category | null>(null);
 
     const assignments = ref<Assignment[]>([]);
 
@@ -192,6 +192,20 @@
         });
     };
 
+    const deleteThisCategoryAction = () => {
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            const response = await deleteCategory(token, selectedCategory.categoryId );
+            console.log({ response });
+            getThisCategoriesByClassroom();
+            selectedCategory.categoryId = '';
+            assignments.value = [];
+            category.value = null;
+            edit.value = false;
+        }).catch((error: string) => {
+            console.error(error);
+        });
+    };
+
     const addAssignmentSubmit = () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await addAssignment(token, { subject: addThisAssignment.subject, categoryId: selectedCategory.categoryId });
@@ -235,14 +249,22 @@
         toggleUpdateAssignmentPopup();
     };
 
-    const deleteThisAssignemntAction = (assignmentId: string) => {
-        console.log('Delete assignment', assignmentId);
+    const deleteThisAssignmentAction = (assignmentId: string) => {
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            const response = await deleteAssignment(token, assignmentId);
+            console.log({ response });
+            getThisAssignmentsByCategory();
+        }).catch((error: string) => {
+            console.error(error);
+        });
     };
     
     watch(() => selectedCategory.categoryId, () => {
-        edit.value = false;
-        getThisCategory();
-        getThisAssignmentsByCategory();
+        if(selectedCategory.categoryId.length) {
+            edit.value = false;
+            getThisCategory();
+            getThisAssignmentsByCategory();
+        };
     });
 
     getThisClassroom();
@@ -395,15 +417,15 @@
             <RouterLink class="c-button__soft" :class="pathNew[pathNew.length - 1] === 'members' ? 'c-button__soft-selected' : ''" :to="`/classes/${classroomId}/members`">Members</RouterLink>
         </nav>
 
-        <div class="u-flex u-align-center u-justify-space-between u-margin-bottom-lg">
-            <button class="c-button__normal" @click="toggleAddCategoryPopup">Create category</button>
+        <div class="u-flex u-align-center u-justify-space-between u-wrap u-margin-bottom-md">
+            <button class="c-button__normal u-margin-bottom-md" @click="toggleAddCategoryPopup">Create category</button>
 
-            <div v-if="category && assignments.length">
+            <div v-if="category && assignments.length" class="u-margin-bottom-md">
                 <button v-if="!category.done && levelsDone" class="c-button__normal" @click="makeCategoryDone">Finalize this category</button>
                 <button v-if="category.done && levelsDone" class="c-button__normal" @click="toggleCategoryVisible">{{ category.visible ? 'Make category invisible' : 'Make category visible' }}</button>
             </div>
 
-            <Select class="u-width-14" :description="categoryOptions.length ? 'Select category' : 'No categories found'" :model="selectedCategory" modelName="categoryId" :options="categoryOptions" />
+            <Select class="u-margin-bottom-md u-width-14" :description="categoryOptions.length ? 'Select category' : 'No categories found'" :model="selectedCategory" modelName="categoryId" :options="categoryOptions" />
         </div>
 
         <div v-if="category" class="u-flex u-align-center u-justify-space-between u-margin-bottom-lg">
@@ -412,7 +434,7 @@
                 <button v-if="!category.done && edit" class="c-button__icon c-button__icon-orange u-margin-right-x-md" @click="toggleUpdateCategoryPopup">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="16 3 21 8 8 21 3 21 3 16 16 3"></polygon></svg>
                 </button>
-                <button v-if="!category.done && edit" class="c-button__icon c-button__icon-alpha">
+                <button v-if="!category.done && edit" class="c-button__icon c-button__icon-alpha" @click="deleteThisCategoryAction">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
                 </button>
             </div>
@@ -429,7 +451,7 @@
             <div v-if="assignments" class="c-assignmentelements">
                 <div v-for="(placeholder, index) in assignments" :key="index" class="c-assignmentelement__placeholder" :style="{ gridRow: `${placeholder.position} / auto`, gridColumn: `1 / auto`, width: `${placeholder.width}px`, height: `${placeholder.height}px` }"></div>
 
-                <AssignmentElement :setRef="setElementRef" v-for="(assignment, index) in assignments" :key="index" :index="index" openLabel="Levels" class="c-assignmentelement" :class="edit ? 'c-assignmentelement__moving' : ''" :assignment="assignment" :edit="edit" :updateAction="updateThisAssignmentAction" :deleteAction="deleteThisAssignemntAction" :style="{ gridRow: `${assignment.position} / auto`, gridColumn: `1 / auto`, top: assignment.top, left: assignment.left, position: assignment.selected ? 'absolute' : 'relative' }">
+                <AssignmentElement :setRef="setElementRef" v-for="(assignment, index) in assignments" :key="index" :index="index" openLabel="Levels" class="c-assignmentelement" :class="edit ? 'c-assignmentelement__moving' : ''" :assignment="assignment" :edit="edit" :updateAction="updateThisAssignmentAction" :deleteAction="deleteThisAssignmentAction" :style="{ gridRow: `${assignment.position} / auto`, gridColumn: `1 / auto`, top: assignment.top, left: assignment.left, position: assignment.selected ? 'absolute' : 'relative' }">
                     <div class="u-margin-top-x-md">
                         <LevelElement v-for="(level, index) in assignment.levels" :key="index" :level="level" :classroomId="classroomId" :category="category" />
                     </div>

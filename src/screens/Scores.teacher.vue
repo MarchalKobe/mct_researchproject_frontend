@@ -119,9 +119,9 @@
     <div v-if="classroom && thisUser" class="e-container">
         <Header :title="`${thisUser.firstName} ${thisUser.lastName} - Scores`" :backPath="`/classes/${classroomId}/members`" />
 
-        <div class="u-flex u-align-center u-justify-space-between u-margin-bottom-lg">
-            <h2 class="u-margin-0 u-weight-400">Scores</h2>
-            <Select class="u-width-14" :description="categoryOptions.length ? 'Select category' : 'No categories found'" :model="selectedCategory" modelName="categoryId" :options="categoryOptions" />
+        <div class="u-flex u-align-center u-justify-space-between u-wrap u-margin-bottom-md">
+            <h2 class="u-margin-0 u-margin-bottom-md u-weight-400">Scores</h2>
+            <Select class="u-margin-bottom-md u-width-14" :description="categoryOptions.length ? 'Select category' : 'No categories found'" :model="selectedCategory" modelName="categoryId" :options="categoryOptions" />
         </div>
 
         <div v-if="selectedCategory.categoryId" class="u-margin-bottom-lg">

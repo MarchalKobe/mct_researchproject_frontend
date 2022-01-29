@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import { computed, reactive, ref } from 'vue';
+    import { computed, onMounted, onUnmounted, reactive, ref } from 'vue';
     import router from '../bootstrap/router';
     import store from '../store';
     import { ActionTypes, GetterTypes, UserState } from '../store/modules/user';
@@ -17,14 +17,24 @@
     };
 
     const open = ref<boolean>(false);
-    const toggleOpen = () => open.value = !open.value; 
+    const toggleOpen = () => open.value = !open.value;
+
+    const width = ref<number>(window.innerWidth);
+    const getWidth = () => width.value = window.innerWidth;
+    onMounted(() => window.addEventListener('resize', getWidth));
+    onUnmounted(() => window.removeEventListener('resize', getWidth));
 </script>
 
 <template>
+    <button v-if="width <= 960" class="c-navbar__button-mobile" @click="toggleOpen">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+
     <nav class="c-navbar" :class="open ? 'c-navbar__open' : ''">
         <button class="c-navbar__button" :style="{ transform: `rotateY(${open ? '180deg' : '0'})` }" @click="toggleOpen">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
         </button>
+
         <div class="c-navbar__section">
             <svg class="c-navbar__logo u-margin-top-md u-margin-bottom-lg" xmlns="http://www.w3.org/2000/svg" width="40.001" height="40" viewBox="0 0 40.001 40">
                 <path id="Subtraction_1" data-name="Subtraction 1" d="M20,40A20.005,20.005,0,0,1,12.215,1.572a20.005,20.005,0,0,1,15.57,36.857A19.875,19.875,0,0,1,20,40Zm0-30a10,10,0,1,0,7.071,2.929A9.933,9.933,0,0,0,20,10Z" transform="translate(-0.001 0)" fill="#fff"/>

@@ -109,9 +109,9 @@
             <RouterLink class="c-button__soft" :class="pathNew[pathNew.length - 1] === 'finishedassignments' ? 'c-button__soft-selected' : ''" :to="`/classes/${classroomId}/finishedassignments`">Finished</RouterLink>
         </nav>
 
-        <div class="u-flex u-align-center u-justify-space-between u-margin-bottom-lg">
-            <h2 class="u-margin-0 u-weight-400">Finished assignments</h2>
-            <Select class="u-width-14" :description="categoryOptions.length ? 'Select category' : 'No categories found'" :model="selectedCategory" modelName="categoryId" :options="categoryOptions" />
+        <div class="u-flex u-align-center u-justify-space-between u-wrap u-margin-bottom-md">
+            <h2 class="u-margin-0 u-margin-bottom-md u-weight-400">Finished assignments</h2>
+            <Select class="u-margin-bottom-md u-width-14" :description="categoryOptions.length ? 'Select category' : 'No categories found'" :model="selectedCategory" modelName="categoryId" :options="categoryOptions" />
         </div>
 
         <div v-if="selectedCategory.categoryId" class="u-margin-bottom-lg">
@@ -122,7 +122,7 @@
                         <div v-for="(score, index) in level.scores" :key="index" class="u-margin-bottom-md">
                             <p class="u-margin-0 u-size-20 u-color-x-light">Total: <span class="u-color-xx-light">{{ JSON.parse(score.scores!).total }}%</span></p>
                             <p class="u-margin-0 u-margin-bottom-sm u-color-x-light">(Tags: {{ JSON.parse(score.scores!).tags }}% - Attributes: {{ JSON.parse(score.scores!).attributes }}% - Text: {{ JSON.parse(score.scores!).text }}%)</p>
-                            <ProgressBar style="width: 24rem" :progress="JSON.parse(score.scores!).total" />
+                            <ProgressBar style="max-width: 24rem" :progress="JSON.parse(score.scores!).total" />
                         </div>
                     </div>
                 </AssignmentElement>

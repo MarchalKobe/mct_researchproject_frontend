@@ -1,6 +1,6 @@
 <script setup lang="ts">
     import { getIdToken, User } from 'firebase/auth';
-    import { computed, reactive, ref } from 'vue';
+    import { computed, onMounted, onUnmounted, reactive, ref } from 'vue';
     import router from '../bootstrap/router';
     import Navbar from '../components/Navbar.vue';
     import store from '../store';
@@ -77,12 +77,17 @@
     const levels = ref<string[]>(['Easy', 'Normal', 'Hard']);
 
     getThisLevel();
+
+    const width = ref<number>(window.innerWidth);
+    const getWidth = () => width.value = window.innerWidth;
+    onMounted(() => window.addEventListener('resize', getWidth));
+    onUnmounted(() => window.removeEventListener('resize', getWidth));
 </script>
 
 <template>
     <Navbar />
 
-    <div v-if="level" class="c-level__container u-margin-left-navbar">
+    <div v-if="width >= 880 && level" class="c-level__container u-margin-left-navbar">
         <div class="c-level__information">
             <h2 class="c-level__category">{{ level.assignment!.category!.name }}</h2>
             <h1 class="c-level__subject"><span class="u-color-x-light">{{ levels[level.level! - 1] }} -</span> {{ level.assignment!.subject }}</h1>
@@ -102,4 +107,6 @@
             <LivePreview :label="editorNavigation.tab === 'code' ? 'Assignment' : 'Startcode'" :code="editorNavigation.tab === 'code' ? level.code!.html! : level.startcode!.html" />
         </div>
     </div>
+
+    <p v-if="width < 880" class="u-margin-left-navbar">Use a full sized web browser to make assignments.</p>
 </template>

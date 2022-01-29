@@ -15,7 +15,7 @@
     import UpdateEditorInput from '../types/UpdateEditorInput';
     import SelectOption from '../types/SelectOption';
     import { validateEmail } from '../helpers/ValidateEmail';
-import { useAlerts } from '../store/alerts';
+    import { useAlerts } from '../store/alerts';
 
     const { updateAccountGeneral, updateAccountEmail, updateAccountPassword, updateAccountEditor } = useNetwork();
 
@@ -206,7 +206,7 @@ import { useAlerts } from '../store/alerts';
             <h2 class="u-margin-0 u-margin-bottom-md u-weight-400">Settings</h2>
     
             <form @submit.prevent>
-                <Select label="Editor theme" description="Select editor theme" :model="editor" modelName="preferredTheme" :options="editorSelectOptions" :required="true" />
+                <Select class="u-margin-bottom-x-md" label="Editor theme" description="Select editor theme" :model="editor" modelName="preferredTheme" :options="editorSelectOptions" :required="true" />
 
                 <button class="c-button__large u-margin-bottom-md" @click="updateThisEditor">Update editor theme</button>
             </form>

@@ -8,7 +8,7 @@
     position: relative;
     border: 1px solid var(--global-x-light);
     background: var(--global-dark);
-    width: calc(52rem - calc(3rem + 2px));
+    width: calc(100% - calc(3rem + 2px));
     // width: calc(100% - calc(3rem + 2px));
     border-radius: 0.5rem;
     padding: 1.5rem;
@@ -79,5 +79,11 @@
 
     &__moving {
         cursor: move;
+    }
+}
+
+@media screen and (min-width: 60rem) {
+    .c-assignmentelement {
+        width: calc(52rem - calc(3rem + 2px));
     }
 }

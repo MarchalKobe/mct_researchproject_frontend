@@ -2,9 +2,10 @@
     position: fixed;
     top: 0;
     left: 0;
-    height: 100vh;
+    bottom: 0;
     width: 3.5rem;
-    display: flex;
+    // display: flex;
+    display: none;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
@@ -20,7 +21,6 @@
         width: 2rem;
         height: 2rem;
         border-radius: 1rem;
-        // display: flex;
         display: none;
         align-items: center;
         justify-content: center;
@@ -35,9 +35,24 @@
             opacity: 0.8;
         }
     }
-
-    &:hover &__button {
+    
+    &__button-mobile {
+        all: unset;
+        position: fixed;
+        top: 1rem;
+        left: 0.25rem;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 1rem;
         display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--global-dark);
+        cursor: pointer;
+        
+        svg {
+            stroke: var(--global-xx-light);
+        }
     }
 
     &__section {
@@ -86,8 +101,15 @@
     &__open {
         width: 12rem;
         align-items: flex-start;
+        display: flex !important;
 
         .c-navbar {
+            display: flex !important;
+
+            &__button {
+                display: flex;
+            }
+
             &__logo {
                 margin-left: 1rem;
                 margin-bottom: 2rem;
@@ -127,6 +149,20 @@
                     content: none;
                 }
             }
+        }
+    }
+}
+
+@media screen and (min-width: 60rem) {
+    .c-navbar {
+        display: flex;
+        
+        &__button {
+            display: none;
+        }
+
+        &:hover &__button {
+            display: flex;
         }
     }
 }

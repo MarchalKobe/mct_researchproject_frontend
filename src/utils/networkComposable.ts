@@ -175,6 +175,22 @@ export const useNetwork = () => {
         },
     });
 
+    const getUser = (token: string, userId: string) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            query GetUser($userId: String!) {
+                getUser(userId: $userId) {
+                    userId
+                    firstName
+                    lastName
+                    avatar
+                }
+            }
+        `,
+        variables: {
+            userId: userId,
+        },
+    });
+
     const getClassroom = (token: string, classroomId: string) => handleData('graphql', token, 'POST', {
         query: /* GraphQL */ `
             query GetClassroom($classroomId: String!) {
@@ -409,6 +425,7 @@ export const useNetwork = () => {
                         scores {
                             scoreId
                             scores
+                            status
                             user {
                                 userId
                                 firstName
@@ -576,6 +593,34 @@ export const useNetwork = () => {
         },
     });
 
+    const getUserScoresByCategory = (token: string, userId: string, categoryId: string) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            query GetUserScoresByCategory($categoryId: String!, $userId: String!) {
+                getUserScoresByCategory(categoryId: $categoryId, userId: $userId) {
+                    assignmentId
+                    subject
+                    category {
+                        categoryId
+                        name
+                    }
+                    levels {
+                        levelId
+                        level
+                        scores {
+                            scoreId
+                            scores
+                            updated_at
+                        }
+                    }
+                }
+            }
+        `,
+        variables: {
+            categoryId: categoryId,
+            userId: userId,
+        },
+    });
+
     const updateScore = (token: string, data: Score) => handleData('graphql', token, 'POST', {
         query: /* GraphQL */ `
             mutation UpdateScore($data: UpdateScoreInput!) {
@@ -601,6 +646,7 @@ export const useNetwork = () => {
         updateAccountEmail,
         updateAccountPassword,
         updateAccountEditor,
+        getUser,
         getClassroom,
         getMyJoinedClassrooms,
         addClassroom,
@@ -622,6 +668,7 @@ export const useNetwork = () => {
         updateLevel,
         getScore,
         getMyScoresByCategory,
+        getUserScoresByCategory,
         updateScore,
     };
 };

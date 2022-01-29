@@ -17,7 +17,7 @@
     import Level from '../types/Level';
     import Score from '../types/Score';
 
-    const { getClassroom, getCategoriesByClassroom, getMyScoresByCategory } = useNetwork();
+    const { getUser, getClassroom, getCategoriesByClassroom, getUserScoresByCategory } = useNetwork();
 
     const user = reactive<{ information: UserState }>({
         information: computed(() => store.getters[GetterTypes.GET_USER_INFORMATION]()).value,
@@ -25,7 +25,8 @@
 
     const path = new URL(location.href).pathname;
     const pathNew = path.split('/');
-    const classroomId = pathNew[pathNew.length - 2];
+    const classroomId = pathNew[pathNew.length - 3];
+    const userId = pathNew[pathNew.length - 1];
 
     const classroom = ref<Classroom | null>(null);
 
@@ -33,6 +34,8 @@
     const selectedCategory = reactive<CategoryOption>({
         categoryId: '',
     });
+
+    const thisUser = ref<UserState | null>(null);
 
     const assignments = ref<Assignment[]>([]);
 
@@ -62,16 +65,28 @@
             });
 
             categoryOptions.value = options;
+
+            getThisUser();
         }).catch((error: string) => {
             console.error(error);
         });
     };
 
-    const getThisMyScoresByCategory = async () => {
+    const getThisUser = () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
-            const response = await getMyScoresByCategory(token, selectedCategory.categoryId);
+            const response = await getUser(token, userId);
+            console.log({ response });
+            thisUser.value = response.data.getUser;
+        }).catch((error: string) => {
+            console.error(error);
+        });
+    };
+
+    const getThisUserScoresByCategory = async () => {
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            const response = await getUserScoresByCategory(token, userId, selectedCategory.categoryId);
             console.log({ response })
-            assignments.value = response.data.getMyScoresByCategory;
+            assignments.value = response.data.getUserScoresByCategory;
 
             assignments.value.map((assignment: Assignment) => {
                 let scores: number[] = [];
@@ -92,7 +107,7 @@
     getThisClassroom();
 
     watch(() => selectedCategory.categoryId, () => {
-        getThisMyScoresByCategory();
+        getThisUserScoresByCategory();
     });
 
     const levels = ref<string[]>(['Easy', 'Normal', 'Hard']);
@@ -101,16 +116,11 @@
 <template>
     <Navbar />
 
-    <div v-if="classroom" class="e-container">
-        <Header :title="`${classroom.name} - Finished Assignments`" backPath="/classes" />
-
-        <nav class="u-flex u-align-center u-justify-center u-margin-bottom-md">
-            <RouterLink class="c-button__soft u-margin-right-x-lg" :class="pathNew[pathNew.length - 1] === 'currentassignments' ? 'c-button__soft-selected' : ''" :to="`/classes/${classroomId}/currentassignments`">Current</RouterLink>
-            <RouterLink class="c-button__soft" :class="pathNew[pathNew.length - 1] === 'finishedassignments' ? 'c-button__soft-selected' : ''" :to="`/classes/${classroomId}/finishedassignments`">Finished</RouterLink>
-        </nav>
+    <div v-if="classroom && thisUser" class="e-container">
+        <Header :title="`${thisUser.firstName} ${thisUser.lastName} - Scores`" :backPath="`/classes/${classroomId}/members`" />
 
         <div class="u-flex u-align-center u-justify-space-between u-margin-bottom-lg">
-            <h2 class="u-margin-0 u-weight-400">Finished assignments</h2>
+            <h2 class="u-margin-0 u-weight-400">Scores</h2>
             <Select class="u-width-14" :description="categoryOptions.length ? 'Select category' : 'No categories found'" :model="selectedCategory" modelName="categoryId" :options="categoryOptions" />
         </div>
 

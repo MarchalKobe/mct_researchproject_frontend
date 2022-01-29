@@ -8,7 +8,8 @@
         add: Boolean as () => boolean | null,
         name: String as () => string | null,
         assignment: Object as () => Assignment | null,
-        current: Boolean as () => Boolean | null,
+        showScore: Boolean as () => boolean | null,
+        current: Boolean as () => boolean | null,
         edit: Boolean as () => boolean | null,
         // userId: String as () => string | null,
         setRef: Function as () => Function | null,
@@ -62,9 +63,12 @@
                     <h3 class="c-assignmentelement__category u-margin-bottom-md">{{ props.assignment!.category!.name }}</h3>
                     <h2 class="c-assignmentelement__subject">{{ props.assignment!.subject }}</h2>
                 </div>
-                <div v-if="!props.edit && props.openLabel" class="c-button__soft u-flex u-align-center" @click="toggleOpen">
-                    <p class="u-margin-right-sm u-color-x-light">{{ props.openLabel }}</p>
-                    <svg class="c-assignmentelement__symbol" :style="{ transform: `rotateX(${open ? '-180deg' : '0'})` }" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                <div v-if="!props.edit && props.openLabel" class="u-flex u-align-center">
+                    <p v-if="props.showScore && assignment" class="u-margin-right-md u-size-20">{{ assignment.total }}%</p>
+                    <div class="c-button__soft u-flex u-align-center" @click="toggleOpen">
+                        <p class="u-margin-right-sm u-color-x-light">{{ props.openLabel }}</p>
+                        <svg class="c-assignmentelement__symbol" :style="{ transform: `rotateX(${open ? '-180deg' : '0'})` }" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
                 </div>
                 <div v-else-if="props.current">
                     <div v-if="level" class="c-button__soft u-flex u-align-center" @click="props.clickAction ? props.clickAction(score!.scoreId) : null">

@@ -8,6 +8,8 @@ export default interface Assignment {
     position?: number;
     levels?: Level[];
 
+    total?: number;
+
     selected?: boolean;
     top?: string;
     left?: string;

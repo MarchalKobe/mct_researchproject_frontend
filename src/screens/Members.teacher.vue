@@ -11,6 +11,7 @@
     import Input from '../components/Input.vue';
     import Popup from '../components/Popup.vue';
     import InviteInput from '../types/InviteInput';
+import router from '../bootstrap/router';
 
     const { getClassroom, resetClasscode, deleteUserFromClassroom, inviteUserToClassroom } = useNetwork();
 
@@ -91,6 +92,10 @@
         });
     };
 
+    const goToUserScoreClick = (userId: string) => {
+        router.push(`/classes/${classroomId}/members/${userId}`);
+    };
+
     getThisClassroom();
 </script>
 
@@ -114,7 +119,7 @@
             </div>
             <div v-if="user.information.user" class="c-userelements">
                 <UserElement name="Invite student" :add="true" @click="toggleInviteStudentPopup" />
-                <UserElement v-for="(student, index) in classroom.users?.filter((user: any) => user.type === 0)" :key="index" :user="student" :classroom="classroom" :edit="studentsEdit" :userId="user.information.user!.uid" :deleteAction="deleteThisUserFromClassroom" />
+                <UserElement v-for="(student, index) in classroom.users?.filter((user: any) => user.type === 0)" :key="index" :user="student" :classroom="classroom" :edit="studentsEdit" :userId="user.information.user!.uid" :deleteAction="deleteThisUserFromClassroom" :clickAction="goToUserScoreClick" />
             </div>
         </section>
 

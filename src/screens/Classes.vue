@@ -11,10 +11,13 @@
     import router from '../bootstrap/router';
     import Input from '../components/Input.vue';
     import Popup from '../components/Popup.vue';
-import UpdateClassroomInput from '../types/UpdateClassroomInput';
-import DupplicateClassroomInput from '../types/DupplicateClassroomInput';
+    import UpdateClassroomInput from '../types/UpdateClassroomInput';
+    import DupplicateClassroomInput from '../types/DupplicateClassroomInput';
+    import { useLoading } from '../store/loading';
 
     const { getMyJoinedClassrooms, addClassroom, updateClassroom, dupplicateClassroom, closeClassroom, joinClassroom, leaveClassroom } = useNetwork();
+
+    const { addLoading, removeLoading } = useLoading();
 
     const user = reactive<{ information: UserState }>({
         information: computed(() => store.getters[GetterTypes.GET_USER_INFORMATION]()).value,
@@ -67,16 +70,22 @@ import DupplicateClassroomInput from '../types/DupplicateClassroomInput';
     };
 
     const getThisMyJoinedClassrooms = async () => {
+        addLoading();
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getMyJoinedClassrooms(token);
             classrooms.value = response.data.getMyJoinedClassrooms;
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const addClassroomSubmit = async () => {
         if(!window.confirm('Are your sure you want to create this classroom?')) return;
+
+        addLoading();
 
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await addClassroom(token, { name: classroom.name! });
@@ -85,10 +94,14 @@ import DupplicateClassroomInput from '../types/DupplicateClassroomInput';
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const updateClassroomSubmit = async () => {
         if(!window.confirm('Are your sure you want to update this classroom?')) return;
+
+        addLoading();
 
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await updateClassroom(token, updateClass as UpdateClassroomInput);
@@ -97,10 +110,14 @@ import DupplicateClassroomInput from '../types/DupplicateClassroomInput';
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const joinClassroomSubmit = async () => {
         if(!window.confirm('Are your sure you want to join this classroom?')) return;
+
+        addLoading();
 
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await joinClassroom(token, { classcode: classroom.classcode! });
@@ -109,10 +126,14 @@ import DupplicateClassroomInput from '../types/DupplicateClassroomInput';
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const leaveThisClassroom = async (classroomId: string) => {
         if(!window.confirm('Are your sure you want to leave this classroom?')) return;
+
+        addLoading();
 
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await leaveClassroom(token, classroomId);
@@ -120,10 +141,14 @@ import DupplicateClassroomInput from '../types/DupplicateClassroomInput';
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const dupplicateClassroomSubmit = async () => {
         if(!window.confirm('Are your sure you want to dupplicate this classroom?')) return;
+
+        addLoading();
 
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await dupplicateClassroom(token, dupplicateClass as DupplicateClassroomInput);
@@ -132,10 +157,14 @@ import DupplicateClassroomInput from '../types/DupplicateClassroomInput';
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const closeThisClassroom = async (classroomId: string) => {
         if(!window.confirm('Are your sure you want to close this classroom? This action can\'t be undone.')) return;
+
+        addLoading();
 
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await closeClassroom(token, classroomId);
@@ -144,6 +173,8 @@ import DupplicateClassroomInput from '../types/DupplicateClassroomInput';
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const goToClass = (classroomId: string) => {

@@ -5,8 +5,11 @@
     import Input from '../components/Input.vue';
     import { validateEmail } from '../helpers/ValidateEmail';
     import router from '../bootstrap/router';
+    import { useLoading } from '../store/loading';
 
     const { register } = useNetwork();
+
+    const { addLoading, removeLoading } = useLoading();
 
     const registerData = reactive<RegisterInput>({
         firstName: '',
@@ -43,7 +46,11 @@
 
         if(!Object.values(registerError).every(error => error === null)) return;
 
+        addLoading();
+
         const response = await register(registerData);
+
+        removeLoading();
 
         // TODO: Check response
         window.alert(`An email has been send to ${registerData.email} with your confirmation link.`);

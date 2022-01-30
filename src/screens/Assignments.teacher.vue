@@ -19,8 +19,11 @@
     import LevelElement from '../components/LevelElement.vue';
     import UpdateAssignmentInput from '../types/UpdateAssignmentInput';
     import Level from '../types/Level';
+    import { useLoading } from '../store/loading';
 
     const { getClassroom, getCategory, getCategoriesByClassroom, addCategory, updateCategory, deleteCategory, getAssignmentsByCategory, addAssignment, updateAssignment, deleteAssignment } = useNetwork();
+
+    const { addLoading, removeLoading } = useLoading();
 
     const user = reactive<{ information: UserState }>({
         information: computed(() => store.getters[GetterTypes.GET_USER_INFORMATION]()).value,
@@ -76,6 +79,8 @@
     const toggleUpdateAssignmentPopup = () => updateAssignmentPopup.value = !updateAssignmentPopup.value;
 
     const getThisClassroom = async () => {
+        addLoading();
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getClassroom(token, classroomId);
             getThisCategoriesByClassroom();
@@ -83,9 +88,13 @@
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const getThisCategory = async () => {
+        addLoading();
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getCategory(token, selectedCategory.categoryId);
             category.value = response.data.getCategory;
@@ -93,9 +102,13 @@
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const getThisAssignmentsByCategory = async () => {
+        addLoading();
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             if(assignments.value.length) {
                 assignments.value.map((assignment: Assignment) => {
@@ -118,9 +131,13 @@
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const getThisCategoriesByClassroom = () => {
+        addLoading();
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getCategoriesByClassroom(token, classroomId);
 
@@ -137,10 +154,14 @@
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const addCategorySubmit = () => {
         if(!window.confirm('Are your sure you want to create this category?')) return;
+
+        addLoading();
 
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await addCategory(token, { name: addThisCategory.name, classroomId: classroomId });
@@ -149,10 +170,14 @@
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const toggleCategoryVisible = () => {
         if(!window.confirm(`Are your sure you want to make this category ${category.value!.visible ? 'in' : ''}visible?`)) return;
+
+        addLoading();
 
         updateThisCategory.visible = !category.value!.visible;
 
@@ -163,10 +188,14 @@
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const makeCategoryDone = () => {
         if(!window.confirm('Are you sure you want to finalize this category? You can\'t edit the assignments after this action and this can\'t be undone.')) return;
+
+        addLoading();
 
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await updateCategory(token, { categoryId: selectedCategory.categoryId, name: updateThisCategory.name, done: true });
@@ -175,10 +204,14 @@
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const updateCategorySubmit = () => {
         if(!window.confirm('Are your sure you want to update this category?')) return;
+
+        addLoading();
 
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await updateCategory(token, { categoryId: selectedCategory.categoryId, name: updateThisCategory.name });
@@ -188,10 +221,14 @@
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const deleteThisCategoryAction = () => {
         if(!window.confirm('Are your sure you want to delete this category?')) return;
+
+        addLoading();
 
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await deleteCategory(token, selectedCategory.categoryId );
@@ -203,10 +240,14 @@
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const addAssignmentSubmit = () => {
         if(!window.confirm('Are your sure you want to create this assignment?')) return;
+
+        addLoading();
 
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await addAssignment(token, { subject: addThisAssignment.subject, categoryId: selectedCategory.categoryId });
@@ -215,10 +256,14 @@
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const updateAssignmentSubmit = () => {
         if(!window.confirm('Are your sure you want to update this assignment?')) return;
+
+        addLoading();
 
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await updateAssignment(token, { assignmentId: updateThisAssignment.assignmentId!, subject: updateThisAssignment.subject });
@@ -227,6 +272,8 @@
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const updateThisAssignmentAction = (assignmentId: string) => {
@@ -238,12 +285,16 @@
     const deleteThisAssignmentAction = (assignmentId: string) => {
         if(!window.confirm('Are your sure you want to delete this assignment?')) return;
 
+        addLoading();
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await deleteAssignment(token, assignmentId);
             getThisAssignmentsByCategory();
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
     
     watch(() => selectedCategory.categoryId, () => {

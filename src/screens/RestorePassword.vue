@@ -1,10 +1,13 @@
 <script setup lang="ts">
     import { reactive, ref } from 'vue';
     import router from '../bootstrap/router';
+    import { useLoading } from '../store/loading';
     import RestorePasswordInput from '../types/RestorePasswordInput';
     import { useNetwork } from '../utils/networkComposable';
 
     const { restorePassword } = useNetwork();
+
+    const { addLoading, removeLoading } = useLoading();
 
     const token = ref<string | null>(new URL(location.href).searchParams.get('token'));
 
@@ -15,7 +18,11 @@
 
     const restorePasswordSubmit = async () => {
         if(token.value) {
+            addLoading();
+
             const response = await restorePassword(token.value, restorePasswordData);
+
+            removeLoading();
 
             // TODO: Check response
             window.alert('Password has been restored.');

@@ -3,17 +3,23 @@
     import ForgotPasswordInput from '../types/ForgotPasswordInput';
     import { useNetwork } from '../utils/networkComposable';
     import Input from '../components/Input.vue';
+    import { useLoading } from '../store/loading';
 
     const { forgotPassword } = useNetwork();
+
+    const { addLoading, removeLoading } = useLoading();
 
     const forgotPasswordData = reactive<ForgotPasswordInput>({
         email: '',
     });
 
     const forgotPasswordSubmit = async () => {
+        addLoading();
+
         const response = await forgotPassword(forgotPasswordData);
 
-        // TODO: Check response
+        removeLoading();
+
         window.alert(`You will receive an email at ${forgotPasswordData.email} if it exists.`);
     };
 </script>

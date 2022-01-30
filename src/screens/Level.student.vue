@@ -10,8 +10,11 @@
     import EditorNavigation from '../types/EditorNavigation';
     import LivePreview from '../components/LivePreview.vue';
     import Score from '../types/Score';
+    import { useLoading } from '../store/loading';
 
     const { getScore, updateScore } = useNetwork();
+
+    const { addLoading, removeLoading } = useLoading();
 
     const user = reactive<{ information: UserState }>({
         information: computed(() => store.getters[GetterTypes.GET_USER_INFORMATION]()).value,
@@ -30,6 +33,8 @@
     });
 
     const getThisScore = async () => {
+        addLoading();
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getScore(token, scoreId);
 
@@ -41,6 +46,8 @@
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const cancelScoreSubmit = () => {
@@ -52,6 +59,8 @@
     const submitScoreSubmit = () => {
         if(!window.confirm('Are your sure you want to submit this assignment?')) return;
 
+        addLoading();
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             score.value!.status = 1;
             const response = await updateScore(token, score.value!);
@@ -59,6 +68,8 @@
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const levels = ref<string[]>(['Easy', 'Normal', 'Hard']);

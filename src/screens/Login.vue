@@ -6,10 +6,13 @@
     import Input from '../components/Input.vue';
     import LoginInput, { LoginError } from '../types/LoginInput';
     import { validateEmail } from '../helpers/ValidateEmail';
+    import { useLoading } from '../store/loading';
 
     const auth: Auth = getAuth();
 
     const { login } = useNetwork();
+
+    const { addLoading, removeLoading } = useLoading();
 
     const loginData = reactive<LoginInput>({
         email: '',
@@ -22,6 +25,8 @@
     });
 
     const loginSubmit = async () => {
+        addLoading();
+
         loginError.email = loginData.email.length ? null : 'Field required';
         if(!loginError.email) loginError.email = validateEmail(loginData.email) ? null : 'Not a valid email address';
         
@@ -42,6 +47,8 @@
             // TODO: Error: email or password is wrong or account has not been confirmed
             window.alert('Email or password is wrong or account has not been confirmed.');
         };
+
+        removeLoading();
     };
 </script>
 

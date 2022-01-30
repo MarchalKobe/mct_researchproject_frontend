@@ -16,8 +16,11 @@
     import ProgressBar from '../components/ProgressBar.vue';
     import Level from '../types/Level';
     import Score from '../types/Score';
+    import { useLoading } from '../store/loading';
 
     const { getClassroom, getCategoriesByClassroom, getMyScoresByCategory } = useNetwork();
+
+    const { addLoading, removeLoading } = useLoading();
 
     const user = reactive<{ information: UserState }>({
         information: computed(() => store.getters[GetterTypes.GET_USER_INFORMATION]()).value,
@@ -37,6 +40,8 @@
     const assignments = ref<Assignment[]>([]);
 
     const getThisClassroom = async () => {
+        addLoading();
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getClassroom(token, classroomId);
             classroom.value = response.data.getClassroom;
@@ -44,28 +49,38 @@
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const getThisCategoriesByClassroom = () => {
+        addLoading();
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getCategoriesByClassroom(token, classroomId);
 
             let options: SelectOption[] = [];
 
             response.data.getCategoriesByClassroom.map((cat: Category) => {
-                options.push({
-                    id: cat.categoryId!,
-                    value: cat.name,
-                });
+                if(cat.done) {
+                    options.push({
+                        id: cat.categoryId!,
+                        value: cat.name,
+                    });
+                };
             });
 
             categoryOptions.value = options;
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const getThisMyScoresByCategory = async () => {
+        addLoading();
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getMyScoresByCategory(token, selectedCategory.categoryId);
             assignments.value = response.data.getMyScoresByCategory;
@@ -84,6 +99,8 @@
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     getThisClassroom();

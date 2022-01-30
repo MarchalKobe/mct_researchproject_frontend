@@ -387,6 +387,7 @@ export const useNetwork = () => {
                 getCategoriesByClassroom(classroomId: $classroomId) {
                     categoryId
                     name
+                    done
                 }
             }
         `,

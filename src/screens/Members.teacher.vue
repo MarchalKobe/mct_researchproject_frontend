@@ -12,8 +12,11 @@
     import Popup from '../components/Popup.vue';
     import InviteInput from '../types/InviteInput';
     import router from '../bootstrap/router';
+    import { useLoading } from '../store/loading';
 
     const { getClassroom, resetClasscode, deleteUserFromClassroom, inviteUserToClassroom } = useNetwork();
+
+    const { addLoading, removeLoading } = useLoading();
 
     const user = reactive<{ information: UserState }>({
         information: computed(() => store.getters[GetterTypes.GET_USER_INFORMATION]()).value,
@@ -49,30 +52,42 @@
     });
 
     const getThisClassroom = async () => {
+        addLoading();
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getClassroom(token, classroomId);
             classroom.value = response.data.getClassroom;
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const resetClasscodeSubmit = async () => {
+        addLoading();
+        
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await resetClasscode(token, classroomId);
             getThisClassroom();
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
     
     const inviteUserToClassroomSubmit = (email: string) => {
+        addLoading();
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await inviteUserToClassroom(token, { email: email, classroomId: classroomId });
             window.alert(`Invite successfully send to ${email}.`);
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
     
     const inviteStudentSubmit = () => inviteUserToClassroomSubmit(inviteStudent.email);
@@ -82,12 +97,16 @@
     const deleteThisUserFromClassroom = (userId: string) => {
         if(!window.confirm('Are your sure you want to remove this user from the classroom?')) return;
 
+        addLoading();
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await deleteUserFromClassroom(token, { userId: userId, classroomId: classroomId });
             getThisClassroom();
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const goToUserScoreClick = (userId: string) => {

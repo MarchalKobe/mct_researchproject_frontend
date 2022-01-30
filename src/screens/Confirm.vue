@@ -1,17 +1,23 @@
 <script setup lang="ts">
     import { ref } from 'vue';
     import router from '../bootstrap/router';
+    import { useLoading } from '../store/loading';
     import { useNetwork } from '../utils/networkComposable';
 
     const { confirm } = useNetwork();
+
+    const { addLoading, removeLoading } = useLoading();
 
     const token = ref<string | null>(new URL(location.href).searchParams.get('token'));
 
     const confirmSubmit = async () => {
         if(token.value) {
+            addLoading();
+            
             const response = await confirm(token.value);
 
-            // TODO: Check response
+            removeLoading();
+
             window.alert('Account has been confirmed');
             router.push('/login');
         };

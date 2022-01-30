@@ -11,8 +11,11 @@
     import Assignment from '../types/Assignment';
     import AssignmentElement from '../components/AssignmentElement.vue';
     import router from '../bootstrap/router';
+    import { useLoading } from '../store/loading';
 
     const { getClassroom, getCurrentCategoryByClassroom, getMyAssignmentsByCategory } = useNetwork();
+
+    const { addLoading, removeLoading } = useLoading();
 
     const user = reactive<{ information: UserState }>({
         information: computed(() => store.getters[GetterTypes.GET_USER_INFORMATION]()).value,
@@ -29,6 +32,8 @@
     const assignments = ref<Assignment[]>([]);
 
     const getThisClassroom = async () => {
+        addLoading();
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getClassroom(token, classroomId);
             classroom.value = response.data.getClassroom;
@@ -36,9 +41,13 @@
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const getThisCurrentCategoryByClassroom = async () => {
+        addLoading();
+        
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getCurrentCategoryByClassroom(token, classroomId);
             category.value = response.data.getCurrentCategoryByClassroom;
@@ -46,15 +55,21 @@
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const getThisMyAssignmentsByCategory = async () => {
+        addLoading();
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await getMyAssignmentsByCategory(token, category.value!.categoryId!);
             assignments.value = response.data.getMyAssignmentsByCategory;
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const clickThisAssignmentAction = (scoreId: string) => {

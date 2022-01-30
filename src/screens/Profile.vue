@@ -15,9 +15,12 @@
     import UpdateEditorInput from '../types/UpdateEditorInput';
     import SelectOption from '../types/SelectOption';
     import { validateEmail } from '../helpers/ValidateEmail';
+    import { useLoading } from '../store/loading';
     // import { useAlerts } from '../store/alerts';
 
     const { updateAccountGeneral, updateAccountEmail, updateAccountPassword, updateAccountEditor } = useNetwork();
+
+    const { addLoading, removeLoading } = useLoading();
 
     const user = reactive<{ information: UserState }>({
         information: computed(() => store.getters[GetterTypes.GET_USER_INFORMATION]()).value,
@@ -77,6 +80,8 @@
 
         if(!window.confirm('Are your sure you want to update your general account settings?')) return;
 
+        addLoading();
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await updateAccountGeneral(token, general);
             window.alert('Account general successfully changed. Log back in to see the changes.');
@@ -87,6 +92,8 @@
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const updateThisAccountEmail = () => {
@@ -96,6 +103,8 @@
         if(!Object.values(emailError).every(error => error === null)) return;
 
         if(!window.confirm('Are your sure you want to update your email address?')) return;
+
+        addLoading();
 
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await updateAccountEmail(token, email);
@@ -107,6 +116,8 @@
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const updateThisPassword = () => {
@@ -125,6 +136,8 @@
 
         if(!window.confirm('Are your sure you want to update your password?')) return;
 
+        addLoading();
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await updateAccountPassword(token, password);
             window.alert('Account password successfully changed. Log back in to see the changes.');
@@ -135,10 +148,14 @@
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     const updateThisEditor = () => {
         if(!window.confirm('Are your sure you want to update your editor theme?')) return;
+
+        addLoading();
 
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await updateAccountEditor(token, editor);
@@ -150,6 +167,8 @@
         }).catch((error: string) => {
             console.error(error);
         });
+
+        removeLoading();
     };
 
     // const { addAlert } = useAlerts();

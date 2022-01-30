@@ -44,10 +44,14 @@
     };
 
     const cancelScoreSubmit = () => {
+        if(!window.confirm('Are your sure you want to cancel this assignment? All progress will be lost.')) return;
+
         router.push(`/classes/${classroomId}/currentassignments`);
     };
 
     const submitScoreSubmit = () => {
+        if(!window.confirm('Are your sure you want to submit this assignment?')) return;
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             score.value!.status = 1;
             const response = await updateScore(token, score.value!);

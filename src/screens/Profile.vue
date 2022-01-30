@@ -15,7 +15,7 @@
     import UpdateEditorInput from '../types/UpdateEditorInput';
     import SelectOption from '../types/SelectOption';
     import { validateEmail } from '../helpers/ValidateEmail';
-    import { useAlerts } from '../store/alerts';
+    // import { useAlerts } from '../store/alerts';
 
     const { updateAccountGeneral, updateAccountEmail, updateAccountPassword, updateAccountEditor } = useNetwork();
 
@@ -75,6 +75,8 @@
 
         if(!Object.values(generalError).every(error => error === null)) return;
 
+        if(!window.confirm('Are your sure you want to update your general account settings?')) return;
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await updateAccountGeneral(token, general);
             window.alert('Account general successfully changed. Log back in to see the changes.');
@@ -92,6 +94,8 @@
         if(!emailError.email) emailError.email = validateEmail(email.email) ? null : 'Not a valid email address';
 
         if(!Object.values(emailError).every(error => error === null)) return;
+
+        if(!window.confirm('Are your sure you want to update your email address?')) return;
 
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await updateAccountEmail(token, email);
@@ -119,6 +123,8 @@
 
         if(!Object.values(passwordError).every(error => error === null)) return;
 
+        if(!window.confirm('Are your sure you want to update your password?')) return;
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await updateAccountPassword(token, password);
             window.alert('Account password successfully changed. Log back in to see the changes.');
@@ -132,6 +138,8 @@
     };
 
     const updateThisEditor = () => {
+        if(!window.confirm('Are your sure you want to update your editor theme?')) return;
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await updateAccountEditor(token, editor);
             window.alert('Account editor successfully changed. Log back in to see the changes.');
@@ -144,11 +152,11 @@
         });
     };
 
-    const { addAlert } = useAlerts();
+    // const { addAlert } = useAlerts();
 
-    const success = () => addAlert('success', 'This is a success alert.');
-    const warning = () => addAlert('warning', 'This is a warning alert.');
-    const error = () => addAlert('error', 'This is an error alert.');
+    // const success = () => addAlert('success', 'This is a success alert.');
+    // const warning = () => addAlert('warning', 'This is a warning alert.');
+    // const error = () => addAlert('error', 'This is an error alert.');
 </script>
 
 <template>
@@ -157,11 +165,11 @@
     <div class="e-container">
         <Header title="Profile" />
 
-        <div class="u-margin-bottom-md">
+        <!-- <div class="u-margin-bottom-md">
             <button class="c-button__normal c-button__normal-green u-margin-right-sm" @click="success">Success</button>
             <button class="c-button__normal c-button__normal-orange u-margin-right-sm" @click="warning">Warning</button>
             <button class="c-button__normal c-button__normal-red" @click="error">Error</button>
-        </div>
+        </div> -->
 
         <section class="u-width-24 u-margin-bottom-lg">
             <h2 class="u-margin-0 u-margin-bottom-md u-weight-400">General</h2>

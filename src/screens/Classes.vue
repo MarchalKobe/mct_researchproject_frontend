@@ -44,6 +44,8 @@
     };
 
     const addClassroomSubmit = async () => {
+        if(!window.confirm('Are your sure you want to create this classroom?')) return;
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await addClassroom(token, { name: classroom.name! });
             getThisMyJoinedClassrooms();
@@ -54,6 +56,8 @@
     };
 
     const joinClassroomSubmit = async () => {
+        if(!window.confirm('Are your sure you want to join this classroom?')) return;
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await joinClassroom(token, { classcode: classroom.classcode! });
             getThisMyJoinedClassrooms();
@@ -64,6 +68,8 @@
     };
 
     const leaveThisClassroom = async (classroomId: string) => {
+        if(!window.confirm('Are your sure you want to leave this classroom?')) return;
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await leaveClassroom(token, classroomId);
             getThisMyJoinedClassrooms();
@@ -73,8 +79,8 @@
     };
 
     const deleteThisClassroom = async (classroomId: string) => {
-        // console.log(classroomId);
-        
+        if(!window.confirm('Are your sure you want to delete this classroom?')) return;
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             // TODO: delete classroom
             

@@ -80,6 +80,8 @@
     const inviteTeacherSubmit = () => inviteUserToClassroomSubmit(inviteTeacher.email);
     
     const deleteThisUserFromClassroom = (userId: string) => {
+        if(!window.confirm('Are your sure you want to remove this user from the classroom?')) return;
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await deleteUserFromClassroom(token, { userId: userId, classroomId: classroomId });
             getThisClassroom();
@@ -119,7 +121,7 @@
             </div>
         </section>
 
-        <section>
+        <section class="u-margin-bottom-lg">
             <div class="u-flex u-align-center u-justify-space-between">
                 <h2 class="u-weight-400">Teachers ({{ classroom.users?.filter((user: any) => user.type === 1).length }})</h2>
                 <button class="c-button__soft u-color-x-light" @click="toggleTeachersEdit">{{ teachersEdit ? 'Done' : 'Edit' }}</button>

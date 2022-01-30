@@ -140,6 +140,8 @@
     };
 
     const addCategorySubmit = () => {
+        if(!window.confirm('Are your sure you want to create this category?')) return;
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await addCategory(token, { name: addThisCategory.name, classroomId: classroomId });
             getThisCategoriesByClassroom();
@@ -150,6 +152,8 @@
     };
 
     const toggleCategoryVisible = () => {
+        if(!window.confirm(`Are your sure you want to make this category ${category.value!.visible ? 'in' : ''}visible?`)) return;
+
         updateThisCategory.visible = !category.value!.visible;
 
         getIdToken(user.information.user as User).then(async (token: string) => {
@@ -162,18 +166,20 @@
     };
 
     const makeCategoryDone = () => {
-        if(window.confirm('Are you sure you want to finalize this category? You can\'t edit the assignments after this action and this can\'t be undone.')) {
-            getIdToken(user.information.user as User).then(async (token: string) => {
-                const response = await updateCategory(token, { categoryId: selectedCategory.categoryId, name: updateThisCategory.name, done: true });
-                getThisCategoriesByClassroom();
-                getThisCategory();
-            }).catch((error: string) => {
-                console.error(error);
-            });
-        };
+        if(window.confirm('Are you sure you want to finalize this category? You can\'t edit the assignments after this action and this can\'t be undone.')) return;
+
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            const response = await updateCategory(token, { categoryId: selectedCategory.categoryId, name: updateThisCategory.name, done: true });
+            getThisCategoriesByClassroom();
+            getThisCategory();
+        }).catch((error: string) => {
+            console.error(error);
+        });
     };
 
     const updateCategorySubmit = () => {
+        if(!window.confirm('Are your sure you want to update this category?')) return;
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await updateCategory(token, { categoryId: selectedCategory.categoryId, name: updateThisCategory.name });
             getThisCategoriesByClassroom();
@@ -185,6 +191,8 @@
     };
 
     const deleteThisCategoryAction = () => {
+        if(!window.confirm('Are your sure you want to delete this category?')) return;
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await deleteCategory(token, selectedCategory.categoryId );
             getThisCategoriesByClassroom();
@@ -198,6 +206,8 @@
     };
 
     const addAssignmentSubmit = () => {
+        if(!window.confirm('Are your sure you want to create this assignment?')) return;
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await addAssignment(token, { subject: addThisAssignment.subject, categoryId: selectedCategory.categoryId });
             getThisAssignmentsByCategory();
@@ -208,6 +218,8 @@
     };
 
     const updateAssignmentSubmit = () => {
+        if(!window.confirm('Are your sure you want to update this assignment?')) return;
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await updateAssignment(token, { assignmentId: updateThisAssignment.assignmentId!, subject: updateThisAssignment.subject });
             getThisAssignmentsByCategory();
@@ -224,6 +236,8 @@
     };
 
     const deleteThisAssignmentAction = (assignmentId: string) => {
+        if(!window.confirm('Are your sure you want to delete this assignment?')) return;
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await deleteAssignment(token, assignmentId);
             getThisAssignmentsByCategory();

@@ -44,10 +44,14 @@
     };
 
     const cancelLevelSubmit = () => {
+        if(!window.confirm('Are your sure you want to cancel this assignment? All progress will be lost.')) return;
+
         router.push(`/classes/${classroomId}/assignments`);
     };
 
     const submitLevelSubmit = () => {
+        if(!window.confirm('Are your sure you want to submit this assignment?')) return;
+
         getIdToken(user.information.user as User).then(async (token: string) => {
             level.value!.status = 2;
             const response = await updateLevel(token, level.value!);

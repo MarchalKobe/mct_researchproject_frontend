@@ -15,7 +15,6 @@
     height: 12rem;
     width: 10rem;
     border-radius: 0.5rem;
-    cursor: pointer;
     margin-bottom: 2rem;
 
     &__container {
@@ -69,8 +68,12 @@
         margin: 0;
     }
 
-    &:hover {
-        opacity: 0.8;
+    &__clickable {
+        cursor: pointer;
+        
+        &:hover {
+            opacity: 0.8;
+        }
     }
 }
 

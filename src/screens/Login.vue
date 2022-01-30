@@ -25,8 +25,6 @@
     });
 
     const loginSubmit = async () => {
-        addLoading();
-
         loginError.email = loginData.email.length ? null : 'Field required';
         if(!loginError.email) loginError.email = validateEmail(loginData.email) ? null : 'Not a valid email address';
         
@@ -34,6 +32,8 @@
         if(!loginError.password) loginError.password = loginData.password.length >= 5 ? null : 'At least 5 characters';
 
         if(!Object.values(loginError).every(error => error === null)) return;
+
+        addLoading();
 
         const response = await login(loginData);
 

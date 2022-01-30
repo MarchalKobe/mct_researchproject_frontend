@@ -94,7 +94,7 @@
                     });
                 });
 
-                assignment.total = Math.round(scores.reduce((a: number, b: number) => a + b, 0) / scores.length);
+                assignment.total = Math.floor(scores.reduce((a: number, b: number) => a + b, 0) / scores.length);
             });
         }).catch((error: string) => {
             console.error(error);

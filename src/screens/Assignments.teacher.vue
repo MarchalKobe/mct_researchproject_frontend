@@ -175,7 +175,7 @@
     };
 
     const toggleCategoryVisible = () => {
-        if(!window.confirm(`Are your sure you want to make this category ${category.value!.visible ? 'in' : ''}visible?`)) return;
+        if(!window.confirm(`Are your sure you want to make this category ${category.value!.visible ? 'in' : ''}visible?${!category.value!.visible ? ' This will make other categories invisible.' : ''}`)) return;
 
         addLoading();
 

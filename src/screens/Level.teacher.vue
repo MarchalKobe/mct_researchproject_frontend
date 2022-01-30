@@ -57,6 +57,11 @@
     };
 
     const submitLevelSubmit = () => {
+        if(!level.value!.description!) {
+            window.alert('You need to specify a description.');
+            return;
+        };
+
         if(!window.confirm('Are your sure you want to submit this assignment?')) return;
 
         addLoading();
@@ -64,6 +69,12 @@
         getIdToken(user.information.user as User).then(async (token: string) => {
             level.value!.status = 2;
             const response = await updateLevel(token, level.value!);
+
+            if(!response.data.updateLevel) {
+                window.alert('Not a valid html file.');
+                return;
+            };
+
             router.push(`/classes/${classroomId}/assignments`);
         }).catch((error: string) => {
             console.error(error);

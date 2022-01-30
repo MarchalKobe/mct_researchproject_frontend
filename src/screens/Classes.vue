@@ -11,8 +11,10 @@
     import router from '../bootstrap/router';
     import Input from '../components/Input.vue';
     import Popup from '../components/Popup.vue';
+import UpdateClassroomInput from '../types/UpdateClassroomInput';
+import DupplicateClassroomInput from '../types/DupplicateClassroomInput';
 
-    const { getMyJoinedClassrooms, addClassroom, joinClassroom, leaveClassroom } = useNetwork();
+    const { getMyJoinedClassrooms, addClassroom, updateClassroom, dupplicateClassroom, closeClassroom, joinClassroom, leaveClassroom } = useNetwork();
 
     const user = reactive<{ information: UserState }>({
         information: computed(() => store.getters[GetterTypes.GET_USER_INFORMATION]()).value,
@@ -28,11 +30,41 @@
         classcode: '',
     });
 
+    const updateClass = reactive<Classroom>({
+        classroomId: '',
+        name: '',
+    });
+
+    const dupplicateClass = reactive<Classroom>({
+        classroomId: '',
+        name: '',
+    });
+
     const addClassPopup = ref<boolean>(false);
     const toggleAddClassPopup = () => addClassPopup.value = !addClassPopup.value;
 
+    const updateClassPopup = ref<boolean>(false);
+    const toggleUpdateClassPopup = (classr: Classroom | null = null) => {
+        if(classr) {
+            updateClass.classroomId = classr.classroomId;
+            updateClass.name = classr.name;
+        };
+
+        updateClassPopup.value = !updateClassPopup.value;
+    };
+
     const joinClassPopup = ref<boolean>(false);
     const toggleJoinClassPopup = () => joinClassPopup.value = !joinClassPopup.value;
+
+    const dupplicateClassPopup = ref<boolean>(false);
+    const toggleDupplicateClassPopup = (classr: Classroom | null = null) => {
+        if(classr) {
+            dupplicateClass.classroomId = classr.classroomId;
+            dupplicateClass.name = classr.name;
+        };
+
+        dupplicateClassPopup.value = !dupplicateClassPopup.value;
+    };
 
     const getThisMyJoinedClassrooms = async () => {
         getIdToken(user.information.user as User).then(async (token: string) => {
@@ -50,6 +82,18 @@
             const response = await addClassroom(token, { name: classroom.name! });
             getThisMyJoinedClassrooms();
             toggleAddClassPopup();
+        }).catch((error: string) => {
+            console.error(error);
+        });
+    };
+
+    const updateClassroomSubmit = async () => {
+        if(!window.confirm('Are your sure you want to update this classroom?')) return;
+
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            const response = await updateClassroom(token, updateClass as UpdateClassroomInput);
+            getThisMyJoinedClassrooms();
+            toggleUpdateClassPopup();
         }).catch((error: string) => {
             console.error(error);
         });
@@ -78,13 +122,25 @@
         });
     };
 
-    const deleteThisClassroom = async (classroomId: string) => {
-        if(!window.confirm('Are your sure you want to delete this classroom?')) return;
+    const dupplicateClassroomSubmit = async () => {
+        if(!window.confirm('Are your sure you want to dupplicate this classroom?')) return;
 
         getIdToken(user.information.user as User).then(async (token: string) => {
-            // TODO: delete classroom
-            
+            const response = await dupplicateClassroom(token, dupplicateClass as DupplicateClassroomInput);
             getThisMyJoinedClassrooms();
+            toggleDupplicateClassPopup();
+        }).catch((error: string) => {
+            console.error(error);
+        });
+    };
+
+    const closeThisClassroom = async (classroomId: string) => {
+        if(!window.confirm('Are your sure you want to close this classroom? This action can\'t be undone.')) return;
+
+        getIdToken(user.information.user as User).then(async (token: string) => {
+            const response = await closeClassroom(token, classroomId);
+            getThisMyJoinedClassrooms();
+            edit.value = false;
         }).catch((error: string) => {
             console.error(error);
         });
@@ -118,7 +174,7 @@
             <div v-if="user.information.user" class="c-classelements">
                 <ClassElement v-if="user.information.type === 1" :add="true" name="Create class" @click="toggleAddClassPopup" />
                 <ClassElement :add="true" name="Join class" @click="toggleJoinClassPopup" />
-                <ClassElement v-for="(classroom, index) in classrooms" :key="index" :classroom="classroom" :edit="edit" :userId="user.information.user.uid" :leaveAction="leaveThisClassroom" :deleteAction="deleteThisClassroom" :clickAction="goToClass" />
+                <ClassElement v-for="(classroom, index) in classrooms" :key="index" :classroom="classroom" :edit="edit" :user="user.information" :leaveAction="leaveThisClassroom" :updateAction="toggleUpdateClassPopup" :closeAction="closeThisClassroom" :dupplicateAction="toggleDupplicateClassPopup" :clickAction="goToClass" />
             </div>
         </section>
     </div>
@@ -127,7 +183,15 @@
         <Input label="Name" symbol="classroom" type="text" placeholder="4BOIN" :model="classroom" modelName="name" />
     </Popup>
 
+    <Popup v-if="updateClassPopup" title="Update class" :toggleClose="toggleUpdateClassPopup" buttonLabel="Update class" :buttonAction="updateClassroomSubmit">
+        <Input label="Name" symbol="classroom" type="text" placeholder="4BOIN" :model="updateClass" modelName="name" />
+    </Popup>
+
     <Popup v-if="joinClassPopup" title="Join class" :toggleClose="toggleJoinClassPopup" buttonLabel="Join class" :buttonAction="joinClassroomSubmit">
         <Input label="Class code" symbol="classroom" type="text" placeholder="1234" :model="classroom" modelName="classcode" />
+    </Popup>
+
+    <Popup v-if="dupplicateClassPopup" title="Dupplicate class" :toggleClose="toggleDupplicateClassPopup" buttonLabel="Dupplicate class" :buttonAction="dupplicateClassroomSubmit">
+        <Input label="Name" symbol="classroom" type="text" placeholder="4BOIN" :model="dupplicateClass" modelName="name" />
     </Popup>
 </template>

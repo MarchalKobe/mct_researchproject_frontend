@@ -29,6 +29,20 @@
         right: -1rem;
     }
 
+    &__button2 {
+        position: absolute;
+        z-index: 100;
+        top: -1rem;
+        right: 2rem;
+    }
+
+    &__button3 {
+        position: absolute;
+        z-index: 100;
+        top: -1rem;
+        right: 5rem;
+    }
+
     &__symbol {
         stroke: var(--global-x-light);
         margin-bottom: 2rem;
@@ -55,9 +69,23 @@
         margin: 0;
     }
 
+    &__closed {
+        position: absolute;
+        font-size: 0.75rem;
+        left: 0.5rem;
+        bottom: 0.5rem;
+        color: var(--global-x-light);
+        margin: 0;
+    }
+    
+    &__isclosed {
+        opacity: 0.4;
+    }
+
     &:hover {
         opacity: 0.8;
     }
+
 }
 
 @media screen and (min-width: 46rem) {

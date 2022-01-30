@@ -103,6 +103,20 @@
                 color: var(--global-xx-light);
             }
         }
+        
+        &-empty {
+            stroke: var(--global-xx-light);
+            border: 2px solid var(--global-light);
+
+            &:focus {
+                border: var(--global-focus-border);
+                opacity: 0.9;
+            }
+        }
+
+        &:hover {
+            opacity: 0.9;
+        }
 
         &-alpha {
             stroke: var(--global-xx-light);
@@ -111,25 +125,21 @@
             span {
                 color: var(--global-xx-light);
             }
+
+            &:focus {
+                // TODO
+                box-shadow: 0 0 4px 2px var(--global-red);
+            }
         }
 
         &-orange {
             stroke: var(--global-xx-light);
             background: var(--global-orange);
-        }
-        
-        &-empty {
-            stroke: var(--global-xx-light);
-            border: 2px solid var(--global-light);
-        }
 
-        &:hover {
-            opacity: 0.9;
-        }
-
-        &:focus {
-            border: var(--global-focus-border);
-            opacity: 0.9;
+            &:focus {
+                // TODO
+                box-shadow: 0 0 4px 2px var(--global-orange);
+            }
         }
     }
 

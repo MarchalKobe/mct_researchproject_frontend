@@ -166,7 +166,7 @@
     };
 
     const makeCategoryDone = () => {
-        if(window.confirm('Are you sure you want to finalize this category? You can\'t edit the assignments after this action and this can\'t be undone.')) return;
+        if(!window.confirm('Are you sure you want to finalize this category? You can\'t edit the assignments after this action and this can\'t be undone.')) return;
 
         getIdToken(user.information.user as User).then(async (token: string) => {
             const response = await updateCategory(token, { categoryId: selectedCategory.categoryId, name: updateThisCategory.name, done: true });
@@ -402,9 +402,9 @@
         </nav>
 
         <div class="u-flex u-align-center u-justify-space-between u-wrap u-margin-bottom-md">
-            <button class="c-button__normal u-margin-bottom-md" @click="toggleAddCategoryPopup">Create category</button>
+            <button v-if="classroom.open" class="c-button__normal u-margin-bottom-md" @click="toggleAddCategoryPopup">Create category</button>
 
-            <div v-if="category && assignments.length" class="u-margin-bottom-md">
+            <div v-if="classroom.open && category && assignments.length" class="u-margin-bottom-md">
                 <button v-if="!category.done && levelsDone" class="c-button__normal" @click="makeCategoryDone">Finalize this category</button>
                 <button v-if="category.done && levelsDone" class="c-button__normal" @click="toggleCategoryVisible">{{ category.visible ? 'Make category invisible' : 'Make category visible' }}</button>
             </div>

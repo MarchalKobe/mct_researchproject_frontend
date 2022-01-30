@@ -2,6 +2,7 @@ import AddAssignmentInput from '../types/AddAssignmentInput';
 import AddCategoryInput from '../types/AddCategoryInput';
 import AddClassroomInput from '../types/AddClassroomInput';
 import DeleteUserFromClassroomInput from '../types/DeleteUserFromClassroomInput';
+import DupplicateClassroomInput from '../types/DupplicateClassroomInput';
 import ForgotPasswordInput from '../types/ForgotPasswordInput';
 import InviteUserToClassroomInput from '../types/InviteUserToClassroomInput';
 import JoinClassroomInput from '../types/JoinClassroomInput';
@@ -12,6 +13,7 @@ import RestorePasswordInput from '../types/RestorePasswordInput';
 import Score from '../types/Score';
 import UpdateAssignmentInput from '../types/UpdateAssignmentInput';
 import UpdateCategoryInput from '../types/UpdateCategoryInput';
+import UpdateClassroomInput from '../types/UpdateClassroomInput';
 import UpdateEditorInput from '../types/UpdateEditorInput';
 import UpdateEmailInput from '../types/UpdateEmailInput';
 import UpdateGeneralInput from '../types/UpdateGeneralInput';
@@ -199,6 +201,7 @@ export const useNetwork = () => {
                     classroomId
                     name
                     classcode
+                    open
                     users {
                         userId
                         firstName
@@ -223,6 +226,7 @@ export const useNetwork = () => {
                 getMyJoinedClassrooms {
                     classroomId
                     name
+                    open
                     userCreated {
                         userId
                     }
@@ -242,6 +246,45 @@ export const useNetwork = () => {
             data: {
                 name: body.name,
             },
+        },
+    });
+
+    const updateClassroom = (token: string, body: UpdateClassroomInput) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            mutation UpdateClassroom($data: UpdateClassroomInput!) {
+                updateClassroom(data: $data)
+            }
+        `,
+        variables: {
+            data: {
+                classroomId: body.classroomId,
+                name: body.name,
+            },
+        },
+    });
+
+    const dupplicateClassroom = (token: string, body: DupplicateClassroomInput) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            mutation DupplicateClassroom($data: DupplicateClassroomInput!) {
+                dupplicateClassroom(data: $data)
+            }
+        `,
+        variables: {
+            data: {
+                classroomId: body.classroomId,
+                name: body.name,
+            },
+        },
+    });
+
+    const closeClassroom = (token: string, classroomId: string) => handleData('graphql', token, 'POST', {
+        query: /* GraphQL */ `
+            mutation CloseClassroom($classroomId: String!) {
+                closeClassroom(classroomId: $classroomId)
+            }
+        `,
+        variables: {
+            classroomId: classroomId,
         },
     });
 
@@ -649,6 +692,9 @@ export const useNetwork = () => {
         getClassroom,
         getMyJoinedClassrooms,
         addClassroom,
+        updateClassroom,
+        dupplicateClassroom,
+        closeClassroom,
         joinClassroom,
         leaveClassroom,
         resetClasscode,

@@ -135,7 +135,8 @@
                         <p class="u-margin-0 u-margin-bottom-sm u-size-20">{{ levels[level.level! - 1] }}</p>
                         <div v-for="(score, index) in level.scores" :key="index" class="u-margin-bottom-md">
                             <p class="u-margin-0 u-size-20 u-color-x-light">Total: <span class="u-color-xx-light">{{ JSON.parse(score.scores!).total }}%</span></p>
-                            <p class="u-margin-0 u-margin-bottom-sm u-color-x-light">(Tags: {{ JSON.parse(score.scores!).tags }}% - Attributes: {{ JSON.parse(score.scores!).attributes }}% - Text: {{ JSON.parse(score.scores!).text }}%)</p>
+                            <p class="u-margin-0 u-color-x-light">(Tags: {{ JSON.parse(score.scores!).tags }}% - Attributes: {{ JSON.parse(score.scores!).attributes }}% - Text: {{ JSON.parse(score.scores!).text }}%)</p>
+                            <p class="u-margin-0 u-margin-bottom-sm u-color-x-light">{{ new Date(score.updated_at!).toLocaleString('nl-BE') }}</p>
                             <ProgressBar style="max-width: 24rem" :progress="JSON.parse(score.scores!).total" />
                         </div>
                     </div>

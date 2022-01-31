@@ -7,6 +7,7 @@ export default interface Score {
     code?: Languages;
     status: number;
     scores?: string;
+    updated_at?: string;
     user?: UserState;
     level?: Level;
 };
